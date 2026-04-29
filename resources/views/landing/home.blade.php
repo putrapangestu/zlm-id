@@ -16,11 +16,11 @@
                     New 2026 Models Available
                 </div>
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white mb-6 leading-tight">
-                    Find your perfect <br>
-                    <span class="text-[#DF5E1D]">workstation.</span>
+                    Toko Laptop Bekas Berkualitas di <br>
+                    <span class="text-[#DF5E1D]">Malang.</span>
                 </h1>
                 <p class="text-lg text-gray-400 mb-8 max-w-xl leading-relaxed">
-                    Discover engineered excellence. From high-performance gaming rigs to ultra-portable business machines, find the device that matches your ambition.
+                    ZLM.ID hadir menyediakan berbagai pilihan laptop bekas second berkualitas dengan jaminan harga dan service terbaik di Malang. Temukan perangkat impian yang sesuai dengan pekerjaan Anda!
                 </p>
                 <div class="flex flex-wrap gap-4">
                     <a href="#" class="bg-[#DF5E1D] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#c45218] transition shadow-sm flex items-center gap-2">
@@ -46,8 +46,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
-                <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Featured Collection</h2>
-                <p class="text-gray-500">Handpicked devices for uncompromising performance.</p>
+                <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Koleksi Pilihan ZLM.ID</h2>
+                <p class="text-gray-500">Unit-unit laptop bekas pilihan dengan kualitas terbaik dan bergaransi.</p>
             </div>
             <a href="#" class="text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
                 View all models
@@ -60,8 +60,8 @@
             <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
 
                 <!-- Image -->
-                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="MacBook Pro" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center border-b border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="MacBook Pro" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
 
                     <!-- Badge -->
                     <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-gray-200 text-[#363230] px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
@@ -125,8 +125,8 @@
             <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
 
                 <!-- Image -->
-                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Razer Blade" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center border-b border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Razer Blade" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
 
                     <!-- Badge -->
                     <div class="absolute top-3 right-3 bg-[#DF5E1D] text-white px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
@@ -190,8 +190,8 @@
             <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
 
                 <!-- Image -->
-                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Dell XPS" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center border-b border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Dell XPS" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
 
                     <!-- Badge -->
                     <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-gray-200 text-[#363230] px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
@@ -258,8 +258,8 @@
 <section class="py-20 bg-white border-y border-gray-200/60">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12 max-w-2xl mx-auto">
-            <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Shop by Architecture</h2>
-            <p class="text-gray-500">Filter through our catalog based on your specific computing requirements.</p>
+            <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Pilih Sesuai Kebutuhan</h2>
+            <p class="text-gray-500">Cari model laptop idaman Anda berdasarkan segmentasi penggunaan harian.</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -310,32 +310,32 @@
                 <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
                     <iconify-icon icon="solar:shield-check-linear" class="text-3xl"></iconify-icon>
                 </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-2">Verified Hardware</h3>
-                <p class="text-sm text-gray-500 leading-relaxed">Every unit is physically inspected and tested to ensure peak performance before shipping.</p>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Teruji Kualitasnya</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Setiap unit laptop bekas telah melewati proses Quality Control ketat untuk menjamin performanya.</p>
             </div>
 
             <div class="flex flex-col">
                 <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
                     <iconify-icon icon="solar:routing-linear" class="text-3xl"></iconify-icon>
                 </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-2">Express Delivery</h3>
-                <p class="text-sm text-gray-500 leading-relaxed">Next-day shipping available on all in-stock items with secure, insured packaging.</p>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Pengiriman Aman</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Tersedia layanan pick-up di Malang dan pengiriman super aman ke seluruh Indonesia dengan asuransi.</p>
             </div>
 
             <div class="flex flex-col">
                 <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
                     <iconify-icon icon="solar:tag-price-linear" class="text-3xl"></iconify-icon>
                 </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-2">Price Match</h3>
-                <p class="text-sm text-gray-500 leading-relaxed">We dynamically monitor market prices to ensure you always get the most competitive rate.</p>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Harga Bersahabat</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Kami terus memantau harga pasar agar Anda selalu mendapat rasio harga ke performa laptop yang paling jujur.</p>
             </div>
 
             <div class="flex flex-col">
                 <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
                     <iconify-icon icon="solar:chat-round-dots-linear" class="text-3xl"></iconify-icon>
                 </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-2">Expert Support</h3>
-                <p class="text-sm text-gray-500 leading-relaxed">Access to dedicated technical staff for configuration assistance and troubleshooting.</p>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Garansi Toko Jelas</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Kami memberikan jaminan dan garansi servis untuk unit laptop dari setiap masalah paska pembelian.</p>
             </div>
         </div>
     </div>
@@ -345,8 +345,8 @@
 <section class="py-24 bg-gray-100/50 border-t border-gray-200/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Client Feedback</h2>
-            <p class="text-gray-500">Hear from professionals who rely on our hardware.</p>
+            <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Apa Kata Pelanggan Kami</h2>
+            <p class="text-gray-500">Ribuan orang puas berbelanja laptop second di ZLM.ID Malang.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -427,8 +427,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
-                <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Hardware Insights</h2>
-                <p class="text-gray-500">Technical deep dives and buying guides.</p>
+                <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Artikel Terkini</h2>
+                <p class="text-gray-500">Informasi tips, panduan hardware, serta perawatan laptop Anda.</p>
             </div>
             <a href="#" class="text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
                 Read Journal
@@ -500,9 +500,9 @@
     <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#DF5E1D] opacity-10 blur-[100px] rounded-full pointer-events-none translate-x-1/2 translate-y-1/2"></div>
 
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <h2 class="text-3xl font-semibold tracking-tight text-white mb-4">Stay at the forefront</h2>
+        <h2 class="text-3xl font-semibold tracking-tight text-white mb-4">Selangkah Lebih Dulu</h2>
         <p class="text-sm text-gray-400 mb-8 max-w-xl mx-auto">
-            Subscribe to receive early access to new releases, technical breakdowns, and exclusive procurement offers.
+            Dapatkan informasi stock terbaru dan penawaran diskon laptop ZLM.ID secara eksklusif.
         </p>
 
         <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -624,3 +624,4 @@
     document.addEventListener('DOMContentLoaded', updateWishlistButtons);
 </script>
 @endsection
+

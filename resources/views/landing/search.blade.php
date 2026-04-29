@@ -1,15 +1,15 @@
 
 @extends('layouts.landing')
 
-@section('title', 'Search Laptops')
+@section('title', 'Cari Laptop')
 
 @section('content')
 <div class="bg-gray-50 min-h-screen py-12 lg:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-12">
-            <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-[#363230] mb-3">Find Your Perfect Laptop</h1>
-            <p class="text-gray-500 max-w-2xl text-sm md:text-base leading-relaxed">Browse our collection of premium engineered devices. Use the filters to find the exact specifications you need.</p>
+            <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-[#363230] mb-3">Temukan Laptop Idamanmu</h1>
+            <p class="text-gray-500 max-w-2xl text-sm md:text-base leading-relaxed">Jelajahi koleksi laptop bekas berkualitas tinggi kami. Gunakan filter untuk menemukan spesifikasi yang paling cocok dengan kebutuhanmu.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
@@ -20,28 +20,28 @@
                         <div class="w-10 h-10 rounded-lg bg-[#DF5E1D]/10 flex items-center justify-center">
                             <iconify-icon icon="solar:filter-linear" class="text-[#DF5E1D] text-lg"></iconify-icon>
                         </div>
-                        <h3 class="text-lg font-semibold tracking-tight text-[#363230]">Filters</h3>
+                        <h3 class="text-lg font-semibold tracking-tight text-[#363230]">Filter Set</h3>
                     </div>
 
                     <form method="GET" action="{{ route('landing.search') }}" class="space-y-6">
                         <!-- Search -->
                         <div>
-                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-2">Search</label>
+                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-2">Pencarian</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                     <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
                                 </div>
-                                <input type="text" name="search" placeholder="Laptop, processor..." value="{{ request('search') }}" class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                                <input type="text" name="search" placeholder="Laptop, prosesor..." value="{{ request('search') }}" class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                             </div>
                         </div>
 
                         <!-- Category Filter -->
                         <div class="pt-4 border-t border-gray-100">
-                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-3">Category</label>
+                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-3">Kategori</label>
                             <div class="space-y-3">
                                 <label class="flex items-center group cursor-pointer">
                                     <input type="radio" name="category" value="all" @checked(!request('category')) class="w-4 h-4 text-[#DF5E1D] bg-gray-100 border-gray-300 focus:ring-[#DF5E1D] accent-[#DF5E1D] cursor-pointer transition-all">
-                                    <span class="ml-3 text-sm text-gray-600 group-hover:text-[#363230] transition-colors">All Categories</span>
+                                    <span class="ml-3 text-sm text-gray-600 group-hover:text-[#363230] transition-colors">Semua Kategori</span>
                                 </label>
                                 @foreach (['gaming' => 'Gaming', 'business' => 'Business', 'student' => 'Student', 'ultrabook' => 'Ultrabook'] as $value => $label)
                                     <label class="flex items-center group cursor-pointer">
@@ -54,10 +54,10 @@
 
                         <!-- Brand Filter -->
                         <div class="pt-4 border-t border-gray-100">
-                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-3">Brand</label>
+                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-3">Merek</label>
                             <div class="relative">
                                 <select name="brand" class="w-full pl-3 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all cursor-pointer">
-                                    <option value="">All Brands</option>
+                                    <option value="">Semua Merek</option>
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand }}" @selected(request('brand') === $brand)>{{ $brand }}</option>
                                     @endforeach
@@ -70,22 +70,22 @@
 
                         <!-- Price Range Filter -->
                         <div class="pt-4 border-t border-gray-100">
-                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-3">Price Range</label>
+                            <label class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-3">Rentang Harga</label>
                             <div class="flex items-center gap-2 mb-2">
                                 <input type="number" name="min_price" placeholder="Min $" value="{{ request('min_price') }}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                                 <span class="text-gray-400">-</span>
                                 <input type="number" name="max_price" placeholder="Max $" value="{{ request('max_price') }}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                             </div>
-                            <p class="text-xs text-gray-400">Max limit: ${{ number_format($maxPrice, 0) }}</p>
+                            <p class="text-xs text-gray-400">Batas maks: Rp {{ number_format($maxPrice, 0) }}</p>
                         </div>
 
                         <!-- Filter Buttons -->
                         <div class="pt-6 space-y-3">
                             <button type="submit" class="w-full bg-[#DF5E1D] text-white py-2.5 rounded-lg text-sm font-medium hover:bg-[#c45218] transition-colors shadow-sm flex items-center justify-center gap-2">
-                                Apply Filters
+                                Terapkan Filter
                             </button>
                             <a href="{{ route('landing.search') }}" class="w-full block text-center bg-gray-50 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm font-medium hover:bg-white hover:text-[#363230] hover:border-gray-300 transition-colors">
-                                Reset
+                                Atur Ulang
                             </a>
                         </div>
                     </form>
@@ -97,15 +97,15 @@
                 <!-- Results Info -->
                 <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                     <p class="text-sm text-gray-500">
-                        Showing <span class="font-semibold text-[#363230]">{{ $laptops->count() }}</span> of
-                        <span class="font-semibold text-[#363230]">{{ $laptops->total() }}</span> results
+                        Menampilkan <span class="font-semibold text-[#363230]">{{ $products->count() }}</span> dari
+                        <span class="font-semibold text-[#363230]">{{ $products->total() }}</span> hasil
                     </p>
                     <div class="relative inline-block w-48">
                         <select class="w-full pl-3 pr-10 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 appearance-none focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all cursor-pointer shadow-sm">
-                            <option>Latest Arrivals</option>
-                            <option>Price: Low to High</option>
-                            <option>Price: High to Low</option>
-                            <option>Most Popular</option>
+                            <option>Produk Terbaru</option>
+                            <option>Harga: Rendah ke Tinggi</option>
+                            <option>Harga: Tinggi ke Rendah</option>
+                            <option>Paling Populer</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
                             <iconify-icon icon="solar:sort-from-top-to-bottom-linear"></iconify-icon>
@@ -114,24 +114,24 @@
                 </div>
 
                 <!-- Laptop Cards Grid -->
-                @if ($laptops->count() > 0)
+                @if ($products->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach ($laptops as $laptop)
+                        @foreach ($products as $laptop)
                             <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
 
                                 <!-- Stock Status Overlay -->
                                 @if ($laptop->stock === 0)
                                     <div class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
                                         <div class="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-semibold shadow-xl tracking-wide">
-                                            Out of Stock
+                                            Stok Habis
                                         </div>
                                     </div>
                                 @endif
 
                                 <!-- Image -->
-                                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
+                                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center border-b border-gray-100">
                                     @if ($laptop->image_url)
-                                        <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                                        <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
                                     @else
                                         <!-- Minimalist high-quality placeholder from Unsplash -->
                                         <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=600" alt="{{ $laptop->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded">
@@ -172,7 +172,7 @@
                                     <!-- Price & Actions -->
                                     <div class="pt-4 border-t border-gray-100">
                                         <p class="text-xl font-semibold tracking-tight text-[#363230] mb-4">
-                                            ${{ number_format($laptop->price, 0) }}
+                                            Rp{{ number_format($laptop->price, 0, ',', '.') }}
                                         </p>
                                         <div class="flex gap-2 items-center">
                                             <!-- Wishlist Button -->
@@ -188,7 +188,7 @@
                                             <!-- View Details Button -->
                                             <a href="{{ route('landing.detail', $laptop->id) }}" class="flex-1 px-3 py-2 rounded-lg bg-gradient-to-b from-[#DF5E1D] to-[#d05619] text-white flex items-center justify-center hover:from-[#d05619] hover:to-[#c45218] transition-all font-medium text-xs gap-1" title="View Details">
                                                 <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
-                                                <span class="hidden sm:inline">Details</span>
+                                                <span class="hidden sm:inline">Detail</span>
                                             </a>
                                         </div>
                                     </div>
@@ -199,7 +199,7 @@
 
                     <!-- Pagination -->
                     <div class="mt-12 flex justify-center">
-                        {{ $laptops->links() }}
+                        {{ $products->links() }}
                     </div>
                 @else
                     <!-- Empty State -->
@@ -207,11 +207,11 @@
                         <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 text-gray-400 border border-gray-100">
                             <iconify-icon icon="solar:ghost-linear" class="text-3xl"></iconify-icon>
                         </div>
-                        <h3 class="text-lg font-semibold tracking-tight text-[#363230] mb-2">No hardware found</h3>
-                        <p class="text-sm text-gray-500 mb-6 max-w-sm">We couldn't find any laptops matching your current filters. Try adjusting your parameters or clear all filters.</p>
+                        <h3 class="text-lg font-semibold tracking-tight text-[#363230] mb-2">Produk Tidak Ditemukan</h3>
+                        <p class="text-sm text-gray-500 mb-6 max-w-sm">Kami tidak menemukan laptop yang sesuai dengan filter Anda. Silakan atur ulang parameter filter atau hapus semua pencarian.</p>
                         <a href="{{ route('landing.search') }}" class="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-white hover:text-[#363230] hover:border-gray-300 transition-colors">
                             <iconify-icon icon="solar:refresh-linear"></iconify-icon>
-                            Clear All Filters
+                            Hapus Semua Filter
                         </a>
                     </div>
                 @endif
@@ -230,7 +230,7 @@
                     <iconify-icon icon="solar:scale-linear" class="text-[#DF5E1D] text-base"></iconify-icon>
                 </div>
                 <div>
-                    <p class="text-xs text-gray-500 font-medium">Compare</p>
+                    <p class="text-xs text-gray-500 font-medium">Bandingkan</p>
                     <p class="text-sm font-semibold text-[#363230]"><span id="compareCount">0</span>/2</p>
                 </div>
             </div>
@@ -248,10 +248,10 @@
         <div class="flex gap-2 pt-3 border-t border-gray-100">
             <a href="{{ route('landing.compare') }}" class="flex-1 bg-gradient-to-b from-[#DF5E1D] to-[#d05619] text-white py-2.5 px-3 rounded-lg text-xs font-semibold hover:from-[#d05619] hover:to-[#c45218] transition-all flex items-center justify-center gap-1.5">
                 <iconify-icon icon="solar:eye-linear" class="text-base"></iconify-icon>
-                <span>View Compare</span>
+                <span>Lihat Bandingkan</span>
             </a>
             <button onclick="clearAllCompare()" class="flex-1 bg-gray-100 text-gray-600 py-2.5 px-3 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-all">
-                <span>Clear All</span>
+                <span>Hapus Semua</span>
             </button>
         </div>
     </div>
@@ -280,7 +280,7 @@
 
         // Prevent duplicates and limit to 2 items
         if (compareList.length >= 2) {
-            showToast('You can only compare up to 2 laptops');
+            showToast('Anda hanya dapat membandingkan maksimal 2 laptop');
             return;
         }
 
@@ -289,9 +289,9 @@
             saveCompareList(compareList);
 
             // Show toast notification
-            showToast(`${name} added to compare!`);
+            showToast(`${name} ditambahkan untuk dibandingkan!`);
         } else {
-            showToast('Already added to compare');
+            showToast('Sudah ditambahkan sebelumnya');
         }
     }
 
@@ -301,7 +301,7 @@
         compareList = compareList.filter(item => item.id !== id);
         saveCompareList(compareList);
         if (removed) {
-            showToast(`${removed.name} removed from compare`);
+            showToast(`${removed.name} dihapus dari perbandingan`);
         }
     }
 
@@ -311,10 +311,10 @@
 
         if (index > -1) {
             wishlist.splice(index, 1);
-            showToast('Removed from wishlist');
+            showToast('Dihapus dari wishlist');
         } else {
             wishlist.push(id);
-            showToast('Added to wishlist!');
+            showToast('Ditambahkan ke wishlist!');
         }
 
         localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
@@ -362,7 +362,7 @@
     function clearAllCompare() {
         localStorage.removeItem(COMPARE_STORAGE_KEY);
         updateFloatingButton();
-        showToast('Compare list cleared');
+        showToast('Daftar perbandingan dibersihkan');
     }
 
     function updateWishlistButtons() {
@@ -398,3 +398,4 @@
     });
 </script>
 @endsection
+

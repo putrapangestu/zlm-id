@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Laptop;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class LaptopController extends Controller
@@ -12,8 +12,8 @@ class LaptopController extends Controller
      */
     public function index()
     {
-        $featured = Laptop::featured()->take(6)->get();
-        $categories = ['gaming', 'business', 'student', 'ultrabook'];
+        $featured = Product::inRandomOrder()->take(6)->get();
+        $categories = ['Gaming', 'Business', 'Student', 'Ultrabook'];
 
         return view('landing.home', compact('featured', 'categories'));
     }
@@ -23,11 +23,11 @@ class LaptopController extends Controller
      */
     public function search(Request $request)
     {
-        $query = Laptop::query();
+        $query = Product::query();
 
         // Filter by category
         if ($request->has('category') && $request->category !== 'all') {
-            $query->where('category', $request->category);
+            $query->where('type', $request->category);
         }
 
         // Filter by price range
@@ -53,11 +53,11 @@ class LaptopController extends Controller
             });
         }
 
-        $laptops = $query->paginate(12);
-        $brands = Laptop::distinct()->pluck('brand');
-        $maxPrice = Laptop::max('price');
+        $products = $query->paginate(12);
+        $brands = Product::distinct()->pluck('brand');
+        $maxPrice = Product::max('price');
 
-        return view('landing.search', compact('laptops', 'brands', 'maxPrice'));
+        return view('landing.search', compact('products', 'brands', 'maxPrice'));
     }
 
     /**
@@ -65,14 +65,14 @@ class LaptopController extends Controller
      */
     public function compare(Request $request)
     {
-        $selected = $request->input('laptops', []);
-        $laptops = [];
+        $selected = $request->input('products', []);
+        $products = [];
 
         if (!empty($selected)) {
-            $laptops = Laptop::whereIn('id', $selected)->get();
+            $products = Product::whereIn('id', $selected)->get();
         }
 
-        return view('landing.compare', compact('laptops'));
+        return view('landing.compare', compact('products'));
     }
 
     /**
@@ -80,15 +80,15 @@ class LaptopController extends Controller
      */
     public function show($id)
     {
-        $laptop = Laptop::findOrFail($id);
+        $product = Product::findOrFail($id);
 
-        // Get similar laptops (same category, different id)
-        $similar = Laptop::where('category', $laptop->category)
+        // Get similar laptops (same type, different id)
+        $similar = Product::where('type', $product->type)
             ->where('id', '!=', $id)
             ->take(4)
             ->get();
 
-        return view('landing.detail', compact('laptop', 'similar'));
+        return view('landing.detail', compact('product', 'similar'));
     }
 
     /**

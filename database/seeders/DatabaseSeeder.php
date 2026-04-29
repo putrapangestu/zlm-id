@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            LaptopSeeder::class,
+            RoleAndUserSeeder::class,
+            DummyDataSeeder::class,
         ]);
     }
 }

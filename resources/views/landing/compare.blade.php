@@ -36,32 +36,32 @@
                 <li>
                     <a href="#" class="hover:text-[#DF5E1D] transition-colors duration-200 flex items-center gap-1.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">
                         <iconify-icon icon="solar:home-2-linear" class="text-base" style="stroke-width: 1.5;"></iconify-icon>
-                        Home
+                        Beranda
                     </a>
                 </li>
                 <li class="flex items-center text-gray-300">
                     <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
                 </li>
                 <li>
-                    <a href="#" class="hover:text-[#DF5E1D] transition-colors duration-200 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">Products</a>
+                    <a href="#" class="hover:text-[#DF5E1D] transition-colors duration-200 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">Produk</a>
                 </li>
                 <li class="flex items-center text-gray-300">
                     <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
                 </li>
-                <li class="text-[#363230] truncate">Compare</li>
+                <li class="text-[#363230] truncate">Perbandingan</li>
             </ol>
         </nav>
 
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 animate-slide-up" style="animation-delay: 0.1s;">
             <div>
-                <h1 class="text-3xl lg:text-4xl font-medium tracking-tight text-[#363230] mb-3">Compare Models</h1>
-                <p class="text-base text-gray-500 max-w-xl">See how these devices stack up against each other to find the perfect fit for your workflow.</p>
+                <h1 class="text-3xl lg:text-4xl font-medium tracking-tight text-[#363230] mb-3">Produk Terpilih</h1>
+                <p class="text-base text-gray-500 max-w-xl">Bandingkan perangkat pilihan Anda untuk merekomposisi laptop terbaik.</p>
             </div>
 
             <!-- Custom Toggle -->
             <div class="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-gray-200/80 shadow-sm">
-                <span class="text-xs font-medium text-gray-500">Highlight differences</span>
+                <span class="text-xs font-medium text-gray-500">Soroti Perbedaan</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" value="" class="sr-only peer" checked="">
                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#DF5E1D]"></div>
@@ -78,7 +78,7 @@
 
                     <!-- Empty Top Left for Desktop -->
                     <div class="hidden lg:flex items-end p-6 border-r border-gray-100">
-                        <span class="text-sm font-medium text-gray-400 uppercase tracking-widest">Specifications</span>
+                        <span class="text-sm font-medium text-gray-400 uppercase tracking-widest">Spesifikasi</span>
                     </div>
 
                     <!-- VS Badge -->
@@ -98,7 +98,7 @@
                         <div class="text-lg lg:text-xl font-medium tracking-tight text-[#363230] mb-5">$1,599</div>
                         <button class="w-full bg-white border border-gray-200 shadow-sm text-[#363230] py-2.5 px-4 rounded-xl text-xs font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 flex items-center justify-center gap-2 group-hover:border-[#DF5E1D]/30 group-hover:text-[#DF5E1D]">
                             <iconify-icon icon="solar:cart-large-2-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>
-                            <span class="hidden sm:inline">Add to Cart</span>
+                            <span class="hidden sm:inline">Lihat Detail</span>
                         </button>
                     </div>
 
@@ -114,7 +114,7 @@
                         <div class="text-lg lg:text-xl font-medium tracking-tight text-[#363230] mb-5">$1,499</div>
                         <button class="w-full bg-white border border-gray-200 shadow-sm text-[#363230] py-2.5 px-4 rounded-xl text-xs font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 flex items-center justify-center gap-2 group-hover:border-[#DF5E1D]/30 group-hover:text-[#DF5E1D]">
                             <iconify-icon icon="solar:cart-large-2-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>
-                            <span class="hidden sm:inline">Add to Cart</span>
+                            <span class="hidden sm:inline">Lihat Detail</span>
                         </button>
                     </div>
 
@@ -126,20 +126,20 @@
 
                 <!-- Category 1: Performance -->
                 <div class="bg-gray-50/80 py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-widest border-y border-gray-100">
-                    Performance
+                    Performa
                 </div>
 
                 <!-- Spec Row 1 -->
                 <div class="grid grid-cols-2 lg:grid-cols-[240px_1fr_1fr] group hover:bg-orange-50/30 transition-colors duration-300">
                     <!-- Mobile Label -->
-                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Processor</div>
+                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Prosesor</div>
                     <!-- Desktop Label -->
                     <div class="hidden lg:flex items-center p-6 border-r border-gray-100">
                         <div class="flex items-center gap-3 text-sm font-medium text-gray-600">
                             <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-orange-100 transition-colors duration-300">
                                 <iconify-icon icon="solar:cpu-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                             </div>
-                            Processor
+                            Prosesor
                         </div>
                     </div>
                     <!-- Value 1 -->
@@ -162,7 +162,7 @@
                             <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-orange-100 transition-colors duration-300">
                                 <iconify-icon icon="solar:ram-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                             </div>
-                            Memory (RAM)
+                            Memori (RAM)
                         </div>
                     </div>
                     <!-- Value 1 -->
@@ -183,13 +183,13 @@
 
                 <!-- Spec Row 3 (Storage) -->
                 <div class="grid grid-cols-2 lg:grid-cols-[240px_1fr_1fr] group hover:bg-orange-50/30 transition-colors duration-300">
-                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Storage</div>
+                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Penyimpanan</div>
                     <div class="hidden lg:flex items-center p-6 border-r border-gray-100">
                         <div class="flex items-center gap-3 text-sm font-medium text-gray-600">
                             <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-orange-100 transition-colors duration-300">
                                 <iconify-icon icon="solar:database-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                             </div>
-                            Storage
+                            Penyimpanan
                         </div>
                     </div>
                     <div class="p-5 lg:p-6 text-sm text-[#363230] text-center lg:text-left border-r border-gray-100 flex items-center justify-center lg:justify-start">
@@ -202,18 +202,18 @@
 
                 <!-- Category 2: Display & Design -->
                 <div class="bg-gray-50/80 py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-widest border-y border-gray-100">
-                    Display & Design
+                    Layar & Desain
                 </div>
 
                 <!-- Spec Row 4 -->
                 <div class="grid grid-cols-2 lg:grid-cols-[240px_1fr_1fr] group hover:bg-orange-50/30 transition-colors duration-300">
-                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Display</div>
+                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Layar</div>
                     <div class="hidden lg:flex items-center p-6 border-r border-gray-100">
                         <div class="flex items-center gap-3 text-sm font-medium text-gray-600">
                             <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-orange-100 transition-colors duration-300">
                                 <iconify-icon icon="solar:monitor-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                             </div>
-                            Display
+                            Layar
                         </div>
                     </div>
                     <div class="p-5 lg:p-6 text-sm text-[#363230] text-center lg:text-left border-r border-gray-100 flex flex-col justify-center">
@@ -228,13 +228,13 @@
 
                 <!-- Spec Row 5 (Weight Visuals) -->
                 <div class="grid grid-cols-2 lg:grid-cols-[240px_1fr_1fr] group hover:bg-orange-50/30 transition-colors duration-300">
-                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Weight</div>
+                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Berat</div>
                     <div class="hidden lg:flex items-center p-6 border-r border-gray-100">
                         <div class="flex items-center gap-3 text-sm font-medium text-gray-600">
                             <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-orange-100 transition-colors duration-300">
                                 <iconify-icon icon="solar:case-minimalistic-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                             </div>
-                            Weight
+                            Berat
                         </div>
                     </div>
                     <div class="p-5 lg:p-6 border-r border-gray-100 flex items-center justify-center lg:justify-start gap-4">
@@ -253,19 +253,19 @@
 
                 <!-- Spec Row 6 (Battery) -->
                 <div class="grid grid-cols-2 lg:grid-cols-[240px_1fr_1fr] group hover:bg-orange-50/30 transition-colors duration-300">
-                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Battery Life</div>
+                    <div class="col-span-2 lg:hidden text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50">Daya Baterai</div>
                     <div class="hidden lg:flex items-center p-6 border-r border-gray-100">
                         <div class="flex items-center gap-3 text-sm font-medium text-gray-600">
                             <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-orange-100 transition-colors duration-300">
                                 <iconify-icon icon="solar:battery-charge-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                             </div>
-                            Battery Life
+                            Daya Baterai
                         </div>
                     </div>
                     <div class="p-5 lg:p-6 border-r border-gray-100 flex flex-col justify-center">
                         <div class="flex justify-between text-xs mb-2">
                             <span class="font-medium text-[#DF5E1D]">Up to 22 hrs</span>
-                            <span class="text-gray-400">Winner</span>
+                            <span class="text-gray-400">Pemenang</span>
                         </div>
                         <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                             <div class="bg-gradient-to-r from-[#DF5E1D] to-[#f4854b] h-1.5 rounded-full animate-bar" style="width: 100%; animation-delay: 0.7s;"></div>
@@ -287,3 +287,4 @@
     </div>
 </div>
 @endsection
+

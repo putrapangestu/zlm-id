@@ -1,7 +1,7 @@
 <html lang="en" class="scroll-smooth"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'ZLM.ID - Premium Laptop Store')</title>
+    <title>@yield('title', 'ZLM.ID - Toko Laptop Bekas Berkualitas')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -145,5 +145,7 @@
             }
         }, 3000);
     </script>
+
+    @stack('scripts')
 
 </body></html>
