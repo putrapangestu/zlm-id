@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Force HTTPS
+    |--------------------------------------------------------------------------
+    |
+    | Whether to force HTTPS for all requests.
+    |
+    */
+
+    'force_https' => (bool) env('FORCE_HTTPS', false),
 ];
