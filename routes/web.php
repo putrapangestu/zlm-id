@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\ArticleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaptopController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::get('/', [LaptopController::class, 'index'])->name('landing.home');
 Route::get('/search', [LaptopController::class, 'search'])->name('landing.search');
@@ -55,5 +57,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/{id}/edit', [ArticleController::class, 'edit'])->name('edit');
         Route::put('/{id}', [ArticleController::class, 'update'])->name('update');
         Route::delete('/{id}', [ArticleController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('transactions')->name('admin.transactions.')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        // Additional transaction routes (show, edit, etc.) can be added here
+    });
+
+    Route::prefix('users')->name('admin.users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        // Additional user routes (show, edit, etc.) can be added here
     });
 });

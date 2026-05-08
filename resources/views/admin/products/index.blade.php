@@ -79,18 +79,18 @@
                             @endif
                         </td>
                         <td class="py-4 px-6 text-right">
-                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="flex items-center justify-end gap-2 opacity-100 transition-opacity">
                                 <a href="{{ route('admin.products.show', $product['id']) }}" class="p-2 text-gray-500 hover:text-[#DF5E1D] hover:bg-orange-50 rounded-lg transition-colors" title="View">
                                     <iconify-icon icon="solar:eye-linear" style="stroke-width: 1.5;"></iconify-icon>
                                 </a>
                                 <a href="{{ route('admin.products.edit', $product['id']) }}" class="p-2 text-gray-500 hover:text-[#DF5E1D] hover:bg-orange-50 rounded-lg transition-colors" title="Edit">
                                     <iconify-icon icon="solar:pen-linear" style="stroke-width: 1.5;"></iconify-icon>
                                 </a>
-                                <form action="{{ route('admin.products.destroy', $product['id']) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                <form action="{{ route('admin.products.destroy', $product['id']) }}" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this product?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                                        <iconify-icon icon="solar:trash-bin-linear" style="stroke-width: 1.5;"></iconify-icon>
+                                        <iconify-icon icon="solar:trash-bin-2-linear" style="stroke-width: 1.5;"></iconify-icon>
                                     </button>
                                 </form>
                             </div>

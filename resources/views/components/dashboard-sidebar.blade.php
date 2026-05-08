@@ -25,20 +25,13 @@
         </a>
 
         <!-- Transaction Link -->
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-[#363230] transition-colors duration-200 group">
+        <a href="{{ route('admin.transactions.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.transactions.*') ? 'bg-orange-50/50 text-[#DF5E1D]' : 'text-gray-500 hover:bg-gray-50 hover:text-[#363230]' }} transition-colors duration-200 group">
             <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-lg group-hover:text-[#363230] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
             <span class="text-sm font-medium">Transactions</span>
-            <div class="ml-auto w-1.5 h-1.5 rounded-full bg-[#DF5E1D]"></div>
-        </a>
-
-        <!-- Tracking Management Link -->
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-[#363230] transition-colors duration-200 group">
-            <iconify-icon icon="solar:map-point-line-line" class="text-lg group-hover:text-[#363230] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
-            <span class="text-sm font-medium">Tracking</span>
         </a>
 
         <!-- User Management Link -->
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-[#363230] transition-colors duration-200 group">
+        <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.users.*') ? 'bg-orange-50/50 text-[#DF5E1D]' : 'text-gray-500 hover:bg-gray-50 hover:text-[#363230]' }} transition-colors duration-200 group">
             <iconify-icon icon="solar:users-group-two-rounded-linear" class="text-lg group-hover:text-[#363230] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
             <span class="text-sm font-medium">User Management</span>
         </a>
@@ -46,24 +39,21 @@
         <div class="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-2 mt-6 mb-2">Content & Reports</div>
 
         <!-- Article Management Link -->
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-[#363230] transition-colors duration-200 group">
-            <iconify-icon icon="solar:newspaper-linear" class="text-lg group-hover:text-[#363230] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
+        <a href="{{ route('admin.articles.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.articles.*') ? 'bg-orange-50/50 text-[#DF5E1D]' : 'text-gray-500 hover:bg-gray-50 hover:text-[#363230]' }} transition-colors duration-200 group">
+            <iconify-icon icon="solar:document-text-linear" class="text-lg group-hover:text-[#363230] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
             <span class="text-sm font-medium">Article Management</span>
-        </a>
-
-        <!-- Report Link -->
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-[#363230] transition-colors duration-200 group">
-            <iconify-icon icon="solar:chart-square-linear" class="text-lg group-hover:text-[#363230] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
-            <span class="text-sm font-medium">Reports</span>
         </a>
 
         <div class="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-2 mt-6 mb-2">Account</div>
 
-        <!-- User Profile Link -->
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-[#363230] transition-colors duration-200 group">
-            <iconify-icon icon="solar:user-circle-linear" class="text-lg group-hover:text-[#363230] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
-            <span class="text-sm font-medium">My Profile</span>
-        </a>
+        <!-- Logout Link -->
+        <form action="{{ route('auth.logout') }}" method="POST" class="w-full">
+            @csrf
+            <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-red-50/50 hover:text-red-600 transition-colors duration-200 group">
+                <iconify-icon icon="solar:logout-3-linear" class="text-lg group-hover:text-red-600 transition-colors" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Logout</span>
+            </button>
+        </form>
     </div>
 
     <!-- User Profile -->

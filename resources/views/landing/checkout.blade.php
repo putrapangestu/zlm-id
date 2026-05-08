@@ -6,7 +6,7 @@
 <div class="bg-gray-50 min-h-screen py-12 lg:py-16">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <nav class="mb-8">
+        <nav class="mb-8 mt-8">
             <ol class="flex items-center gap-2 text-sm text-gray-500 font-medium">
                 <li>
                     <a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 flex items-center gap-1.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">
