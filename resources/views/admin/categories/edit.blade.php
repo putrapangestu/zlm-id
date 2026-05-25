@@ -4,7 +4,7 @@
 @section('heading', 'Edit Category')
 
 @section('content')
-<form method="POST" action="{{ route('admin.categories.update', $category) }}" class="space-y-8">
+<form method="POST" action="{{ route('admin.categories.update', $category) }}" enctype="multipart/form-data" class="space-y-8">
     @csrf
     @method('PUT')
 
@@ -34,11 +34,17 @@
                     @error('icon') <p class="mt-1.5 text-xs text-red-500 flex items-center gap-1"><iconify-icon icon="solar:danger-circle-linear"></iconify-icon> {{ $message }}</p> @enderror
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Image URL</label>
-                    <input type="url" name="image_url" value="{{ old('image_url', $category->image_url) }}" placeholder="https://example.com/image.jpg"
-                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
-                    @error('image_url') <p class="mt-1.5 text-xs text-red-500 flex items-center gap-1"><iconify-icon icon="solar:danger-circle-linear"></iconify-icon> {{ $message }}</p> @enderror
+                <div class="lg:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Category Image</label>
+                    @include('admin.variants._image_upload', [
+                        'inputId' => 'category-image-input',
+                        'dropzoneId' => 'category-dropzone',
+                        'previewId' => 'category-preview',
+                        'emptyId' => 'category-empty',
+                        'infoId' => 'category-info',
+                        'removeBtnId' => 'category-remove',
+                        'existingImage' => $category->image_url_full,
+                    ])
                 </div>
 
                 <div class="lg:col-span-2">
