@@ -2,35 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Laptop;
 use Illuminate\Http\Request;
 
 class LaptopController extends Controller
 {
-    /**
-     * Home page with laptop recommendations
-     */
     public function index()
     {
-        $featured = Laptop::featured()->take(6)->get();
-        $categories = ['gaming', 'business', 'student', 'ultrabook'];
+        $featured = Laptop::featured()->with('categories', 'variants')->take(6)->get();
+        $categories = Category::where('is_active', true)->get();
 
         return view('landing.home', compact('featured', 'categories'));
     }
 
-    /**
-     * Laptop search page with filters
-     */
     public function search(Request $request)
     {
-        $query = Laptop::query();
+        $query = Laptop::with('categories', 'variants');
 
-        // Filter by category
         if ($request->has('category') && $request->category !== 'all') {
-            $query->where('category', $request->category);
+            $query->whereHas('categories', function ($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
         }
 
-        // Filter by price range
         if ($request->has('min_price') && $request->min_price) {
             $query->where('price', '>=', $request->min_price);
         }
@@ -38,12 +33,10 @@ class LaptopController extends Controller
             $query->where('price', '<=', $request->max_price);
         }
 
-        // Filter by brand
         if ($request->has('brand') && $request->brand) {
             $query->where('brand', $request->brand);
         }
 
-        // Search by name or specifications
         if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -53,55 +46,53 @@ class LaptopController extends Controller
             });
         }
 
+        // Sort logic
+        switch ($request->sort) {
+            case 'price_asc':
+                $query->orderBy('price');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'popular':
+                $query->orderBy('name'); // bisa diganti dengan review_count nanti
+                break;
+            default:
+                $query->latest();
+                break;
+        }
+
         $laptops = $query->paginate(12);
         $brands = Laptop::distinct()->pluck('brand');
         $maxPrice = Laptop::max('price');
+        $categories = Category::where('is_active', true)->get();
 
-        return view('landing.search', compact('laptops', 'brands', 'maxPrice'));
+        return view('landing.search', compact('laptops', 'brands', 'maxPrice', 'categories'));
     }
 
-    /**
-     * Compare laptops page
-     */
-    public function compare(Request $request)
-    {
-        $selected = $request->input('laptops', []);
-        $laptops = [];
-
-        if (!empty($selected)) {
-            $laptops = Laptop::whereIn('id', $selected)->get();
-        }
-
-        return view('landing.compare', compact('laptops'));
-    }
-
-    /**
-     * Detail page for specific laptop
-     */
     public function show($id)
     {
-        $laptop = Laptop::findOrFail($id);
+        $laptop = Laptop::with('categories', 'variants', 'reviews.user')->findOrFail($id);
 
-        // Get similar laptops (same category, different id)
-        $similar = Laptop::where('category', $laptop->category)
-            ->where('id', '!=', $id)
+        $categoryIds = $laptop->categories->pluck('id');
+        $similar = Laptop::whereHas('categories', function ($q) use ($categoryIds) {
+            $q->whereIn('categories.id', $categoryIds);
+        })
+            ->where('laptops.id', '!=', $laptop->id)
+            ->with('categories')
             ->take(4)
             ->get();
 
-        return view('landing.detail', compact('laptop', 'similar'));
+        $reviews = $laptop->reviews()->with('user')->latest()->paginate(10);
+
+        return view('landing.detail', compact('laptop', 'similar', 'reviews'));
     }
 
-    /**
-     * Checkout page
-     */
     public function checkout()
     {
         return view('landing.checkout');
     }
 
-    /**
-     * User profile page
-     */
     public function profile()
     {
         return view('landing.profile');

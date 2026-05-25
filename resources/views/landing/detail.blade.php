@@ -45,12 +45,12 @@
                         @if ($laptop->image_url)
                             <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain p-8 mix-blend-multiply transition-transform duration-700 ease-out group-hover:scale-110">
                         @else
-                            <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=1200" alt="{{ $laptop->name }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110">
+                            <img src="https://placehold.co/800x600/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110">
                         @endif
 
                         <!-- Floating Category Badge -->
                         <div class="absolute top-5 left-5 bg-white/80 backdrop-blur-md border border-gray-200/50 text-[#363230] px-3 py-1.5 rounded-lg text-xs font-medium shadow-sm uppercase tracking-wide">
-                            {{ $laptop->category }}
+                            {{ $laptop->categories->first()?->name ?? 'General' }}
                         </div>
 
                         <!-- Hover Overlay Hint -->
@@ -71,7 +71,7 @@
                             @if ($laptop->image_url)
                                 <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain">
                             @else
-                                <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=1200" alt="{{ $laptop->name }}" class="w-full h-full object-contain rounded-xl shadow-2xl">
+                                <img src="https://placehold.co/1200x800/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-contain rounded-xl shadow-2xl">
                             @endif
                         </div>
                     </div>
@@ -114,8 +114,8 @@
                         <div class="flex flex-col gap-1">
                             <span class="text-sm text-gray-400 font-medium tracking-wide uppercase">Total Price</span>
                             <div class="flex items-baseline gap-2">
-                                <span class="text-4xl font-medium tracking-tight text-[#363230]">${{ number_format($laptop->price, 2) }}</span>
-                                <span class="text-sm text-gray-400">USD</span>
+                                <span class="text-4xl font-medium tracking-tight text-[#363230]">Rp {{ number_format($laptop->price, 0, ',', '.') }}</span>
+                                {{-- <span class="text-sm text-gray-400">USD</span> --}}
                             </div>
                         </div>
                         <div class="text-right">
@@ -133,20 +133,57 @@
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4 mb-10">
-                        <button class="flex-1 bg-gradient-to-b from-[#DF5E1D] to-[#d05619] shadow-sm text-white py-4 px-6 rounded-2xl text-sm font-medium hover:from-[#d05619] hover:to-[#c45218] hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed group" @if ($laptop->stock <= 0) disabled @endif>
-                            <!-- Button Shine Effect -->
-                            <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite] transition-transform"></div>
+                    <!-- Variant Selection -->
+                    @if ($laptop->variants->count() > 0)
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Variant</label>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($laptop->variants as $variant)
+                                    <label class="variant-option cursor-pointer">
+                                        <input type="radio" name="variant_id" value="{{ $variant->id }}" data-price="{{ $laptop->price + $variant->price_modifier }}" data-stock="{{ $variant->stock }}" class="peer hidden">
+                                        <div class="px-4 py-2.5 rounded-xl border-2 border-gray-200 peer-checked:border-[#DF5E1D] peer-checked:bg-[#DF5E1D]/5 text-sm text-gray-600 peer-checked:text-[#DF5E1D] hover:border-gray-300 transition-all">
+                                            <span class="font-medium">{{ $variant->name }}</span>
+                                            @if ($variant->price_modifier > 0)
+                                                <span class="text-xs ml-1">+Rp {{ number_format($variant->price_modifier, 0, ',', '.') }}</span>
+                                            @endif
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
 
+                    <!-- Action Buttons -->
+                    <form method="POST" action="{{ route('cart.add') }}" class="flex flex-col sm:flex-row gap-4 mb-10">
+                        @csrf
+                        <input type="hidden" name="laptop_id" value="{{ $laptop->id }}">
+                        <input type="hidden" name="variant_id" id="selectedVariantId" value="">
+                        <input type="hidden" name="quantity" value="1">
+
+                        <button type="submit" class="flex-1 bg-gradient-to-b from-[#DF5E1D] to-[#d05619] shadow-sm text-white py-4 px-6 rounded-2xl text-sm font-medium hover:from-[#d05619] hover:to-[#c45218] hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed group" @if ($laptop->stock <= 0) disabled @endif>
                             <iconify-icon icon="solar:cart-large-2-linear" class="text-xl group-hover:-translate-y-0.5 group-hover:scale-110 transition-all duration-300"></iconify-icon>
-                            Add to Cart
+                            <span id="addToCartText">Add to Cart</span>
                         </button>
-                        <button class="sm:w-auto w-full bg-white border border-gray-200 shadow-sm text-[#363230] py-4 px-6 rounded-2xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow transition-all duration-300 flex items-center justify-center gap-2.5 group">
+                        <button type="button" onclick="toggleDetailWishlist('{{ $laptop->id }}')" data-wishlist-btn data-laptop-id="{{ $laptop->id }}" class="sm:w-auto w-full bg-white border border-gray-200 shadow-sm text-[#363230] py-4 px-6 rounded-2xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow transition-all duration-300 flex items-center justify-center gap-2.5 group">
                             <iconify-icon icon="solar:heart-linear" class="text-xl text-gray-400 group-hover:text-rose-500 group-hover:scale-110 transition-all duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                            Save
+                            <span>Save</span>
                         </button>
-                    </div>
+                        <button type="button" onclick="addToCompare('{{ $laptop->id }}')" class="sm:w-auto w-full bg-white border border-gray-200 shadow-sm text-[#363230] py-4 px-6 rounded-2xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow transition-all duration-300 flex items-center justify-center gap-2.5 group">
+                            <iconify-icon icon="solar:scale-linear" class="text-xl text-gray-400 group-hover:text-blue-500 group-hover:scale-110 transition-all duration-300" style="stroke-width: 1.5;"></iconify-icon>
+                            <span>Compare</span>
+                        </button>
+                    </form>
+
+                    <script>
+                    document.querySelectorAll('.variant-option input').forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            document.getElementById('selectedVariantId').value = this.value;
+                            const price = this.dataset.price;
+                            const stock = this.dataset.stock;
+                            document.querySelector('.text-4xl').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
+                        });
+                    });
+                    </script>
 
                     <!-- Additional Details / Share -->
                     <div class="flex items-center justify-between mt-auto">
@@ -271,6 +308,36 @@
             </div>
         </div>
 
+        <!-- Kelebihan & Kekurangan Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-16">
+            <div class="bg-emerald-50/50 rounded-2xl border border-emerald-200/60 p-6 lg:p-8">
+                <h3 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center gap-2.5">
+                    <iconify-icon icon="solar:like-linear" class="text-xl text-emerald-500"></iconify-icon>
+                    Kelebihan
+                </h3>
+                @if ($laptop->kelebihan)
+                <div class="prose prose-sm max-w-none text-gray-700">
+                    {!! $laptop->kelebihan !!}
+                </div>
+                @else
+                <p class="text-sm text-gray-400 italic">Belum ada informasi kelebihan.</p>
+                @endif
+            </div>
+            <div class="bg-rose-50/50 rounded-2xl border border-rose-200/60 p-6 lg:p-8">
+                <h3 class="text-lg font-semibold text-rose-800 mb-4 flex items-center gap-2.5">
+                    <iconify-icon icon="solar:dislike-linear" class="text-xl text-rose-500"></iconify-icon>
+                    Kekurangan
+                </h3>
+                @if ($laptop->kekurangan)
+                <div class="prose prose-sm max-w-none text-gray-700">
+                    {!! $laptop->kekurangan !!}
+                </div>
+                @else
+                <p class="text-sm text-gray-400 italic">Belum ada informasi kekurangan.</p>
+                @endif
+            </div>
+        </div>
+
         <!-- Similar Laptops Section -->
         @if ($similar->count() > 0)
             <div class="border-t border-gray-200/60 pt-16 lg:pt-20">
@@ -294,13 +361,13 @@
                                 @if ($product->image_url)
                                     <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700 ease-out">
                                 @else
-                                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=600" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                                 @endif
 
                                 <!-- Hover Overlay & Badge -->
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
                                 <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md border border-gray-200/80 text-[#363230] px-2.5 py-1 rounded-md text-[10px] font-semibold shadow-sm tracking-wide uppercase">
-                                    {{ ucfirst($product->category) }}
+                                    {{ $product->categories->first()?->name ?? 'General' }}
                                 </div>
                             </a>
 
@@ -329,7 +396,7 @@
                                     <div>
                                         <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Price</span>
                                         <p class="text-lg font-medium tracking-tight text-[#363230]">
-                                            ${{ number_format($product->price, 0) }}
+                                            Rp {{ number_format($product->price, 0, ',', '.') }}
                                         </p>
                                     </div>
                                     <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-400 flex items-center justify-center group-hover:bg-[#DF5E1D] group-hover:text-white group-hover:border-[#DF5E1D] group-hover:shadow-md transition-all duration-300 shadow-sm" title="View Details">
@@ -342,6 +409,219 @@
                 </div>
             </div>
         @endif
+
+{{-- Reviews Section --}}
+<div class="border-t border-gray-200/60 pt-16 lg:pt-20 mb-16">
+    <h2 class="text-2xl font-medium tracking-tight text-[#363230] mb-10">Customer Reviews</h2>
+
+    @if ($reviews->count() > 0)
+    <div class="space-y-6">
+        @foreach ($reviews as $review)
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-600 shrink-0">
+                    {{ strtoupper(substr($review->user->name ?? 'U', 0, 1)) }}
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-sm font-semibold text-[#363230]">{{ $review->user->name ?? 'Anonymous' }}</p>
+                        <span class="text-xs text-gray-400">{{ $review->created_at->diffForHumans() }}</span>
+                    </div>
+                    <div class="flex text-amber-400 text-sm mb-2">
+                        @for ($i = 1; $i <= 5; $i++)
+                            <iconify-icon icon="{{ $i <= $review->rating ? 'solar:star-bold' : 'solar:star-linear' }}"></iconify-icon>
+                        @endfor
+                    </div>
+                    @if ($review->comment)
+                    <p class="text-sm text-gray-600">{{ $review->comment }}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    @if ($reviews->hasPages())
+    <div class="mt-8">{{ $reviews->links() }}</div>
+    @endif
+    @else
+    <div class="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200/60">
+        <iconify-icon icon="solar:chat-round-dots-linear" class="text-4xl text-gray-300 mb-3"></iconify-icon>
+        <p class="text-sm text-gray-500">Belum ada review untuk produk ini.</p>
+    </div>
+    @endif
 </div>
 
+{{-- Review Form --}}
+@auth
+<div class="border-t border-gray-200/60 pt-16 lg:pt-20 mb-16">
+    <h2 class="text-2xl font-medium tracking-tight text-[#363230] mb-6">Write a Review</h2>
+    <form method="POST" action="{{ route('reviews.store', $laptop) }}" class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-4">
+        @csrf
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+            <div class="flex gap-1 text-2xl" id="rating-stars">
+                @for ($i = 1; $i <= 5; $i++)
+                    <button type="button" onclick="setRating({{ $i }})" class="text-gray-300 hover:text-amber-400 transition-colors rating-star" data-value="{{ $i }}">
+                        <iconify-icon icon="solar:star-linear"></iconify-icon>
+                    </button>
+                @endfor
+            </div>
+            <input type="hidden" name="rating" id="rating-input" value="5">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Review</label>
+            <textarea name="comment" rows="4" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all" placeholder="Share your experience with this product..."></textarea>
+        </div>
+        <button type="submit" class="bg-[#DF5E1D] text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-[#c45218] transition-colors">
+            Submit Review
+        </button>
+    </form>
+</div>
+
+<script>
+function setRating(val) {
+    document.getElementById('rating-input').value = val;
+    document.querySelectorAll('.rating-star').forEach(function(star, i) {
+        var icon = star.querySelector('iconify-icon');
+        if (i < val) {
+            icon.setAttribute('icon', 'solar:star-bold');
+            star.classList.add('text-amber-400');
+            star.classList.remove('text-gray-300');
+        } else {
+            icon.setAttribute('icon', 'solar:star-linear');
+            star.classList.remove('text-amber-400');
+            star.classList.add('text-gray-300');
+        }
+    });
+}
+</script>
+@else
+<div class="border-t border-gray-200/60 pt-16 lg:pt-20 mb-16 text-center">
+    <p class="text-sm text-gray-500">
+        <a href="{{ route('login') }}" class="text-[#DF5E1D] hover:underline font-medium">Login</a> to write a review.
+    </p>
+</div>
+@endauth
+</div>
+
+<script>
+    function toggleDetailWishlist(id) {
+        const wishlist = getWishlist();
+        const index = wishlist.indexOf(id);
+        if (index > -1) {
+            wishlist.splice(index, 1);
+        } else {
+            wishlist.push(id);
+        }
+        saveWishlist(wishlist);
+        updateWishlistButtons();
+    }
+
+    function getWishlist() {
+        try {
+            return JSON.parse(localStorage.getItem('wishlistLaptops')) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveWishlist(list) {
+        localStorage.setItem('wishlistLaptops', JSON.stringify(list));
+        updateWishlistButtons();
+    }
+
+    function updateWishlistButtons() {
+        const wishlist = getWishlist();
+        document.querySelectorAll('[data-wishlist-btn]').forEach(btn => {
+            const id = btn.dataset.laptopId ? parseInt(btn.dataset.laptopId) : null;
+            if (id && wishlist.includes(id)) {
+                btn.classList.add('text-red-500', 'bg-red-50', 'border-red-200');
+                btn.classList.remove('text-gray-600');
+                const icon = btn.querySelector('iconify-icon');
+                if (icon) icon.setAttribute('icon', 'solar:heart-bold');
+            } else {
+                btn.classList.remove('text-red-500', 'bg-red-50', 'border-red-200');
+                btn.classList.add('text-gray-600');
+                const icon = btn.querySelector('iconify-icon');
+                if (icon) icon.setAttribute('icon', 'solar:heart-linear');
+            }
+        });
+    }
+
+    // ===== Compare Functions (Session-based) =====
+    function addToCompare(laptopId) {
+        fetch('{{ route('compare.add') }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            body: JSON.stringify({ laptop_id: laptopId }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                showToast(res.message, 'success');
+                updateCompareBadge();
+            } else {
+                showToast(res.message, 'info');
+            }
+        })
+        .catch(function() {
+            showToast('Gagal menambahkan ke perbandingan', 'error');
+        });
+    }
+
+    function clearCompare() {
+        fetch('{{ route('compare.clear') }}', {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                location.reload();
+            }
+        });
+    }
+
+    function showToast(message, type) {
+        var toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 px-4 py-3 rounded-lg text-white text-sm font-medium shadow-lg z-50 transition-all duration-300 ' + (type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3000);
+    }
+
+    function updateCompareBadge() {
+        fetch('{{ route('compare.ids') }}')
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            var count = res.ids ? res.ids.length : 0;
+            var badge = document.querySelector('.compare-count');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'flex' : 'none';
+            }
+            // Update floating compare widget
+            var floatingWidget = document.getElementById('floating-compare');
+            var compareBadge = document.getElementById('compare-badge');
+            var compareCount = document.getElementById('compare-count');
+            if (floatingWidget) {
+                if (count > 0) {
+                    floatingWidget.classList.remove('hidden');
+                } else {
+                    floatingWidget.classList.add('hidden');
+                }
+                if (compareBadge) compareBadge.textContent = count;
+                if (compareCount) compareCount.textContent = count;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateWishlistButtons();
+        updateCompareBadge();
+    });
+</script>
 @endsection

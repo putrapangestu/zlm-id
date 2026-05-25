@@ -1,28 +1,74 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LaptopController as AdminLaptopController;
+use App\Http\Controllers\Admin\LaptopVariantController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CompareController;
 use App\Http\Controllers\LaptopController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\WishlistController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LaptopController::class, 'index'])->name('landing.home');
 Route::get('/search', [LaptopController::class, 'search'])->name('landing.search');
-Route::get('/compare', [LaptopController::class, 'compare'])->name('landing.compare');
-Route::get('/laptop/{id}', [LaptopController::class, 'show'])->name('landing.detail');
-Route::get('/checkout', [LaptopController::class, 'checkout'])->name('landing.checkout');
-Route::get('/profile', [LaptopController::class, 'profile'])->name('landing.profile');
+Route::get('/compare', [CompareController::class, 'index'])->name('landing.compare');
+Route::post('/compare/add', [CompareController::class, 'add'])->name('compare.add');
+Route::delete('/compare/remove/{laptop}', [CompareController::class, 'remove'])->name('compare.remove');
+Route::delete('/compare/clear', [CompareController::class, 'clear'])->name('compare.clear');
+Route::get('/compare/ids', [CompareController::class, 'ids'])->name('compare.ids');
+Route::get('/compare/products', [CompareController::class, 'products'])->name('compare.products');
+Route::get('/laptop/{laptop}', [LaptopController::class, 'show'])->name('landing.detail');
 Route::get('/articles', function () {
     return view('landing.articles');
 })->name('landing.articles');
 
-// Auth Routes
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('auth.login');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/{item}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('cart.remove');
 
-Route::post('/logout', function () {
-    // auth()->logout();
-    return redirect('/')->with('success', 'Logged out successfully');
-})->name('auth.logout');
+Route::post('/laptop/{laptop}/reviews', [ReviewController::class, 'store'])->name('reviews.store')->middleware('auth');
+Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle')->middleware('auth');
 
-Route::get('/admin', function () {
-    return view('layouts.dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('landing.checkout');
+    Route::post('/orders', [OrderController::class, 'placeOrder'])->name('orders.place');
+    Route::get('/orders/{order}', [OrderController::class, 'confirmation'])->name('orders.confirmation');
+    Route::get('/orders', [OrderController::class, 'history'])->name('orders.history');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('laptops', AdminLaptopController::class)->except(['show']);
+    Route::get('/laptops/{laptop}', [AdminLaptopController::class, 'show'])->name('laptops.show');
+    Route::resource('laptops.variants', LaptopVariantController::class)->shallow();
+
+    Route::resource('categories', CategoryController::class)->except(['show']);
+
+    Route::get('/orders', function () {
+        $orders = App\Models\Order::with('user', 'items')->latest()->paginate(20);
+        return view('admin.orders.index', compact('orders'));
+    })->name('orders.index');
+
+    Route::patch('/orders/{order}/status', [App\Http\Controllers\Admin\OrderStatusController::class, 'update'])->name('orders.status');
+
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/customers/{user}', [CustomerController::class, 'show'])->name('customers.show');
+});
+
+require __DIR__.'/auth.php';

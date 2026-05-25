@@ -2,16 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Laptop;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class LaptopSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        $gaming = Category::where('slug', 'gaming')->first();
+        $business = Category::where('slug', 'business')->first();
+        $student = Category::where('slug', 'student')->first();
+        $ultrabook = Category::where('slug', 'ultrabook')->first();
+
         $laptops = [
             // Gaming Laptops
             [
@@ -26,9 +30,13 @@ class LaptopSeeder extends Seeder
                 'display' => '16" 4K OLED 120Hz',
                 'weight' => 2.5,
                 'battery_life' => '6 hours',
-                'category' => 'gaming',
                 'stock' => 5,
                 'is_featured' => true,
+                'categories' => [$gaming->id],
+                'variants' => [
+                    ['name' => '32GB / 1TB', 'sku' => 'rog-g16-32-1t', 'price_modifier' => 0, 'ram' => '32GB DDR5', 'storage' => '1TB NVMe SSD', 'stock' => 3],
+                    ['name' => '64GB / 2TB', 'sku' => 'rog-g16-64-2t', 'price_modifier' => 400, 'ram' => '64GB DDR5', 'storage' => '2TB NVMe SSD', 'stock' => 2],
+                ],
             ],
             [
                 'name' => 'Legion Pro 9',
@@ -42,9 +50,13 @@ class LaptopSeeder extends Seeder
                 'display' => '16" QHD+ 240Hz',
                 'weight' => 2.8,
                 'battery_life' => '5 hours',
-                'category' => 'gaming',
                 'stock' => 3,
                 'is_featured' => true,
+                'categories' => [$gaming->id],
+                'variants' => [
+                    ['name' => '32GB / 2TB', 'sku' => 'legion9-32-2t', 'price_modifier' => 0, 'ram' => '32GB DDR5', 'storage' => '2TB NVMe SSD', 'stock' => 2],
+                    ['name' => '64GB / 4TB', 'sku' => 'legion9-64-4t', 'price_modifier' => 500, 'ram' => '64GB DDR5', 'storage' => '4TB NVMe SSD', 'stock' => 1],
+                ],
             ],
             [
                 'name' => 'MSI Raider GE78',
@@ -58,9 +70,13 @@ class LaptopSeeder extends Seeder
                 'display' => '15.6" FHD 144Hz',
                 'weight' => 2.6,
                 'battery_life' => '4 hours',
-                'category' => 'gaming',
                 'stock' => 8,
                 'is_featured' => false,
+                'categories' => [$gaming->id],
+                'variants' => [
+                    ['name' => '24GB / 1TB', 'sku' => 'msi-ge78-24-1t', 'price_modifier' => 0, 'ram' => '24GB DDR5', 'storage' => '1TB NVMe SSD', 'stock' => 5],
+                    ['name' => '32GB / 2TB', 'sku' => 'msi-ge78-32-2t', 'price_modifier' => 300, 'ram' => '32GB DDR5', 'storage' => '2TB NVMe SSD', 'stock' => 3],
+                ],
             ],
 
             // Business Laptops
@@ -76,9 +92,13 @@ class LaptopSeeder extends Seeder
                 'display' => '16" 2.5K IPS',
                 'weight' => 1.9,
                 'battery_life' => '8 hours',
-                'category' => 'business',
                 'stock' => 12,
                 'is_featured' => true,
+                'categories' => [$business->id],
+                'variants' => [
+                    ['name' => '32GB / 1TB', 'sku' => 'tp-x1-32-1t', 'price_modifier' => 0, 'ram' => '32GB DDR4', 'storage' => '1TB NVMe SSD', 'stock' => 8],
+                    ['name' => '64GB / 2TB', 'sku' => 'tp-x1-64-2t', 'price_modifier' => 350, 'ram' => '64GB DDR4', 'storage' => '2TB NVMe SSD', 'stock' => 4],
+                ],
             ],
             [
                 'name' => 'MacBook Pro 16"',
@@ -92,9 +112,13 @@ class LaptopSeeder extends Seeder
                 'display' => '16" Liquid Retina XDR',
                 'weight' => 2.1,
                 'battery_life' => '17 hours',
-                'category' => 'business',
                 'stock' => 7,
                 'is_featured' => true,
+                'categories' => [$business->id],
+                'variants' => [
+                    ['name' => '32GB / 1TB', 'sku' => 'mbp16-32-1t', 'price_modifier' => 0, 'ram' => '32GB Unified Memory', 'storage' => '1TB SSD', 'stock' => 4],
+                    ['name' => '64GB / 2TB', 'sku' => 'mbp16-64-2t', 'price_modifier' => 600, 'ram' => '64GB Unified Memory', 'storage' => '2TB SSD', 'stock' => 3],
+                ],
             ],
             [
                 'name' => 'Dell XPS 17',
@@ -108,9 +132,13 @@ class LaptopSeeder extends Seeder
                 'display' => '17" OLED 3.5K',
                 'weight' => 2.3,
                 'battery_life' => '10 hours',
-                'category' => 'business',
                 'stock' => 6,
                 'is_featured' => false,
+                'categories' => [$business->id],
+                'variants' => [
+                    ['name' => '16GB / 512GB', 'sku' => 'xps17-16-512', 'price_modifier' => 0, 'ram' => '16GB DDR5', 'storage' => '512GB NVMe SSD', 'stock' => 3],
+                    ['name' => '32GB / 1TB', 'sku' => 'xps17-32-1t', 'price_modifier' => 300, 'ram' => '32GB DDR5', 'storage' => '1TB NVMe SSD', 'stock' => 3],
+                ],
             ],
 
             // Student Laptops
@@ -126,9 +154,13 @@ class LaptopSeeder extends Seeder
                 'display' => '15.6" HD',
                 'weight' => 1.9,
                 'battery_life' => '7 hours',
-                'category' => 'student',
                 'stock' => 25,
                 'is_featured' => true,
+                'categories' => [$student->id],
+                'variants' => [
+                    ['name' => '8GB / 512GB', 'sku' => 'ip3-8-512', 'price_modifier' => 0, 'ram' => '8GB DDR4', 'storage' => '512GB NVMe SSD', 'stock' => 15],
+                    ['name' => '16GB / 1TB', 'sku' => 'ip3-16-1t', 'price_modifier' => 150, 'ram' => '16GB DDR4', 'storage' => '1TB NVMe SSD', 'stock' => 10],
+                ],
             ],
             [
                 'name' => 'VivoBook 15',
@@ -142,9 +174,13 @@ class LaptopSeeder extends Seeder
                 'display' => '15.6" FHD',
                 'weight' => 1.8,
                 'battery_life' => '8 hours',
-                'category' => 'student',
                 'stock' => 20,
                 'is_featured' => false,
+                'categories' => [$student->id],
+                'variants' => [
+                    ['name' => '8GB / 256GB', 'sku' => 'vb15-8-256', 'price_modifier' => 0, 'ram' => '8GB DDR4', 'storage' => '256GB SSD', 'stock' => 12],
+                    ['name' => '16GB / 512GB', 'sku' => 'vb15-16-512', 'price_modifier' => 120, 'ram' => '16GB DDR4', 'storage' => '512GB SSD', 'stock' => 8],
+                ],
             ],
             [
                 'name' => 'Inspiron 15',
@@ -158,9 +194,13 @@ class LaptopSeeder extends Seeder
                 'display' => '15.6" FHD',
                 'weight' => 1.75,
                 'battery_life' => '7 hours',
-                'category' => 'student',
                 'stock' => 30,
                 'is_featured' => false,
+                'categories' => [$student->id],
+                'variants' => [
+                    ['name' => '8GB / 256GB', 'sku' => 'ins15-8-256', 'price_modifier' => 0, 'ram' => '8GB DDR4', 'storage' => '256GB SSD', 'stock' => 20],
+                    ['name' => '16GB / 512GB', 'sku' => 'ins15-16-512', 'price_modifier' => 100, 'ram' => '16GB DDR4', 'storage' => '512GB SSD', 'stock' => 10],
+                ],
             ],
 
             // Ultrabook
@@ -176,9 +216,13 @@ class LaptopSeeder extends Seeder
                 'display' => '13.6" Liquid Retina',
                 'weight' => 1.24,
                 'battery_life' => '18 hours',
-                'category' => 'ultrabook',
                 'stock' => 10,
                 'is_featured' => true,
+                'categories' => [$ultrabook->id],
+                'variants' => [
+                    ['name' => '8GB / 512GB', 'sku' => 'mba-m2-8-512', 'price_modifier' => 0, 'ram' => '8GB Unified Memory', 'storage' => '512GB SSD', 'stock' => 5],
+                    ['name' => '16GB / 1TB', 'sku' => 'mba-m2-16-1t', 'price_modifier' => 300, 'ram' => '16GB Unified Memory', 'storage' => '1TB SSD', 'stock' => 5],
+                ],
             ],
             [
                 'name' => 'ZenBook 14',
@@ -192,9 +236,13 @@ class LaptopSeeder extends Seeder
                 'display' => '14" OLED FHD',
                 'weight' => 1.4,
                 'battery_life' => '13 hours',
-                'category' => 'ultrabook',
                 'stock' => 8,
                 'is_featured' => false,
+                'categories' => [$ultrabook->id],
+                'variants' => [
+                    ['name' => '16GB / 512GB', 'sku' => 'zb14-16-512', 'price_modifier' => 0, 'ram' => '16GB DDR4', 'storage' => '512GB NVMe SSD', 'stock' => 5],
+                    ['name' => '32GB / 1TB', 'sku' => 'zb14-32-1t', 'price_modifier' => 250, 'ram' => '32GB DDR4', 'storage' => '1TB NVMe SSD', 'stock' => 3],
+                ],
             ],
             [
                 'name' => 'XPS 13 Plus',
@@ -208,14 +256,27 @@ class LaptopSeeder extends Seeder
                 'display' => '13.4" OLED',
                 'weight' => 1.2,
                 'battery_life' => '15 hours',
-                'category' => 'ultrabook',
                 'stock' => 6,
                 'is_featured' => false,
+                'categories' => [$ultrabook->id],
+                'variants' => [
+                    ['name' => '16GB / 512GB', 'sku' => 'xps13-16-512', 'price_modifier' => 0, 'ram' => '16GB DDR5', 'storage' => '512GB NVMe SSD', 'stock' => 3],
+                    ['name' => '32GB / 1TB', 'sku' => 'xps13-32-1t', 'price_modifier' => 350, 'ram' => '32GB DDR5', 'storage' => '1TB NVMe SSD', 'stock' => 3],
+                ],
             ],
         ];
 
-        foreach ($laptops as $laptop) {
-            Laptop::create($laptop);
+        foreach ($laptops as $data) {
+            $variants = $data['variants'] ?? [];
+            $categoryIds = $data['categories'] ?? [];
+            unset($data['variants'], $data['categories']);
+
+            $laptop = Laptop::create($data);
+            $laptop->categories()->attach($categoryIds);
+
+            foreach ($variants as $variant) {
+                $laptop->variants()->create($variant);
+            }
         }
     }
 }

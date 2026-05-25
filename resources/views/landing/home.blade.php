@@ -23,7 +23,7 @@
                     Discover engineered excellence. From high-performance gaming rigs to ultra-portable business machines, find the device that matches your ambition.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="#" class="bg-[#DF5E1D] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#c45218] transition shadow-sm flex items-center gap-2">
+                    <a href="{{ route('landing.search') }}" class="bg-[#DF5E1D] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#c45218] transition shadow-sm flex items-center gap-2">
                         Explore Catalog
                         <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
                     </a>
@@ -49,207 +49,72 @@
                 <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Featured Collection</h2>
                 <p class="text-gray-500">Handpicked devices for uncompromising performance.</p>
             </div>
-            <a href="#" class="text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
+            <a href="{{ route('landing.search') }}" class="text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
                 View all models
                 <iconify-icon icon="solar:arrow-right-linear" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
             </a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <!-- Product Card 1 -->
-            <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
+            @foreach ($featured as $laptop)
+                <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
 
-                <!-- Image -->
-                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="MacBook Pro" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                    <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
+                        @if ($laptop->image_url)
+                            <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                        @else
+                            <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                        @endif
 
-                    <!-- Badge -->
-                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-gray-200 text-[#363230] px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
-                        Bestseller
-                    </div>
-                </div>
-
-                <!-- Content -->
-                <div class="p-5 flex flex-col flex-grow">
-                    <!-- Brand -->
-                    <p class="text-xs text-gray-400 font-medium tracking-wide uppercase mb-1">Apple</p>
-
-                    <!-- Title -->
-                    <h3 class="text-base font-semibold text-[#363230] mb-4 line-clamp-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
-                        MacBook Pro 16" M3 Max
-                    </h3>
-
-                    <!-- Specs (Using Icons) -->
-                    <div class="mb-6 space-y-2.5 flex-grow">
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:cpu-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span class="truncate">Apple M3 Max 16-core</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:ram-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span>36GB Unified</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:database-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span>1TB SSD</span>
+                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-gray-200 text-[#363230] px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
+                            {{ $laptop->categories->first()?->name ?? 'Featured' }}
                         </div>
                     </div>
 
-                    <!-- Price & Actions -->
-                    <div class="pt-4 border-t border-gray-100">
-                        <p class="text-xl font-semibold tracking-tight text-[#363230] mb-4">
-                            $3,499
-                        </p>
-                        <div class="flex gap-2 items-center">
-                            <!-- Wishlist Button -->
-                            <button onclick="toggleWishlist(1)" data-wishlist-btn data-laptop-id="1" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all" title="Add to Wishlist">
-                                <iconify-icon icon="solar:heart-linear" class="text-lg"></iconify-icon>
-                            </button>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <p class="text-xs text-gray-400 font-medium tracking-wide uppercase mb-1">{{ $laptop->brand }}</p>
 
-                            <!-- Add to Compare Button -->
-                            <button onclick="addToCompare(1, 'MacBook Pro 16 M3 Max', 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800')" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all" title="Add to Compare">
-                                <iconify-icon icon="solar:scale-linear" class="text-lg"></iconify-icon>
-                            </button>
+                        <h3 class="text-base font-semibold text-[#363230] mb-4 line-clamp-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                            {{ $laptop->name }}
+                        </h3>
 
-                            <!-- View Details Button -->
-                            <a href="/laptop/1" class="flex-1 px-3 py-2 rounded-lg bg-gradient-to-b from-[#DF5E1D] to-[#d05619] text-white flex items-center justify-center hover:from-[#d05619] hover:to-[#c45218] transition-all font-medium text-xs gap-1" title="View Details">
-                                <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
-                                <span class="hidden sm:inline">Details</span>
-                            </a>
+                        <div class="mb-6 space-y-2.5 flex-grow">
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <iconify-icon icon="solar:cpu-linear" class="text-gray-400 text-base"></iconify-icon>
+                                <span class="truncate">{{ $laptop->processor }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <iconify-icon icon="solar:ram-linear" class="text-gray-400 text-base"></iconify-icon>
+                                <span>{{ $laptop->ram }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <iconify-icon icon="solar:database-linear" class="text-gray-400 text-base"></iconify-icon>
+                                <span>{{ $laptop->storage }}</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-100">
+                            <p class="text-xl font-semibold tracking-tight text-[#363230] mb-4">
+                                Rp {{ number_format($laptop->price, 0, ',', '.') }}
+                            </p>
+                            <div class="flex gap-2 items-center">
+                                <button onclick="toggleWishlist('{{ $laptop->id }}')" data-wishlist-btn data-laptop-id="{{ $laptop->id }}" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all" title="Add to Wishlist">
+                                    <iconify-icon icon="solar:heart-linear" class="text-lg"></iconify-icon>
+                                </button>
+
+                                <button onclick="addToCompare('{{ $laptop->id }}')" data-compare-btn data-laptop-id="{{ $laptop->id }}" class="compare-btn w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all" title="Add to Compare">
+                                    <iconify-icon icon="solar:scale-linear" class="text-lg"></iconify-icon>
+                                </button>
+
+                                <a href="{{ route('landing.detail', $laptop->id) }}" class="flex-1 px-3 py-2 rounded-lg bg-gradient-to-b from-[#DF5E1D] to-[#d05619] text-white flex items-center justify-center hover:from-[#d05619] hover:to-[#c45218] transition-all font-medium text-xs gap-1" title="View Details">
+                                    <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
+                                    <span class="hidden sm:inline">Details</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Product Card 2 -->
-            <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
-
-                <!-- Image -->
-                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Razer Blade" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
-
-                    <!-- Badge -->
-                    <div class="absolute top-3 right-3 bg-[#DF5E1D] text-white px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
-                        Featured
-                    </div>
-                </div>
-
-                <!-- Content -->
-                <div class="p-5 flex flex-col flex-grow">
-                    <!-- Brand -->
-                    <p class="text-xs text-gray-400 font-medium tracking-wide uppercase mb-1">Razer</p>
-
-                    <!-- Title -->
-                    <h3 class="text-base font-semibold text-[#363230] mb-4 line-clamp-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
-                        Blade 16 Advanced
-                    </h3>
-
-                    <!-- Specs (Using Icons) -->
-                    <div class="mb-6 space-y-2.5 flex-grow">
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:cpu-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span class="truncate">Intel Core i9-14900HX</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:ram-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span>32GB DDR5</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:database-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span>2TB PCIe 4.0</span>
-                        </div>
-                    </div>
-
-                    <!-- Price & Actions -->
-                    <div class="pt-4 border-t border-gray-100">
-                        <p class="text-xl font-semibold tracking-tight text-[#363230] mb-4">
-                            $4,299
-                        </p>
-                        <div class="flex gap-2 items-center">
-                            <!-- Wishlist Button -->
-                            <button onclick="toggleWishlist(2)" data-wishlist-btn data-laptop-id="2" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all" title="Add to Wishlist">
-                                <iconify-icon icon="solar:heart-linear" class="text-lg"></iconify-icon>
-                            </button>
-
-                            <!-- Add to Compare Button -->
-                            <button onclick="addToCompare(2, 'Razer Blade 16 Advanced', 'https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&q=80&w=800')" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all" title="Add to Compare">
-                                <iconify-icon icon="solar:scale-linear" class="text-lg"></iconify-icon>
-                            </button>
-
-                            <!-- View Details Button -->
-                            <a href="/laptop/2" class="flex-1 px-3 py-2 rounded-lg bg-gradient-to-b from-[#DF5E1D] to-[#d05619] text-white flex items-center justify-center hover:from-[#d05619] hover:to-[#c45218] transition-all font-medium text-xs gap-1" title="View Details">
-                                <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
-                                <span class="hidden sm:inline">Details</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product Card 3 -->
-            <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
-
-                <!-- Image -->
-                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Dell XPS" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
-
-                    <!-- Badge -->
-                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-gray-200 text-[#363230] px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
-                        Ultrabook
-                    </div>
-                </div>
-
-                <!-- Content -->
-                <div class="p-5 flex flex-col flex-grow">
-                    <!-- Brand -->
-                    <p class="text-xs text-gray-400 font-medium tracking-wide uppercase mb-1">Dell</p>
-
-                    <!-- Title -->
-                    <h3 class="text-base font-semibold text-[#363230] mb-4 line-clamp-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
-                        XPS 14 OLED
-                    </h3>
-
-                    <!-- Specs (Using Icons) -->
-                    <div class="mb-6 space-y-2.5 flex-grow">
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:cpu-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span class="truncate">Intel Core Ultra 7</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:ram-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span>16GB LPDDR5X</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <iconify-icon icon="solar:database-linear" class="text-gray-400 text-base"></iconify-icon>
-                            <span>512GB SSD</span>
-                        </div>
-                    </div>
-
-                    <!-- Price & Actions -->
-                    <div class="pt-4 border-t border-gray-100">
-                        <p class="text-xl font-semibold tracking-tight text-[#363230] mb-4">
-                            $1,699
-                        </p>
-                        <div class="flex gap-2 items-center">
-                            <!-- Wishlist Button -->
-                            <button onclick="toggleWishlist(3)" data-wishlist-btn data-laptop-id="3" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all" title="Add to Wishlist">
-                                <iconify-icon icon="solar:heart-linear" class="text-lg"></iconify-icon>
-                            </button>
-
-                            <!-- Add to Compare Button -->
-                            <button onclick="addToCompare(3, 'Dell XPS 14 OLED', 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800')" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all" title="Add to Compare">
-                                <iconify-icon icon="solar:scale-linear" class="text-lg"></iconify-icon>
-                            </button>
-
-                            <!-- View Details Button -->
-                            <a href="/laptop/3" class="flex-1 px-3 py-2 rounded-lg bg-gradient-to-b from-[#DF5E1D] to-[#d05619] text-white flex items-center justify-center hover:from-[#d05619] hover:to-[#c45218] transition-all font-medium text-xs gap-1" title="View Details">
-                                <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
-                                <span class="hidden sm:inline">Details</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -263,41 +128,15 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            <!-- Category 1 -->
-            <a href="#" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
-                <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
-                    <iconify-icon icon="solar:gamepad-linear" class="text-2xl"></iconify-icon>
-                </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-1">Gaming</h3>
-                <p class="text-sm text-gray-500">High refresh rates &amp; discrete GPUs.</p>
-            </a>
-
-            <!-- Category 2 -->
-            <a href="#" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
-                <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
-                    <iconify-icon icon="solar:briefcase-linear" class="text-2xl"></iconify-icon>
-                </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-1">Business</h3>
-                <p class="text-sm text-gray-500">Enterprise security &amp; reliability.</p>
-            </a>
-
-            <!-- Category 3 -->
-            <a href="#" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
-                <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
-                    <iconify-icon icon="solar:diploma-linear" class="text-2xl"></iconify-icon>
-                </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-1">Student</h3>
-                <p class="text-sm text-gray-500">Value, battery life &amp; portability.</p>
-            </a>
-
-            <!-- Category 4 -->
-            <a href="#" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
-                <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
-                    <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-2xl"></iconify-icon>
-                </div>
-                <h3 class="text-base font-semibold text-[#363230] mb-1">Ultrabook</h3>
-                <p class="text-sm text-gray-500">Thin, lightweight &amp; premium build.</p>
-            </a>
+            @foreach ($categories as $category)
+                <a href="{{ route('landing.search', ['category' => $category->slug]) }}" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
+                    <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
+                        <iconify-icon icon="{{ $category->icon ?? 'solar:laptop-minimalistic-linear' }}" class="text-2xl"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-semibold text-[#363230] mb-1">{{ $category->name }}</h3>
+                    <p class="text-sm text-gray-500">{{ $category->description }}</p>
+                </a>
+            @endforeach
         </div>
     </div>
 </section>
@@ -430,7 +269,7 @@
                 <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Hardware Insights</h2>
                 <p class="text-gray-500">Technical deep dives and buying guides.</p>
             </div>
-            <a href="#" class="text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
+            <a href="{{ route('landing.articles') }}" class="text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
                 Read Journal
                 <iconify-icon icon="solar:arrow-right-linear" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
             </a>
@@ -521,21 +360,7 @@
 </section>
 
 <script>
-    // Local Storage Management for Compare and Wishlist
-    const COMPARE_STORAGE_KEY = 'laptopsToCompare';
     const WISHLIST_STORAGE_KEY = 'wishlistLaptops';
-
-    function getCompareList() {
-        try {
-            return JSON.parse(localStorage.getItem(COMPARE_STORAGE_KEY)) || [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function saveCompareList(list) {
-        localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(list));
-    }
 
     function getWishlist() {
         try {
@@ -577,50 +402,81 @@
         });
     }
 
-    function addToCompare(id, name, image) {
-        let compareList = getCompareList();
+    document.addEventListener('DOMContentLoaded', function() {
+        updateWishlistButtons();
+        updateCompareBadge();
+    });
 
-        if (compareList.length >= 2) {
-            const existingIndex = compareList.findIndex(item => item.id === id);
-            if (existingIndex === -1) {
-                showToast('Maximum 2 items can be compared', 'info');
-                return;
+    // ===== Compare Functions (Session-based) =====
+    function addToCompare(laptopId) {
+        fetch('{{ route('compare.add') }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            body: JSON.stringify({ laptop_id: laptopId }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                showToast(res.message, 'success');
+                updateCompareBadge();
+            } else {
+                showToast(res.message, 'info');
             }
-        }
-
-        if (!compareList.find(item => item.id === id)) {
-            compareList.push({ id, name, image });
-            saveCompareList(compareList);
-            showToast(`${name} added to compare`, 'success');
-        }
+        })
+        .catch(function() {
+            showToast('Gagal menambahkan ke perbandingan', 'error');
+        });
     }
 
-    function removeFromCompare(id) {
-        let compareList = getCompareList();
-        compareList = compareList.filter(item => item.id !== id);
-        saveCompareList(compareList);
+    function clearCompare() {
+        fetch('{{ route('compare.clear') }}', {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                location.reload();
+            }
+        });
     }
 
-    function clearAllCompare() {
-        localStorage.removeItem(COMPARE_STORAGE_KEY);
-        showToast('Compare list cleared', 'success');
+    function updateCompareBadge() {
+        fetch('{{ route('compare.ids') }}')
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            var count = res.ids ? res.ids.length : 0;
+            var badge = document.querySelector('.compare-count');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'flex' : 'none';
+            }
+            // Update floating compare widget
+            var floatingWidget = document.getElementById('floating-compare');
+            var compareBadge = document.getElementById('compare-badge');
+            var compareCount = document.getElementById('compare-count');
+            if (floatingWidget) {
+                if (count > 0) {
+                    floatingWidget.classList.remove('hidden');
+                } else {
+                    floatingWidget.classList.add('hidden');
+                }
+                if (compareBadge) compareBadge.textContent = count;
+                if (compareCount) compareCount.textContent = count;
+            }
+        });
     }
 
-    function showToast(message, type = 'info') {
-        const toast = document.createElement('div');
-        toast.className = `fixed top-4 right-4 px-4 py-3 rounded-lg text-white text-sm font-medium shadow-lg z-50 transition-all duration-300 ${
-            type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-        }`;
+    function showToast(message, type) {
+        var toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 px-4 py-3 rounded-lg text-white text-sm font-medium shadow-lg z-50 transition-all duration-300 ' + (type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500');
         toast.textContent = message;
         document.body.appendChild(toast);
-
-        setTimeout(() => {
+        setTimeout(function() {
             toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
+            setTimeout(function() { toast.remove(); }, 300);
         }, 3000);
     }
-
-    // Initialize wishlist buttons on page load
-    document.addEventListener('DOMContentLoaded', updateWishlistButtons);
 </script>
+@include('components.floating-compare')
 @endsection

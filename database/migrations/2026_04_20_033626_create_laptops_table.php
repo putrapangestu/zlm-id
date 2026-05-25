@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('laptops', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('brand');
             $table->text('description');
@@ -25,9 +25,9 @@ return new class extends Migration
             $table->decimal('weight', 5, 2)->nullable();
             $table->string('battery_life')->nullable();
             $table->string('image_url')->nullable();
-            $table->enum('category', ['gaming', 'business', 'student', 'ultrabook']);
             $table->integer('stock')->default(0);
             $table->boolean('is_featured')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

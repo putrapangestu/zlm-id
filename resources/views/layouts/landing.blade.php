@@ -1,6 +1,7 @@
 <html lang="en" class="scroll-smooth"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'ZLM.ID - Premium Laptop Store')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,7 +130,6 @@
 
     <!-- Preloader Script -->
     <script>
-        // Hide preloader when page is fully loaded
         window.addEventListener('load', function() {
             const preloader = document.getElementById('preloader');
             if (preloader) {
@@ -137,7 +137,6 @@
             }
         });
 
-        // Also hide preloader if it takes too long (safety timeout)
         setTimeout(function() {
             const preloader = document.getElementById('preloader');
             if (preloader) {
@@ -145,5 +144,7 @@
             }
         }, 3000);
     </script>
+
+    @stack('scripts')
 
 </body></html>
