@@ -12,7 +12,7 @@
                 <div class="bg-white rounded-xl border border-gray-200/80 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group relative">
                     <div class="relative h-44 bg-gray-50 flex items-center justify-center p-4 border-b border-gray-100">
                         @if ($item->laptop->image_url)
-                            <img src="{{ $item->laptop->image_url }}" alt="" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                            <img src="{{ $item->laptop->image_url_full }}" alt="" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
                         @else
                             <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-4xl text-gray-300"></iconify-icon>
                         @endif

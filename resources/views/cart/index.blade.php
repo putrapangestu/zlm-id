@@ -13,7 +13,7 @@
                     <div class="flex items-center gap-4 p-4 sm:p-6">
                         <div class="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center p-2 border border-gray-100">
                             @if ($item->laptop->image_url)
-                                <img src="{{ $item->laptop->image_url }}" alt="" class="w-full h-full object-contain mix-blend-multiply">
+                                <img src="{{ $item->laptop->image_url_full }}" alt="" class="w-full h-full object-contain mix-blend-multiply">
                             @else
                                 <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-3xl text-gray-300"></iconify-icon>
                             @endif
