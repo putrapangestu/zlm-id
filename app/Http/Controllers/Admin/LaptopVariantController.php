@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Laptop;
 use App\Models\LaptopVariant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LaptopVariantController extends Controller
 {
@@ -33,13 +34,14 @@ class LaptopVariantController extends Controller
             'display' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'battery_life' => 'nullable|string|max:255',
-            'image_url' => 'nullable|url|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'stock' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
 
         $data['is_active'] = $request->boolean('is_active');
         $data['laptop_id'] = $laptop->id;
+        $data['image_url'] = $this->handleImageUpload($request);
 
         $laptop->variants()->create($data);
 
@@ -73,12 +75,17 @@ class LaptopVariantController extends Controller
             'display' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'battery_life' => 'nullable|string|max:255',
-            'image_url' => 'nullable|url|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'stock' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
 
         $data['is_active'] = $request->boolean('is_active');
+
+        if ($request->hasFile('image')) {
+            $this->deleteImageFile($variant->image_url);
+            $data['image_url'] = $this->handleImageUpload($request);
+        }
 
         $variant->update($data);
 
@@ -90,9 +97,33 @@ class LaptopVariantController extends Controller
     {
         $laptop = $variant->laptop;
 
+        $this->deleteImageFile($variant->image_url);
         $variant->delete();
 
         return redirect()->route('admin.laptops.variants.index', $laptop)
             ->with('success', 'Variant deleted successfully.');
+    }
+
+    private function handleImageUpload(Request $request): ?string
+    {
+        if (!$request->hasFile('image')) {
+            return null;
+        }
+
+        $path = $request->file('image')->store('variants', 'public');
+
+        return $path;
+    }
+
+    private function deleteImageFile(?string $path): void
+    {
+        if (!$path) {
+            return;
+        }
+
+        // Only delete if it's a storage path, not an external URL
+        if (!str_starts_with($path, 'http') && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

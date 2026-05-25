@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="w-full max-w-full">
-    <form method="POST" action="{{ route('admin.laptops.variants.store', $laptop) }}" class="space-y-6">
+    <form method="POST" action="{{ route('admin.laptops.variants.store', $laptop) }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-5">
@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
                     <input type="number" step="0.01" min="0" name="weight" value="{{ old('weight') }}" placeholder="e.g. 1.5" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
@@ -62,10 +62,11 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Battery Life</label>
                     <input type="text" name="battery_life" value="{{ old('battery_life') }}" placeholder="e.g. Up to 10 hours" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                    <input type="url" name="image_url" value="{{ old('image_url') }}" placeholder="https://example.com/image.jpg" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
-                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Variant Image</label>
+                @include('admin.variants._image_upload')
             </div>
 
             <div class="flex items-center gap-2 pt-2">
