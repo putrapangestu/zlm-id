@@ -57,7 +57,7 @@
                     <span class="text-xl font-bold tracking-tighter text-[#363230]">ZLM.ID</span>
                 </div>
 
-                {{ $slot }}
+                @yield('content')
             </div>
         </div>
     </div>

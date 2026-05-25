@@ -97,8 +97,8 @@
                 <!-- Results Info -->
                 <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                     <p class="text-sm text-gray-500">
-                        Menampilkan <span class="font-semibold text-[#363230]">{{ $products->count() }}</span> dari
-                        <span class="font-semibold text-[#363230]">{{ $products->total() }}</span> hasil
+                        Menampilkan <span class="font-semibold text-[#363230]">{{ $laptops->count() }}</span> dari
+                        <span class="font-semibold text-[#363230]">{{ $laptops->total() }}</span> hasil
                     </p>
                     <form method="GET" action="{{ route('landing.search') }}" class="inline-block">
                         @if(request('category'))
@@ -131,9 +131,9 @@
                 </div>
 
                 <!-- Laptop Cards Grid -->
-                @if ($products->count() > 0)
+                @if ($laptops->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach ($products as $laptop)
+                        @foreach ($laptops as $laptop)
                             <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
 
                                 <!-- Stock Status Overlay -->
@@ -216,7 +216,7 @@
 
                     <!-- Pagination -->
                     <div class="mt-12 flex justify-center">
-                        {{ $products->links() }}
+                        {{ $laptops->links() }}
                     </div>
                 @else
                     <!-- Empty State -->

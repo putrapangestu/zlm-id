@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', $product->name)
+@section('title', $laptop->name)
 
 @section('content')
 
@@ -23,7 +23,7 @@
                 <li class="flex items-center text-gray-300">
                     <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
                 </li>
-                <li class="text-[#363230] truncate max-w-[200px] sm:max-w-none">{{ $product->name }}</li>
+                <li class="text-[#363230] truncate max-w-[200px] sm:max-w-none">{{ $laptop->name }}</li>
             </ol>
         </nav>
 
@@ -102,11 +102,11 @@
                     <div class="mb-10">
                         <div class="flex items-center gap-3 mb-4">
                             <span class="text-xs font-semibold text-[#DF5E1D] tracking-widest uppercase bg-[#DF5E1D]/10 px-3 py-1 rounded-full border border-[#DF5E1D]/20">
-                                {{ $product->brand }}
+                                {{ $laptop->brand }}
                             </span>
                         </div>
-                        <h1 class="text-3xl lg:text-4xl font-medium tracking-tight text-[#363230] mb-5 leading-tight">{{ $product->name }}</h1>
-                        <p class="text-base text-gray-500 leading-relaxed">{{ $product->description }}</p>
+                        <h1 class="text-3xl lg:text-4xl font-medium tracking-tight text-[#363230] mb-5 leading-tight">{{ $laptop->name }}</h1>
+                        <p class="text-base text-gray-500 leading-relaxed">{{ $laptop->description }}</p>
                     </div>
 
                     <!-- Price & Stock -->
@@ -119,10 +119,10 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            @if ($product->stock > 0)
+                            @if ($laptop->stock > 0)
                                 <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-medium border border-emerald-200/60 shadow-sm">
                                     <iconify-icon icon="solar:check-circle-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>
-                                    Stok Tersedia ({{ $product->stock }})
+                                    Stok Tersedia ({{ $laptop->stock }})
                                 </div>
                             @else
                                 <div class="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-3.5 py-2 rounded-xl text-xs font-medium border border-rose-200/60 shadow-sm">
@@ -216,15 +216,15 @@
                     <iconify-icon icon="solar:settings-minimalistic-linear" class="text-2xl text-[#DF5E1D]" style="stroke-width: 1.5;"></iconify-icon>
                 </div>
                 <h2 class="text-2xl lg:text-3xl font-medium tracking-tight text-[#363230] mb-3">Spesifikasi Teknis</h2>
-                <p class="text-sm text-gray-500 max-w-lg mx-auto">Semua yang perlu Anda ketahui tentang {{ $product->name }}, ada di bawah ini.</p>
+                <p class="text-sm text-gray-500 max-w-lg mx-auto">Semua yang perlu Anda ketahui tentang {{ $laptop->name }}, ada di bawah ini.</p>
             </div>
 
             <div class="bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden transition-all hover:shadow-md duration-300">
 
-                        @if ($product->battery_life)
+                        @if ($laptop->battery_life)
 
                         @endif
-                        @if ($product->weight)
+                        @if ($laptop->weight)
 
                         @endif
                     <table class="w-full text-sm text-left">
@@ -238,7 +238,7 @@
                                     Prosesor
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $product->processor }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->processor }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -249,7 +249,7 @@
                                     Memori (RAM)
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $product->ram }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->ram }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -260,7 +260,7 @@
                                     Penyimpanan
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $product->storage }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->storage }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -271,7 +271,7 @@
                                     Grafis
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $product->graphics }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->graphics }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -282,7 +282,7 @@
                                     Layar
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $product->display }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->display }}</td>
                         </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
                                 <div class="flex items-center gap-3">
@@ -292,7 +292,7 @@
                                     Daya Baterai
                                 </div>
                             </th>
-                                <td class="px-6 py-5 text-[#363230]">{{ $product->battery_life }}</td>
+                                <td class="px-6 py-5 text-[#363230]">{{ $laptop->battery_life }}</td>
                         </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
                                 <div class="flex items-center gap-3">
@@ -302,7 +302,7 @@
                                     Berat
                                 </div>
                             </th>
-                                <td class="px-6 py-5 text-[#363230]">{{ $product->weight }} kg</td>
+                                <td class="px-6 py-5 text-[#363230]">{{ $laptop->weight }} kg</td>
                         </tr></tbody>
                 </table>
             </div>
@@ -353,42 +353,42 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-                    @foreach ($similar as $product)
+                    @foreach ($similar as $similarProduct)
                         <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1.5 transition-all duration-400 overflow-hidden flex flex-col group relative">
 
                             <!-- Card Image -->
-                            <a href="{{ route('landing.detail', $product->id) }}" class="relative h-56 bg-gradient-to-b from-gray-50 to-white overflow-hidden flex items-center justify-center border-b border-gray-100">
-                                @if ($product->image_url)
-                                    <img src="{{ $product->image_url_full }}" alt="{{ $product->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700 ease-out">
+                            <a href="{{ route('landing.detail', $similarProduct->id) }}" class="relative h-56 bg-gradient-to-b from-gray-50 to-white overflow-hidden flex items-center justify-center border-b border-gray-100">
+                                @if ($similarProduct->image_url)
+                                    <img src="{{ $similarProduct->image_url_full }}" alt="{{ $similarProduct->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700 ease-out">
                                 @else
-                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $similarProduct->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                                 @endif
 
                                 <!-- Hover Overlay & Badge -->
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
                                 <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md border border-gray-200/80 text-[#363230] px-2.5 py-1 rounded-md text-[10px] font-semibold shadow-sm tracking-wide uppercase">
-                                    {{ $product->categories->first()?->name ?? 'General' }}
+                                    {{ $similarProduct->categories->first()?->name ?? 'General' }}
                                 </div>
                             </a>
 
                             <!-- Card Content -->
                             <div class="p-6 flex flex-col flex-grow">
-                                <p class="text-[11px] text-gray-400 font-semibold tracking-widest uppercase mb-2">{{ $product->brand }}</p>
+                                <p class="text-[11px] text-gray-400 font-semibold tracking-widest uppercase mb-2">{{ $similarProduct->brand }}</p>
                                 <h3 class="text-base font-medium text-[#363230] mb-4 line-clamp-2 leading-snug group-hover:text-[#DF5E1D] transition-colors duration-300">
-                                    <a href="{{ route('landing.detail', $product->id) }}" class="focus:outline-none">
+                                    <a href="{{ route('landing.detail', $similarProduct->id) }}" class="focus:outline-none">
                                         <span class="absolute inset-0" aria-hidden="true"></span>
-                                        {{ $product->name }}
+                                        {{ $similarProduct->name }}
                                     </a>
                                 </h3>
 
                                 <div class="mb-6 space-y-3 flex-grow">
                                     <div class="flex items-center gap-2.5 text-xs text-gray-500 bg-gray-50/50 py-1.5 px-2 rounded-md">
                                         <iconify-icon icon="solar:cpu-linear" class="text-gray-400 text-sm"></iconify-icon>
-                                        <span class="truncate font-medium">{{ $product->processor }}</span>
+                                        <span class="truncate font-medium">{{ $similarProduct->processor }}</span>
                                     </div>
                                     <div class="flex items-center gap-2.5 text-xs text-gray-500 bg-gray-50/50 py-1.5 px-2 rounded-md">
                                         <iconify-icon icon="solar:ram-linear" class="text-gray-400 text-sm"></iconify-icon>
-                                        <span class="truncate font-medium">{{ $product->ram }} • {{ $product->storage }}</span>
+                                        <span class="truncate font-medium">{{ $similarProduct->ram }} • {{ $similarProduct->storage }}</span>
                                     </div>
                                 </div>
 
@@ -396,7 +396,7 @@
                                     <div>
                                         <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Harga</span>
                                         <p class="text-lg font-medium tracking-tight text-[#363230]">
-                                            Rp {{ number_format($product->price, 0, ',', '.') }}
+                                            Rp {{ number_format($similarProduct->price, 0, ',', '.') }}
                                         </p>
                                     </div>
                                     <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-400 flex items-center justify-center group-hover:bg-[#DF5E1D] group-hover:text-white group-hover:border-[#DF5E1D] group-hover:shadow-md transition-all duration-300 shadow-sm" title="View Details">

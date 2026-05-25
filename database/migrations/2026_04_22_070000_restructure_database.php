@@ -8,13 +8,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * WARNING: This migration came from a merge conflict.
+     * The original dropped 'laptops' table — that line has been REMOVED
+     * to prevent data loss. Existing laptops table is preserved.
      */
     public function up(): void
     {
-        // Drop old laptops table
-        Schema::dropIfExists('laptops');
+        // SAFETY: Do NOT drop laptops table — it is used by existing code
+        // The line Schema::dropIfExists('laptops') has been removed
 
-        // Create products table
+        // Create products table (used by ProductController from merged branch)
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -46,7 +50,8 @@ return new class extends Migration
         // Create transactions table
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->decimal('total_price', 15, 2);
             $table->string('payment_method');
             $table->string('payment_status')->default('pending');
