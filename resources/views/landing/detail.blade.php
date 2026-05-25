@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', $laptop->name)
+@section('title', $product->name)
 
 @section('content')
 
@@ -11,19 +11,19 @@
                 <li>
                     <a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 flex items-center gap-1.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">
                         <iconify-icon icon="solar:home-2-linear" class="text-base" style="stroke-width: 1.5;"></iconify-icon>
-                        Home
+                        Beranda
                     </a>
                 </li>
                 <li class="flex items-center text-gray-300">
                     <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
                 </li>
                 <li>
-                    <a href="{{ route('landing.search') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">Products</a>
+                    <a href="{{ route('landing.search') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">Produk</a>
                 </li>
                 <li class="flex items-center text-gray-300">
                     <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
                 </li>
-                <li class="text-[#363230] truncate max-w-[200px] sm:max-w-none">{{ $laptop->name }}</li>
+                <li class="text-[#363230] truncate max-w-[200px] sm:max-w-none">{{ $product->name }}</li>
             </ol>
         </nav>
 
@@ -89,7 +89,7 @@
                         <div class="aspect-square bg-white rounded-xl border border-gray-200/60 overflow-hidden flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 cursor-pointer group transition-all duration-300 hover:border-[#DF5E1D]/30 hover:shadow-inner">
                             <div class="flex flex-col items-center gap-2 text-gray-400 group-hover:text-[#DF5E1D] transition-colors transform group-hover:scale-105 duration-300">
                                 <iconify-icon icon="solar:gallery-linear" class="text-2xl" style="stroke-width: 1.5;"></iconify-icon>
-                                <span class="text-xs font-medium">View All</span>
+                                <span class="text-xs font-medium">Lihat Semua</span>
                             </div>
                         </div>
                     </div>
@@ -102,32 +102,32 @@
                     <div class="mb-10">
                         <div class="flex items-center gap-3 mb-4">
                             <span class="text-xs font-semibold text-[#DF5E1D] tracking-widest uppercase bg-[#DF5E1D]/10 px-3 py-1 rounded-full border border-[#DF5E1D]/20">
-                                {{ $laptop->brand }}
+                                {{ $product->brand }}
                             </span>
                         </div>
-                        <h1 class="text-3xl lg:text-4xl font-medium tracking-tight text-[#363230] mb-5 leading-tight">{{ $laptop->name }}</h1>
-                        <p class="text-base text-gray-500 leading-relaxed">{{ $laptop->description }}</p>
+                        <h1 class="text-3xl lg:text-4xl font-medium tracking-tight text-[#363230] mb-5 leading-tight">{{ $product->name }}</h1>
+                        <p class="text-base text-gray-500 leading-relaxed">{{ $product->description }}</p>
                     </div>
 
                     <!-- Price & Stock -->
                     <div class="flex items-end justify-between mb-10 pb-10 border-b border-gray-100">
                         <div class="flex flex-col gap-1">
-                            <span class="text-sm text-gray-400 font-medium tracking-wide uppercase">Total Price</span>
+                            <span class="text-sm text-gray-400 font-medium tracking-wide uppercase">Total Harga</span>
                             <div class="flex items-baseline gap-2">
                                 <span class="text-4xl font-medium tracking-tight text-[#363230]">Rp {{ number_format($laptop->price, 0, ',', '.') }}</span>
                                 {{-- <span class="text-sm text-gray-400">USD</span> --}}
                             </div>
                         </div>
                         <div class="text-right">
-                            @if ($laptop->stock > 0)
+                            @if ($product->stock > 0)
                                 <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-medium border border-emerald-200/60 shadow-sm">
                                     <iconify-icon icon="solar:check-circle-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>
-                                    In Stock ({{ $laptop->stock }})
+                                    Stok Tersedia ({{ $product->stock }})
                                 </div>
                             @else
                                 <div class="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-3.5 py-2 rounded-xl text-xs font-medium border border-rose-200/60 shadow-sm">
                                     <iconify-icon icon="solar:close-circle-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>
-                                    Out of Stock
+                                    Stok Habis
                                 </div>
                             @endif
                         </div>
@@ -193,7 +193,7 @@
                                 <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=2" alt="User avatar">
                                 <div class="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-medium text-gray-500">+12</div>
                             </div>
-                            <span class="text-xs text-gray-500 font-medium">Recently purchased</span>
+                            <span class="text-xs text-gray-500 font-medium">Dilirik Banyak Orang</span>
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -215,16 +215,16 @@
                 <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-gray-200/80 shadow-sm mb-4">
                     <iconify-icon icon="solar:settings-minimalistic-linear" class="text-2xl text-[#DF5E1D]" style="stroke-width: 1.5;"></iconify-icon>
                 </div>
-                <h2 class="text-2xl lg:text-3xl font-medium tracking-tight text-[#363230] mb-3">Technical Specifications</h2>
-                <p class="text-sm text-gray-500 max-w-lg mx-auto">Everything you need to know about the {{ $laptop->name }}, detailed below.</p>
+                <h2 class="text-2xl lg:text-3xl font-medium tracking-tight text-[#363230] mb-3">Spesifikasi Teknis</h2>
+                <p class="text-sm text-gray-500 max-w-lg mx-auto">Semua yang perlu Anda ketahui tentang {{ $product->name }}, ada di bawah ini.</p>
             </div>
 
             <div class="bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden transition-all hover:shadow-md duration-300">
 
-                        @if ($laptop->battery_life)
+                        @if ($product->battery_life)
 
                         @endif
-                        @if ($laptop->weight)
+                        @if ($product->weight)
 
                         @endif
                     <table class="w-full text-sm text-left">
@@ -235,10 +235,10 @@
                                     <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
                                         <iconify-icon icon="solar:cpu-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                                     </div>
-                                    Processor
+                                    Prosesor
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->processor }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $product->processor }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -246,10 +246,10 @@
                                     <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
                                         <iconify-icon icon="solar:ram-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                                     </div>
-                                    Memory (RAM)
+                                    Memori (RAM)
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->ram }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $product->ram }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -257,10 +257,10 @@
                                     <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
                                         <iconify-icon icon="solar:database-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                                     </div>
-                                    Storage
+                                    Penyimpanan
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->storage }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $product->storage }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -268,10 +268,10 @@
                                     <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
                                         <iconify-icon icon="solar:monitor-camera-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                                     </div>
-                                    Graphics
+                                    Grafis
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->graphics }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $product->graphics }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -279,30 +279,30 @@
                                     <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
                                         <iconify-icon icon="solar:monitor-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                                     </div>
-                                    Display
+                                    Layar
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->display }}</td>
+                            <td class="px-6 py-5 text-[#363230]">{{ $product->display }}</td>
                         </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
                                         <iconify-icon icon="solar:battery-charge-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                                     </div>
-                                    Battery Life
+                                    Daya Baterai
                                 </div>
                             </th>
-                                <td class="px-6 py-5 text-[#363230]">{{ $laptop->battery_life }}</td>
+                                <td class="px-6 py-5 text-[#363230]">{{ $product->battery_life }}</td>
                         </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
                                         <iconify-icon icon="solar:case-minimalistic-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
                                     </div>
-                                    Weight
+                                    Berat
                                 </div>
                             </th>
-                                <td class="px-6 py-5 text-[#363230]">{{ $laptop->weight }} kg</td>
+                                <td class="px-6 py-5 text-[#363230]">{{ $product->weight }} kg</td>
                         </tr></tbody>
                 </table>
             </div>
@@ -343,11 +343,11 @@
             <div class="border-t border-gray-200/60 pt-16 lg:pt-20">
                 <div class="flex items-end justify-between mb-10">
                     <div>
-                        <h2 class="text-2xl font-medium tracking-tight text-[#363230] mb-2">Similar Models</h2>
-                        <p class="text-sm text-gray-500">Explore other options in this category.</p>
+                        <h2 class="text-2xl font-medium tracking-tight text-[#363230] mb-2">Model Serupa</h2>
+                        <p class="text-sm text-gray-500">Jelajahi opsi lain di kategori ini.</p>
                     </div>
                     <a href="{{ route('landing.search') }}" class="text-sm font-medium text-[#363230] hover:text-[#DF5E1D] transition-colors duration-300 flex items-center gap-1.5 group pb-1 border-b border-transparent hover:border-[#DF5E1D]/30">
-                        View all
+                        Lihat semua
                         <iconify-icon icon="solar:arrow-right-linear" class="transform group-hover:translate-x-1 transition-transform duration-300" style="stroke-width: 1.5;"></iconify-icon>
                     </a>
                 </div>
@@ -357,7 +357,7 @@
                         <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1.5 transition-all duration-400 overflow-hidden flex flex-col group relative">
 
                             <!-- Card Image -->
-                            <a href="{{ route('landing.detail', $product->id) }}" class="relative h-56 bg-gradient-to-b from-gray-50 to-white overflow-hidden flex items-center justify-center p-6 border-b border-gray-100">
+                            <a href="{{ route('landing.detail', $product->id) }}" class="relative h-56 bg-gradient-to-b from-gray-50 to-white overflow-hidden flex items-center justify-center border-b border-gray-100">
                                 @if ($product->image_url)
                                     <img src="{{ $product->image_url_full }}" alt="{{ $product->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700 ease-out">
                                 @else
@@ -394,7 +394,7 @@
 
                                 <div class="flex justify-between items-end pt-5 border-t border-gray-100 mt-auto relative z-10">
                                     <div>
-                                        <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Price</span>
+                                        <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Harga</span>
                                         <p class="text-lg font-medium tracking-tight text-[#363230]">
                                             Rp {{ number_format($product->price, 0, ',', '.') }}
                                         </p>

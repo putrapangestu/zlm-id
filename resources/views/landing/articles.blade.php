@@ -35,7 +35,7 @@
         <!-- Articles Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Article 1 -->
-            <article class="bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
+            <a href="{{ route('landing.article-detail', 1) }}" class="block bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&q=80&w=600" alt="CPU Architecture" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute top-3 left-3 bg-[#DF5E1D]/10 text-[#DF5E1D] px-3 py-1 rounded-md text-xs font-semibold">Panduan</div>
@@ -57,10 +57,10 @@
                         <iconify-icon icon="solar:arrow-right-linear" class="text-[#DF5E1D] group-hover:translate-x-1 transition-transform"></iconify-icon>
                     </div>
                 </div>
-            </article>
+            </a>
 
             <!-- Article 2 -->
-            <article class="bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
+            <a href="{{ route('landing.article-detail', 1) }}" class="block bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=600" alt="Laptop Tips" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute top-3 left-3 bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-xs font-semibold">Tips</div>
@@ -82,10 +82,10 @@
                         <iconify-icon icon="solar:arrow-right-linear" class="text-[#DF5E1D] group-hover:translate-x-1 transition-transform"></iconify-icon>
                     </div>
                 </div>
-            </article>
+            </a>
 
             <!-- Article 3 -->
-            <article class="bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
+            <a href="{{ route('landing.article-detail', 1) }}" class="block bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&q=80&w=600" alt="Display" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute top-3 left-3 bg-purple-100 text-purple-600 px-3 py-1 rounded-md text-xs font-semibold">Review</div>
@@ -107,10 +107,10 @@
                         <iconify-icon icon="solar:arrow-right-linear" class="text-[#DF5E1D] group-hover:translate-x-1 transition-transform"></iconify-icon>
                     </div>
                 </div>
-            </article>
+            </a>
 
             <!-- Article 4 -->
-            <article class="bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
+            <a href="{{ route('landing.article-detail', 1) }}" class="block bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=600" alt="Gaming" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute top-3 left-3 bg-red-100 text-red-600 px-3 py-1 rounded-md text-xs font-semibold">Gaming</div>
@@ -132,10 +132,10 @@
                         <iconify-icon icon="solar:arrow-right-linear" class="text-[#DF5E1D] group-hover:translate-x-1 transition-transform"></iconify-icon>
                     </div>
                 </div>
-            </article>
+            </a>
 
             <!-- Article 5 -->
-            <article class="bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
+            <a href="{{ route('landing.article-detail', 1) }}" class="block bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1516321318423-f06140cf6439?auto=format&fit=crop&q=80&w=600" alt="Business" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute top-3 left-3 bg-green-100 text-green-600 px-3 py-1 rounded-md text-xs font-semibold">Bisnis</div>
@@ -157,10 +157,10 @@
                         <iconify-icon icon="solar:arrow-right-linear" class="text-[#DF5E1D] group-hover:translate-x-1 transition-transform"></iconify-icon>
                     </div>
                 </div>
-            </article>
+            </a>
 
             <!-- Article 6 -->
-            <article class="bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
+            <a href="{{ route('landing.article-detail', 1) }}" class="block bg-white rounded-xl border border-gray-200/60 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=600" alt="Student Laptop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute top-3 left-3 bg-yellow-100 text-yellow-600 px-3 py-1 rounded-md text-xs font-semibold">Pelajar</div>
@@ -182,7 +182,7 @@
                         <iconify-icon icon="solar:arrow-right-linear" class="text-[#DF5E1D] group-hover:translate-x-1 transition-transform"></iconify-icon>
                     </div>
                 </div>
-            </article>
+            </a>
         </div>
 
         <!-- Load More Button -->

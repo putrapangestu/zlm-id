@@ -24,7 +24,7 @@
                 <li>
                     <a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 flex items-center gap-1.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">
                         <iconify-icon icon="solar:home-2-linear" class="text-base" style="stroke-width: 1.5;"></iconify-icon>
-                        Home
+                        Beranda
                     </a>
                 </li>
                 <li class="flex items-center text-gray-300">
@@ -36,7 +36,7 @@
                 <li class="flex items-center text-gray-300">
                     <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
                 </li>
-                <li class="text-[#363230] truncate">Compare</li>
+                <li class="text-[#363230] truncate">Perbandingan</li>
             </ol>
         </nav>
 
@@ -255,3 +255,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endsection
+
