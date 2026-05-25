@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Laptop extends Model
@@ -39,6 +40,8 @@ class Laptop extends Model
         'weight' => 'decimal:2',
         'is_featured' => 'boolean',
     ];
+
+    protected $appends = ['image_url_full'];
 
     protected static function booted(): void
     {
@@ -78,6 +81,19 @@ class Laptop extends Model
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);
+    }
+
+    public function getImageUrlFullAttribute(): ?string
+    {
+        if (!$this->image_url) {
+            return null;
+        }
+
+        if (str_starts_with($this->image_url, 'http://') || str_starts_with($this->image_url, 'https://')) {
+            return $this->image_url;
+        }
+
+        return Storage::url($this->image_url);
     }
 
     public function scopeFeatured($query)

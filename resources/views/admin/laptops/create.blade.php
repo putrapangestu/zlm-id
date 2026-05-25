@@ -18,7 +18,7 @@
 
 @section('content')
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-    <form method="POST" action="{{ route('admin.laptops.store') }}" class="xl:col-span-2 space-y-6">
+    <form method="POST" action="{{ route('admin.laptops.store') }}" enctype="multipart/form-data" class="xl:col-span-2 space-y-6">
         @csrf
 
         <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-5">
@@ -94,17 +94,22 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Battery Life</label>
-                    <input type="text" name="battery_life" value="{{ old('battery_life') }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
-                    @error('battery_life') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                    <input type="url" name="image_url" value="{{ old('image_url') }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
-                    @error('image_url') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Battery Life</label>
+                <input type="text" name="battery_life" value="{{ old('battery_life') }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                @error('battery_life') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
+                @include('admin.variants._image_upload', [
+                    'inputId' => 'laptop-image-input',
+                    'dropzoneId' => 'laptop-dropzone',
+                    'previewId' => 'laptop-preview',
+                    'emptyId' => 'laptop-empty',
+                    'infoId' => 'laptop-info',
+                    'removeBtnId' => 'laptop-remove',
+                ])
             </div>
 
             <div>
@@ -160,7 +165,7 @@
                 </li>
                 <li class="flex items-start gap-2">
                     <iconify-icon icon="solar:gallery-linear" class="text-base text-[#DF5E1D] mt-0.5 shrink-0"></iconify-icon>
-                    <span>Gunakan URL gambar dari layanan hosting eksternal untuk menghindari file besar di server.</span>
+                    <span>Upload gambar produk langsung dari perangkat Anda. Format: JPG, PNG, WebP (max 2MB).</span>
                 </li>
                 <li class="flex items-start gap-2">
                     <iconify-icon icon="solar:star-linear" class="text-base text-[#DF5E1D] mt-0.5 shrink-0"></iconify-icon>

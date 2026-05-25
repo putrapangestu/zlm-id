@@ -61,7 +61,7 @@
 
                     <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center p-4 border-b border-gray-100">
                         @if ($laptop->image_url)
-                            <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                            <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
                         @else
                             <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
                         @endif

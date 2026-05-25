@@ -43,7 +43,7 @@
                     <!-- Main Image Area -->
                     <label for="zoom-image" class="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square flex items-center justify-center bg-white rounded-2xl border border-gray-200/50 shadow-sm overflow-hidden mb-6 group cursor-zoom-in transition-all duration-300 hover:border-gray-300 hover:shadow-md">
                         @if ($laptop->image_url)
-                            <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain p-8 mix-blend-multiply transition-transform duration-700 ease-out group-hover:scale-110">
+                            <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain p-8 mix-blend-multiply transition-transform duration-700 ease-out group-hover:scale-110">
                         @else
                             <img src="https://placehold.co/800x600/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110">
                         @endif
@@ -69,7 +69,7 @@
                         </label>
                         <div class="relative w-full max-w-5xl max-h-[90vh] p-4 scale-95 peer-checked:scale-100 transition-transform duration-500 ease-out z-0">
                             @if ($laptop->image_url)
-                                <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain">
+                                <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain">
                             @else
                                 <img src="https://placehold.co/1200x800/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-contain rounded-xl shadow-2xl">
                             @endif
@@ -359,7 +359,7 @@
                             <!-- Card Image -->
                             <a href="{{ route('landing.detail', $product->id) }}" class="relative h-56 bg-gradient-to-b from-gray-50 to-white overflow-hidden flex items-center justify-center p-6 border-b border-gray-100">
                                 @if ($product->image_url)
-                                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700 ease-out">
+                                    <img src="{{ $product->image_url_full }}" alt="{{ $product->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700 ease-out">
                                 @else
                                     <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                                 @endif

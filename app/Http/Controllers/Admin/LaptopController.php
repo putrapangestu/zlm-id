@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Laptop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class LaptopController extends Controller
@@ -48,7 +49,7 @@ class LaptopController extends Controller
             'display' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'battery_life' => 'nullable|string|max:255',
-            'image_url' => 'nullable|url|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'kelebihan' => 'nullable|string',
             'kekurangan' => 'nullable|string',
             'stock' => 'required|integer|min:0',
@@ -57,6 +58,7 @@ class LaptopController extends Controller
         ]);
 
         $data['is_featured'] = $request->boolean('is_featured');
+        $data['image_url'] = $this->handleImageUpload($request);
 
         $laptop = Laptop::create($data);
 
@@ -97,7 +99,7 @@ class LaptopController extends Controller
             'display' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'battery_life' => 'nullable|string|max:255',
-            'image_url' => 'nullable|url|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'kelebihan' => 'nullable|string',
             'kekurangan' => 'nullable|string',
             'stock' => 'required|integer|min:0',
@@ -106,6 +108,11 @@ class LaptopController extends Controller
         ]);
 
         $data['is_featured'] = $request->boolean('is_featured');
+
+        if ($request->hasFile('image')) {
+            $this->deleteImageFile($laptop->image_url);
+            $data['image_url'] = $this->handleImageUpload($request);
+        }
 
         $laptop->update($data);
 
@@ -121,9 +128,30 @@ class LaptopController extends Controller
 
     public function destroy(Laptop $laptop)
     {
+        $this->deleteImageFile($laptop->image_url);
         $laptop->delete();
 
         return redirect()->route('admin.laptops.index')
             ->with('success', 'Laptop deleted successfully.');
+    }
+
+    private function handleImageUpload(Request $request): ?string
+    {
+        if (!$request->hasFile('image')) {
+            return null;
+        }
+
+        return $request->file('image')->store('laptops', 'public');
+    }
+
+    private function deleteImageFile(?string $path): void
+    {
+        if (!$path) {
+            return;
+        }
+
+        if (!str_starts_with($path, 'http') && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

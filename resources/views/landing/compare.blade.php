@@ -80,7 +80,7 @@
                                 <iconify-icon icon="solar:close-circle-linear" class="text-lg"></iconify-icon>
                             </button>
                             <div class="relative w-32 h-32 lg:w-40 lg:h-40 mb-6">
-                                <img src="{{ $laptop->image_url ?? 'https://placehold.co/400x300/363230/DF5E1D?text=ZLM' }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain mix-blend-multiply">
+                                <img src="{{ $laptop->image_url_full ?? 'https://placehold.co/400x300/363230/DF5E1D?text=ZLM' }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain mix-blend-multiply">
                             </div>
                             <span class="text-[10px] font-medium text-[#DF5E1D] tracking-widest uppercase bg-[#DF5E1D]/10 px-2.5 py-1 rounded-md mb-3">
                                 {{ $laptop->brand }}
@@ -202,9 +202,9 @@ function loadCompareProducts(search) {
             }
             list.innerHTML = data.products.map(p => {
                 const disabled = compareIds.includes(String(p.id));
-                return '<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors ' + (disabled ? 'opacity-50' : 'cursor-pointer') + '" ' + (disabled ? '' : 'onclick="addCompareFromModal(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', \'' + (p.image_url || '') + '\')"') + '>' +
+                return '<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors ' + (disabled ? 'opacity-50' : 'cursor-pointer') + '" ' + (disabled ? '' : 'onclick="addCompareFromModal(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', \'' + (p.image_url_full || '') + '\')"') + '>' +
                     '<div class="w-12 h-12 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">' +
-                        (p.image_url ? '<img src="' + p.image_url + '" class="w-full h-full object-contain p-1">' : '<iconify-icon icon="solar:laptop-linear" class="text-xl text-gray-300"></iconify-icon>') +
+                        (p.image_url_full ? '<img src="' + p.image_url_full + '" class="w-full h-full object-contain p-1">' : '<iconify-icon icon="solar:laptop-linear" class="text-xl text-gray-300"></iconify-icon>') +
                     '</div>' +
                     '<div class="flex-1 min-w-0">' +
                         '<p class="text-sm font-medium text-[#363230] truncate">' + p.name + '</p>' +

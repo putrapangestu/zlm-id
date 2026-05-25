@@ -34,7 +34,7 @@
             {{-- Image --}}
             <div class="bg-gradient-to-b from-gray-50 to-white p-8 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-gray-200/60">
                 @if ($laptop->image_url)
-                    <img src="{{ $laptop->image_url }}" alt="{{ $laptop->name }}" class="w-full max-w-sm object-contain mix-blend-multiply">
+                    <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full max-w-sm object-contain mix-blend-multiply">
                 @else
                     <img src="https://placehold.co/400x300/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full max-w-sm object-contain">
                 @endif
