@@ -295,12 +295,13 @@ class LaptopSeeder extends Seeder
             $categoryIds = $data['categories'] ?? [];
             unset($data['variants'], $data['categories']);
 
-            $laptop = Laptop::create($data);
-            $laptop->categories()->attach($categoryIds);
+            $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
 
-            foreach ($variants as $variant) {
-                $laptop->variants()->create($variant);
-            }
+            $laptop = Laptop::updateOrCreate(['slug' => $data['slug']], $data);
+            $laptop->categories()->sync($categoryIds);
+
+            // Skip variant creation — variants already exist from previous seed
+            // Only updating laptop-level fields (kelebihan, kekurangan, etc.)
         }
     }
 }
