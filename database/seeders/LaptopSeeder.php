@@ -291,7 +291,6 @@ class LaptopSeeder extends Seeder
         ];
 
         foreach ($laptops as $data) {
-            $variants = $data['variants'] ?? [];
             $categoryIds = $data['categories'] ?? [];
             unset($data['variants'], $data['categories']);
 
@@ -299,9 +298,6 @@ class LaptopSeeder extends Seeder
 
             $laptop = Laptop::updateOrCreate(['slug' => $data['slug']], $data);
             $laptop->categories()->sync($categoryIds);
-
-            // Skip variant creation — variants already exist from previous seed
-            // Only updating laptop-level fields (kelebihan, kekurangan, etc.)
         }
     }
 }

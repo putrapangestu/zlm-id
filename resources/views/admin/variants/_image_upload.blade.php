@@ -103,6 +103,17 @@
         previewImg.src = '';
         info.textContent = '';
 
+        // Signal the backend to clear the existing image
+        let hidden = document.getElementById('{{ $inputId }}-remove-flag');
+        if (!hidden) {
+            hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.id = '{{ $inputId }}-remove-flag';
+            hidden.name = 'remove_image';
+            hidden.value = '1';
+            el.closest('form').appendChild(hidden);
+        }
+
         // Trigger change event so the preview resets
         input.dispatchEvent(new Event('change'));
     }

@@ -85,6 +85,9 @@ class LaptopVariantController extends Controller
         if ($request->hasFile('image')) {
             $this->deleteImageFile($variant->image_url);
             $data['image_url'] = $this->handleImageUpload($request);
+        } elseif ($request->boolean('remove_image')) {
+            $this->deleteImageFile($variant->image_url);
+            $data['image_url'] = null;
         }
 
         $variant->update($data);

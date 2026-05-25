@@ -61,6 +61,11 @@ class OrderTest extends TestCase
 
         $response = $this->actingAs($this->user)->post('/orders', [
             'notes' => 'Leave at door',
+            'shipping_address' => 'Jl. Merdeka No. 123',
+            'shipping_city' => 'Jakarta',
+            'shipping_province' => 'DKI Jakarta',
+            'shipping_postal_code' => '12345',
+            'shipping_phone' => '081234567890',
         ]);
 
         $this->assertDatabaseHas('orders', [
@@ -91,7 +96,13 @@ class OrderTest extends TestCase
             'unit_price' => 1600.00,
         ]);
 
-        $this->actingAs($this->user)->post('/orders');
+        $this->actingAs($this->user)->post('/orders', [
+            'shipping_address' => 'Jl. Merdeka No. 123',
+            'shipping_city' => 'Jakarta',
+            'shipping_province' => 'DKI Jakarta',
+            'shipping_postal_code' => '12345',
+            'shipping_phone' => '081234567890',
+        ]);
         $order = $this->user->orders()->first();
 
         $response = $this->actingAs($this->user)->get("/orders/{$order->id}");
@@ -113,7 +124,13 @@ class OrderTest extends TestCase
             'unit_price' => 1600.00,
         ]);
 
-        $this->actingAs($otherUser)->post('/orders');
+        $this->actingAs($otherUser)->post('/orders', [
+            'shipping_address' => 'Jl. Merdeka No. 123',
+            'shipping_city' => 'Jakarta',
+            'shipping_province' => 'DKI Jakarta',
+            'shipping_postal_code' => '12345',
+            'shipping_phone' => '081234567890',
+        ]);
         $order = $otherUser->orders()->first();
 
         $response = $this->actingAs($this->user)->get("/orders/{$order->id}");

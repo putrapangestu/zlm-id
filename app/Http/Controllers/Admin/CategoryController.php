@@ -75,6 +75,9 @@ class CategoryController extends Controller
         if ($request->hasFile('image')) {
             $this->deleteImageFile($category->image_url);
             $data['image_url'] = $this->handleImageUpload($request);
+        } elseif ($request->boolean('remove_image')) {
+            $this->deleteImageFile($category->image_url);
+            $data['image_url'] = null;
         }
 
         $category->update($data);

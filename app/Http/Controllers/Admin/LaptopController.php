@@ -112,6 +112,9 @@ class LaptopController extends Controller
         if ($request->hasFile('image')) {
             $this->deleteImageFile($laptop->image_url);
             $data['image_url'] = $this->handleImageUpload($request);
+        } elseif ($request->boolean('remove_image')) {
+            $this->deleteImageFile($laptop->image_url);
+            $data['image_url'] = null;
         }
 
         $laptop->update($data);
