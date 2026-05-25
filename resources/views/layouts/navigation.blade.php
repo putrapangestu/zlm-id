@@ -54,6 +54,12 @@
                     </x-slot>
                 </x-dropdown>
             </div>
+            @else
+            <!-- Guest Links -->
+            <div class="hidden sm:flex sm:items-center sm:ms-6 gap-4">
+                <a href="{{ route('login') }}" class="text-sm font-medium text-gray-500 hover:text-[#363230] transition-colors">{{ __('Login') }}</a>
+                <a href="{{ route('register') }}" class="bg-[#DF5E1D] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#c45218] transition-colors shadow-sm">{{ __('Register') }}</a>
+            </div>
             @endauth
 
             <!-- Hamburger -->
@@ -76,9 +82,7 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
-        @endauth
 
-        @auth
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
@@ -102,6 +106,12 @@
                     </x-responsive-nav-link>
                 </form>
             </div>
+        </div>
+        @else
+        <!-- Responsive Guest Links -->
+        <div class="pt-2 pb-3 space-y-1 px-4">
+            <a href="{{ route('login') }}" class="block py-2 text-sm font-medium text-gray-500 hover:text-[#363230] transition-colors">{{ __('Login') }}</a>
+            <a href="{{ route('register') }}" class="block py-2 text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] transition-colors">{{ __('Register') }}</a>
         </div>
         @endauth
     </div>
