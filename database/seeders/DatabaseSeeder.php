@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             LaptopSeeder::class,
             RoleSeeder::class,
+            SettingsSeeder::class,
         ]);
     }
 }

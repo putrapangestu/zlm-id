@@ -8,14 +8,18 @@ use App\Http\Controllers\Admin\LaptopController as AdminLaptopController;
 use App\Http\Controllers\Admin\LaptopVariantController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\LaptopController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProofUploadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\XenditWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,6 +52,11 @@ Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('cart.rem
 Route::post('/laptop/{laptop}/reviews', [ReviewController::class, 'store'])->name('reviews.store')->middleware('auth');
 Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle')->middleware('auth');
 
+// Xendit Webhook (public, no auth, no CSRF)
+Route::post('/webhooks/xendit', [XenditWebhookController::class, 'handle'])
+    ->name('webhooks.xendit')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes
@@ -62,12 +71,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('landing.checkout');
     Route::post('/orders', [OrderController::class, 'placeOrder'])->name('orders.place');
     Route::get('/orders/{order}', [OrderController::class, 'confirmation'])->name('orders.confirmation');
+    Route::get('/orders/{order}/xendit/callback', [OrderController::class, 'xenditCallback'])->name('orders.xendit.callback');
+    Route::post('/orders/{order}/proof', [ProofUploadController::class, 'upload'])->name('orders.proof.upload');
     Route::get('/orders', [OrderController::class, 'history'])->name('orders.history');
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Shipping (RajaOngkir)
+    Route::get('/shipping/provinces', [ShippingController::class, 'provinces'])->name('shipping.provinces');
+    Route::get('/shipping/cities', [ShippingController::class, 'cities'])->name('shipping.cities');
+    Route::post('/shipping/cost', [ShippingController::class, 'cost'])->name('shipping.cost');
 });
 
 /*
@@ -121,6 +137,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Transactions (new module from merge)
     Route::prefix('transactions')->name('transactions.')->group(function () {
         Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::get('/create', [TransactionController::class, 'create'])->name('create');
+        Route::post('/', [TransactionController::class, 'store'])->name('store');
+        Route::get('/{order}', [TransactionController::class, 'show'])->name('show');
+        Route::post('/{order}/confirm-payment', [TransactionController::class, 'confirmPayment'])->name('confirm-payment');
     });
 
     // Users (new module from merge)
@@ -146,6 +166,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Customers (existing module)
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('/customers/{user}', [CustomerController::class, 'show'])->name('customers.show');
+
+    // Settings
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingController::class, 'index'])->name('index');
+        Route::post('/', [SettingController::class, 'update'])->name('update');
+    });
 });
 
 require __DIR__.'/auth.php';

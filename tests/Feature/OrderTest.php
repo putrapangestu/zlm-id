@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Laptop;
 use App\Models\LaptopVariant;
 use App\Models\Cart;
+use App\Services\XenditService;
 use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -33,6 +34,17 @@ class OrderTest extends TestCase
             'price_modifier' => 100.00,
             'stock' => 5,
         ]);
+
+        // Mock XenditService to avoid external API calls
+        $this->mock(XenditService::class, function ($mock) {
+            $mock->shouldReceive('createInvoice')
+                ->andReturn([
+                    'id' => 'mock-invoice-id',
+                    'invoice_url' => 'https://mock.xendit.co/invoice',
+                    'expiry_date' => now()->addDay()->toISOString(),
+                    'status' => 'PENDING',
+                ]);
+        });
     }
 
     public function test_checkout_page_requires_auth(): void
@@ -66,13 +78,21 @@ class OrderTest extends TestCase
             'shipping_province' => 'DKI Jakarta',
             'shipping_postal_code' => '12345',
             'shipping_phone' => '081234567890',
+            'shipping_cost' => 50000,
+            'shipping_courier' => 'jne',
+            'shipping_service' => 'REG',
+            'shipping_etd' => '2-3 hari',
+            'shipping_city_id' => '152',
+            'shipping_city_name' => 'Jakarta Selatan',
+            'shipping_province_name' => 'DKI Jakarta',
         ]);
 
         $this->assertDatabaseHas('orders', [
             'user_id' => $this->user->id,
             'subtotal' => 3200.00,
             'tax' => 352.00,
-            'total' => 3552.00,
+            'total' => 53552.00, // subtotal(3200) + tax(352) + shipping_cost(50000)
+            'shipping_cost' => 50000.00,
         ]);
 
         $this->assertDatabaseHas('order_items', [
@@ -102,6 +122,13 @@ class OrderTest extends TestCase
             'shipping_province' => 'DKI Jakarta',
             'shipping_postal_code' => '12345',
             'shipping_phone' => '081234567890',
+            'shipping_cost' => 50000,
+            'shipping_courier' => 'jne',
+            'shipping_service' => 'REG',
+            'shipping_etd' => '2-3 hari',
+            'shipping_city_id' => '152',
+            'shipping_city_name' => 'Jakarta Selatan',
+            'shipping_province_name' => 'DKI Jakarta',
         ]);
         $order = $this->user->orders()->first();
 
@@ -130,6 +157,13 @@ class OrderTest extends TestCase
             'shipping_province' => 'DKI Jakarta',
             'shipping_postal_code' => '12345',
             'shipping_phone' => '081234567890',
+            'shipping_cost' => 50000,
+            'shipping_courier' => 'jne',
+            'shipping_service' => 'REG',
+            'shipping_etd' => '2-3 hari',
+            'shipping_city_id' => '152',
+            'shipping_city_name' => 'Jakarta Selatan',
+            'shipping_province_name' => 'DKI Jakarta',
         ]);
         $order = $otherUser->orders()->first();
 

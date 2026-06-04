@@ -53,6 +53,11 @@
                 <span class="text-sm font-medium">Categories</span>
             </a>
 
+            <a href="{{ route('admin.transactions.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.transactions.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
+                <iconify-icon icon="solar:wallet-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Transactions</span>
+            </a>
+
             <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.orders.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
                 <span class="text-sm font-medium">Orders</span>
@@ -61,6 +66,11 @@
             <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.customers.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:users-group-two-rounded-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
                 <span class="text-sm font-medium">Customers</span>
+            </a>
+
+            <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.settings.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
+                <iconify-icon icon="solar:settings-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Settings</span>
             </a>
         </div>
 

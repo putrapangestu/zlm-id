@@ -21,6 +21,19 @@ class Order extends Model
         'total',
         'payment_method',
         'payment_status',
+        'xendit_invoice_id',
+        'xendit_invoice_url',
+        'xendit_expiry',
+        'proof_of_transfer',
+        'paid_at',
+        'approved_by',
+        'shipping_cost',
+        'shipping_courier',
+        'shipping_service',
+        'shipping_etd',
+        'shipping_city_id',
+        'shipping_city_name',
+        'shipping_province_name',
         'notes',
         'shipping_address',
         'shipping_city',
@@ -33,6 +46,9 @@ class Order extends Model
         'subtotal' => 'decimal:2',
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
+        'shipping_cost' => 'decimal:2',
+        'xendit_expiry' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     protected static function booted(): void
@@ -52,6 +68,11 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function scopePending($query)
