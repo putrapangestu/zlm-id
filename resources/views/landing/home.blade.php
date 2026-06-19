@@ -27,6 +27,10 @@
                         Explore Catalog
                         <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
                     </a>
+                    <a href="{{ route('landing.smart-search') }}" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
+                        <iconify-icon icon="solar:magic-stick-3-linear"></iconify-icon>
+                        Smart Search
+                    </a>
                     <a href="#featured" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
                         View Featured
                     </a>
@@ -189,74 +193,31 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Review 1 -->
-            <div class="bg-white p-8 rounded-xl border border-gray-200/60 shadow-sm">
-                <div class="flex text-[#DF5E1D] mb-4 gap-1">
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-6">
-                    "The configuration options were exactly what my development team needed. Fast shipping and the machines arrived in pristine condition."
-                </p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-500 border border-gray-200">
-                        SJ
+            @foreach ($testimonials as $testimonial)
+                <div class="bg-white p-8 rounded-xl border border-gray-200/60 shadow-sm">
+                    <div class="flex text-[#DF5E1D] mb-4 gap-1">
+                        @for ($i = 0; $i < $testimonial->rating; $i++)
+                            <iconify-icon icon="solar:star-bold"></iconify-icon>
+                        @endfor
                     </div>
-                    <div>
-                        <p class="text-sm font-semibold text-[#363230]">Sarah Johnson</p>
-                        <p class="text-xs text-gray-400">Software Engineer</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Review 2 -->
-            <div class="bg-white p-8 rounded-xl border border-gray-200/60 shadow-sm">
-                <div class="flex text-[#DF5E1D] mb-4 gap-1">
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-6">
-                    "I used their comparison tool to find a lightweight rig for video editing on the go. The recommended XPS model has been flawless."
-                </p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-500 border border-gray-200">
-                        MC
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold text-[#363230]">Mike Chen</p>
-                        <p class="text-xs text-gray-400">Content Creator</p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">"{{ $testimonial->content }}"</p>
+                    <div class="flex items-center gap-3">
+                        @if ($testimonial->photo)
+                            <img src="{{ Storage::url($testimonial->photo) }}" class="w-10 h-10 rounded-full object-cover">
+                        @else
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-500 border border-gray-200">
+                                {{ substr($testimonial->name, 0, 2) }}
+                            </div>
+                        @endif
+                        <div>
+                            <p class="text-sm font-semibold text-[#363230]">{{ $testimonial->name }}</p>
+                            @if ($testimonial->position)
+                                <p class="text-xs text-gray-400">{{ $testimonial->position }}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Review 3 -->
-            <div class="bg-white p-8 rounded-xl border border-gray-200/60 shadow-sm">
-                <div class="flex text-[#DF5E1D] mb-4 gap-1">
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                    <iconify-icon icon="solar:star-bold"></iconify-icon>
-                </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-6">
-                    "Their corporate procurement process is seamless. Deployed 50 ThinkPads across our new branch without a single hitch or delay."
-                </p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-500 border border-gray-200">
-                        ED
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold text-[#363230]">Emma Davis</p>
-                        <p class="text-xs text-gray-400">IT Director</p>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>

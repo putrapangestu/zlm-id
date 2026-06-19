@@ -68,9 +68,31 @@
                 <span class="text-sm font-medium">Customers</span>
             </a>
 
+            <a href="{{ route('admin.testimonials.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.testimonials.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
+                <iconify-icon icon="solar:chat-round-dots-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Testimonials</span>
+            </a>
+
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.settings.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:settings-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
                 <span class="text-sm font-medium">Settings</span>
+            </a>
+
+            <div class="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-2 mt-4 mb-2">Laporan</div>
+
+            <a href="{{ route('admin.reports.purchases') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.reports.purchases')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
+                <iconify-icon icon="solar:document-text-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Pembelian</span>
+            </a>
+
+            <a href="{{ route('admin.reports.profit-loss') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.reports.profit-loss')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
+                <iconify-icon icon="solar:chart-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Laba Rugi</span>
+            </a>
+
+            <a href="{{ route('admin.reports.product-stats') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.reports.product-stats')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
+                <iconify-icon icon="solar:box-minimalistic-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Statistik Barang</span>
             </a>
         </div>
 

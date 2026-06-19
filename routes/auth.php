@@ -40,6 +40,12 @@ Route::middleware('guest')->group(function () {
     Route::get('otp/verify', [OtpController::class, 'showVerifyForm'])->name('otp.verify');
     Route::post('otp/verify', [OtpController::class, 'verifyOtp'])->name('otp.verify.store');
     Route::post('otp/resend', [OtpController::class, 'resendOtp'])->name('otp.resend');
+
+    // Google Login
+    Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleController::class, 'redirect'])
+        ->name('auth.google');
+    Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleController::class, 'callback'])
+        ->name('auth.google.callback');
 });
 
 Route::middleware('auth')->group(function () {

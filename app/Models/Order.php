@@ -40,6 +40,10 @@ class Order extends Model
         'shipping_province',
         'shipping_postal_code',
         'shipping_phone',
+        'tracking_number',
+        'tracking_history',
+        'shipped_at',
+        'estimated_delivery',
     ];
 
     protected $casts = [
@@ -49,6 +53,9 @@ class Order extends Model
         'shipping_cost' => 'decimal:2',
         'xendit_expiry' => 'datetime',
         'paid_at' => 'datetime',
+        'tracking_history' => 'array',
+        'shipped_at' => 'datetime',
+        'estimated_delivery' => 'date',
     ];
 
     protected static function booted(): void
@@ -83,5 +90,23 @@ class Order extends Model
     public function scopeByUser($query, $userId)
     {
         return $query->where('user_id', $userId);
+    }
+
+    public function addTrackingEvent(string $status, string $description, ?string $location = null): void
+    {
+        $history = $this->tracking_history ?? [];
+        $history[] = [
+            'status' => $status,
+            'description' => $description,
+            'location' => $location,
+            'timestamp' => now()->toIso8601String(),
+        ];
+        $this->update(['tracking_history' => $history]);
+    }
+
+    public function getLatestTracking(): ?array
+    {
+        $history = $this->tracking_history ?? [];
+        return !empty($history) ? end($history) : null;
     }
 }

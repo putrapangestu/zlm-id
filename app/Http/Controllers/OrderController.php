@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmationMail;
 use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -110,6 +112,9 @@ class OrderController extends Controller
 
         $cart->items()->delete();
         $cart->delete();
+
+        // Kirim email konfirmasi
+        Mail::to($order->user->email)->queue(new OrderConfirmationMail($order));
 
         // Buat Xendit Invoice
         try {

@@ -64,7 +64,7 @@ $psColors = ['unpaid' => 'bg-yellow-100 text-yellow-700', 'pending_verification'
                     </div>
 
                     <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                        <div>
+                        <div class="flex items-center gap-3">
                             @if($order->payment_method === 'xendit' && $order->payment_status === 'unpaid' && $order->xendit_invoice_url)
                             <a href="{{ $order->xendit_invoice_url }}" target="_blank"
                                class="px-3 py-1.5 bg-[#DF5E1D] text-white rounded-lg text-xs font-medium hover:bg-[#c94f14]">
@@ -77,6 +77,13 @@ $psColors = ['unpaid' => 'bg-yellow-100 text-yellow-700', 'pending_verification'
                             </a>
                             @elseif($order->payment_status === 'paid')
                             <span class="text-xs text-green-600 font-medium">Paid on {{ $order->paid_at ? $order->paid_at->format('d M Y') : '-' }}</span>
+                            @endif
+
+                            @if($order->tracking_number || $order->status !== 'pending')
+                            <a href="{{ route('tracking.show', $order) }}" class="text-sm text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 transition-colors">
+                                <iconify-icon icon="solar:map-point-linear" style="stroke-width: 1.5;"></iconify-icon>
+                                Lacak
+                            </a>
                             @endif
                         </div>
                         <a href="{{ route('orders.confirmation', $order) }}" class="text-sm text-[#DF5E1D] hover:text-[#c45218] transition-colors font-medium">
