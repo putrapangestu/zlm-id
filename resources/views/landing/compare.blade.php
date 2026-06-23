@@ -185,45 +185,83 @@ function closeCompareModal() {
     document.getElementById('compareModal').classList.add('hidden');
 }
 
-function loadCompareProducts(search) {
+async function loadCompareProducts(search) {
     const list = document.getElementById('compareProductList');
     list.innerHTML = '<div class="text-center py-8 text-sm text-gray-400">Memuat produk...</div>';
-
-    let url = '{{ route('compare.products') }}';
-    if (search) url += '?search=' + encodeURIComponent(search);
-
-    fetch(url)
-        .then(r => r.json())
-        .then(data => {
-            const compareIds = JSON.parse(localStorage.getItem('laptopsToCompare') || '[]').map(p => String(p.id));
-            if (data.products.length === 0) {
-                list.innerHTML = '<div class="text-center py-8 text-sm text-gray-400">Produk tidak ditemukan.</div>';
-                return;
-            }
-            list.innerHTML = data.products.map(p => {
-                const disabled = compareIds.includes(String(p.id));
-                return '<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors ' + (disabled ? 'opacity-50' : 'cursor-pointer') + '" ' + (disabled ? '' : 'onclick="addCompareFromModal(\'' + p.id + '\', \'' + p.name.replace(/'/g, "\\'") + '\', \'' + (p.image_url_full || '') + '\')"') + '>' +
-                    '<div class="w-12 h-12 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">' +
-                        (p.image_url_full ? '<img src="' + p.image_url_full + '" class="w-full h-full object-contain p-1">' : '<iconify-icon icon="solar:laptop-linear" class="text-xl text-gray-300"></iconify-icon>') +
-                    '</div>' +
-                    '<div class="flex-1 min-w-0">' +
-                        '<p class="text-sm font-medium text-[#363230] truncate">' + p.name + '</p>' +
-                        '<p class="text-xs text-gray-400">' + p.brand + '</p>' +
-                    '</div>' +
-                    '<div class="text-right shrink-0">' +
-                        '<p class="text-sm font-medium text-[#363230]">Rp ' + new Intl.NumberFormat('id-ID').format(p.price) + '</p>' +
-                        (disabled ? '<p class="text-[10px] text-gray-400">Sudah ditambahkan</p>' : '') +
-                    '</div>' +
-                '</div>';
-            }).join('');
-        })
-        .catch(() => {
-            list.innerHTML = '<div class="text-center py-8 text-sm text-red-400">Gagal memuat produk.</div>';
-        });
+    
+    try {
+        // 1. Dapatkan existing compare IDs dari server
+        const idsRes = await fetch('{{ route('compare.ids') }}');
+        const idsData = await idsRes.json();
+        const existingIds = (idsData.ids || []).map(String);
+        
+        // 2. Fetch products
+        let url = '{{ route('compare.products') }}';
+        if (search) url += '?search=' + encodeURIComponent(search);
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (!data.products || data.products.length === 0) {
+            list.innerHTML = '<div class="text-center py-8 text-sm text-gray-400">Produk tidak ditemukan.</div>';
+            return;
+        }
+        
+        // 3. Render — disable yang sudah ada di compare
+        list.innerHTML = data.products.map(p => {
+            const productId = String(p.id);
+            const disabled = existingIds.includes(productId);
+            const name = (p.name || '').replace(/'/g, "\\'");
+            const image = p.image_url_full || '';
+            
+            return '<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors ' + 
+                   (disabled ? 'opacity-50' : 'cursor-pointer') + '" ' + 
+                   (disabled ? '' : 'onclick="addCompareFromModal(\'' + p.id + '\', \'' + name + '\', \'' + image + '\')"') + '>' +
+                   '<div class="w-12 h-12 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">' +
+                       (image ? '<img src="' + image + '" class="w-full h-full object-contain p-1">' : '<iconify-icon icon="solar:laptop-linear" class="text-xl text-gray-300"></iconify-icon>') +
+                   '</div>' +
+                   '<div class="flex-1 min-w-0">' +
+                       '<p class="text-sm font-medium text-[#363230] truncate">' + p.name + '</p>' +
+                       '<p class="text-xs text-gray-400">' + (p.brand || '') + '</p>' +
+                   '</div>' +
+                   '<div class="text-right shrink-0">' +
+                       '<p class="text-sm font-medium text-[#363230]">Rp ' + new Intl.NumberFormat('id-ID').format(p.price) + '</p>' +
+                       (disabled ? '<p class="text-[10px] text-gray-400">Sudah ditambahkan</p>' : '') +
+                   '</div>' +
+               '</div>';
+        }).join('');
+        
+    } catch (e) {
+        list.innerHTML = '<div class="text-center py-8 text-sm text-red-400">Gagal memuat produk.</div>';
+    }
 }
 
 function searchCompareProducts(value) {
     loadCompareProducts(value);
+}
+
+function showToast(message, type) {
+    var toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 px-4 py-3 rounded-lg text-white text-sm font-medium shadow-lg z-50 transition-all duration-300 ' + (type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500');
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(function() {
+        toast.style.opacity = '0';
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+}
+
+function clearCompare() {
+    fetch('{{ route('compare.clear') }}', {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+        if (res.success) {
+            location.reload();
+        }
+    });
 }
 
 function addCompareFromModal(id, name, image) {
@@ -235,9 +273,6 @@ function addCompareFromModal(id, name, image) {
     .then(r => r.json())
     .then(res => {
         if (res.success) {
-            let compare = JSON.parse(localStorage.getItem('laptopsToCompare') || '[]');
-            compare.push({ id, name, image });
-            localStorage.setItem('laptopsToCompare', JSON.stringify(compare));
             showToast(res.message, 'success');
             closeCompareModal();
             location.reload();
@@ -246,6 +281,21 @@ function addCompareFromModal(id, name, image) {
         }
     })
     .catch(() => showToast('Gagal menambahkan produk', 'error'));
+}
+
+function removeFromCompare(laptopId) {
+    fetch('{{ route('compare.remove', '') }}/' + laptopId, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            showToast(res.message, 'success');
+            location.reload();
+        }
+    })
+    .catch(() => showToast('Gagal menghapus produk', 'error'));
 }
 
 document.addEventListener('DOMContentLoaded', function () {

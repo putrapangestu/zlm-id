@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Laptop;
+use App\Models\LaptopImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -49,7 +50,8 @@ class LaptopController extends Controller
             'display' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'battery_life' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'kelebihan' => 'nullable|string',
             'kekurangan' => 'nullable|string',
             'stock' => 'required|integer|min:0',
@@ -58,9 +60,30 @@ class LaptopController extends Controller
         ]);
 
         $data['is_featured'] = $request->boolean('is_featured');
-        $data['image_url'] = $this->handleImageUpload($request);
+
+        // Handle multiple image uploads
+        $images = $request->file('images', []);
+        if (!empty($images)) {
+            $data['image_url'] = $this->handleImageUploadDirect($images[0]);
+        } else {
+            $data['image_url'] = null;
+        }
 
         $laptop = Laptop::create($data);
+
+        // Save additional images to laptop_images table
+        $sortOrder = 0;
+        foreach ($images as $index => $image) {
+            $path = $this->handleImageUploadDirect($image);
+            if ($path) {
+                LaptopImage::create([
+                    'laptop_id' => $laptop->id,
+                    'image_url' => $path,
+                    'sort_order' => $sortOrder++,
+                    'caption' => null,
+                ]);
+            }
+        }
 
         if ($request->has('categories')) {
             $laptop->categories()->attach($request->categories);
@@ -80,7 +103,7 @@ class LaptopController extends Controller
     public function edit(Laptop $laptop)
     {
         $categories = Category::where('is_active', true)->get();
-        $laptop->load(['categories', 'variants']);
+        $laptop->load(['categories', 'variants', 'images']);
 
         return view('admin.laptops.edit', compact('laptop', 'categories'));
     }
@@ -99,7 +122,10 @@ class LaptopController extends Controller
             'display' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'battery_life' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'exists:laptop_images,id',
             'kelebihan' => 'nullable|string',
             'kekurangan' => 'nullable|string',
             'stock' => 'required|integer|min:0',
@@ -109,15 +135,49 @@ class LaptopController extends Controller
 
         $data['is_featured'] = $request->boolean('is_featured');
 
-        if ($request->hasFile('image')) {
-            $this->deleteImageFile($laptop->image_url);
-            $data['image_url'] = $this->handleImageUpload($request);
-        } elseif ($request->boolean('remove_image')) {
-            $this->deleteImageFile($laptop->image_url);
-            $data['image_url'] = null;
+        // Handle new image uploads
+        $images = $request->file('images', []);
+        if (!empty($images)) {
+            $data['image_url'] = $this->handleImageUploadDirect($images[0]);
+        }
+
+        // Handle image deletions
+        $deleteIds = $request->input('delete_images', []);
+        if (!empty($deleteIds)) {
+            // Check if the current main image is being deleted
+            $pathsBeingDeleted = $this->getImagePathsToDelete($deleteIds, $laptop->id);
+            $mainImageBeingDeleted = in_array($laptop->image_url, $pathsBeingDeleted);
+
+            // Delete from storage and DB
+            $imagesToDelete = LaptopImage::whereIn('id', $deleteIds)->where('laptop_id', $laptop->id)->get();
+            foreach ($imagesToDelete as $img) {
+                $this->deleteImageFile($img->image_url);
+                $img->delete();
+            }
+
+            // If main image was deleted and no new image uploaded, promote next image
+            if ($mainImageBeingDeleted && empty($data['image_url'])) {
+                $nextImage = LaptopImage::where('laptop_id', $laptop->id)->orderBy('sort_order')->first();
+                $data['image_url'] = $nextImage?->image_url;
+            }
         }
 
         $laptop->update($data);
+
+        // Save new images to laptop_images table
+        $maxSort = LaptopImage::where('laptop_id', $laptop->id)->max('sort_order') ?? -1;
+        $sortOrder = $maxSort + 1;
+        foreach ($images as $index => $image) {
+            $path = $this->handleImageUploadDirect($image);
+            if ($path) {
+                LaptopImage::create([
+                    'laptop_id' => $laptop->id,
+                    'image_url' => $path,
+                    'sort_order' => $sortOrder++,
+                    'caption' => null,
+                ]);
+            }
+        }
 
         if ($request->has('categories')) {
             $laptop->categories()->sync($request->categories);
@@ -131,7 +191,14 @@ class LaptopController extends Controller
 
     public function destroy(Laptop $laptop)
     {
+        // Delete all laptop images from storage
+        foreach ($laptop->images as $image) {
+            $this->deleteImageFile($image->image_url);
+        }
+
+        // Delete the main image
         $this->deleteImageFile($laptop->image_url);
+
         $laptop->delete();
 
         return redirect()->route('admin.laptops.index')
@@ -147,6 +214,15 @@ class LaptopController extends Controller
         return $request->file('image')->store('laptops', 'public');
     }
 
+    private function handleImageUploadDirect($file): ?string
+    {
+        if (!$file) {
+            return null;
+        }
+
+        return $file->store('laptops', 'public');
+    }
+
     private function deleteImageFile(?string $path): void
     {
         if (!$path) {
@@ -156,5 +232,13 @@ class LaptopController extends Controller
         if (!str_starts_with($path, 'http') && Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
         }
+    }
+
+    private function getImagePathsToDelete(array $deleteIds, string $laptopId): array
+    {
+        return LaptopImage::whereIn('id', $deleteIds)
+            ->where('laptop_id', $laptopId)
+            ->pluck('image_url')
+            ->toArray();
     }
 }

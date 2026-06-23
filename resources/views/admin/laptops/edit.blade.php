@@ -102,16 +102,14 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
-                @include('admin.variants._image_upload', [
-                    'inputId' => 'laptop-image-input',
+                <label class="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                @include('admin.laptops._multi_image_upload', [
+                    'inputName' => 'images[]',
                     'dropzoneId' => 'laptop-dropzone',
-                    'previewId' => 'laptop-preview',
-                    'emptyId' => 'laptop-empty',
-                    'infoId' => 'laptop-info',
-                    'removeBtnId' => 'laptop-remove',
-                    'existingImage' => $laptop->image_url_full,
+                    'gridId' => 'laptop-preview-grid',
+                    'existingImages' => $laptop->images,
                 ])
+                <p class="mt-2 text-xs text-gray-400">Centang gambar yang ingin dihapus. Gambar baru akan ditambahkan setelah gambar yang ada.</p>
             </div>
 
             <div>

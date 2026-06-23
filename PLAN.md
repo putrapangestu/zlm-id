@@ -1,453 +1,197 @@
-# PLAN.md — ZLM-ID Landing & Admin Modules
+# PLAN — Perbaikan Fitur ZLM.ID (Juni 2026)
 
-## Project Context
-Laravel 13.x e-commerce laptop store with MySQL, Tailwind CSS, Alpine.js, Spatie Roles, Iconify Icons (Solar).
+## Ringkasan Issue dari User
 
-### Design System
-- **Primary Color**: `#DF5E1D` (orange)
-- **Text Color**: `#363230` (dark charcoal)
-- **Font**: Inter (Google Fonts)
-- **Border Radius**: `xl` (12px), `2xl` (16px)
-- **Shadow**: `shadow-sm`, `shadow-md`, `shadow-lg`
+| # | Issue | Prioritas |
+|---|-------|-----------|
+| 1 | Barang per variant — tidak ada tampilan gambar/spec per variant | 🔴 High |
+| 2 | Gambar produk cuma 1, gabisa banyak | 🔴 High |
+| 3 | Compare jelek: `removeFromCompare()` gak ada, sync localStorage kacau, tombol di detail gak perlu | 🔴 High |
+| 4 | Tombol salin (copy link) dan bagikan (share) gak jalan | 🟡 Medium |
+| 5 | Tombol add product untuk compare di modal gak jalan | 🔴 High |
 
----
+## Tech Stack
 
-## Module Breakdown
-
-### Modul A: Landing Pages
-
-#### A.1 Landing Home
-**File**: `resources/views/landing/home.blade.php` (sudah ada — revisi harga & gambar)
-
-**Data Controller** (`LaptopController@index`):
-- `$featured` — 6 laptop teratas dengan `is_featured = true`
-- `$categories` — semua kategori aktif
-
-**UI Design**:
-```
-┌─────────────────────────────────────────────────────┐
-│ [NAV] Logo | Beranda  Katalog  Artikel  [Compare][Cart][User] │
-├─────────────────────────────────────────────────────┤
-│                                                     │
-│  ★ Hero Section — dark bg (#363230)                │
-│  "Find your perfect workstation."                  │
-│  [Explore Catalog] [View Featured]                 │
-│  ┌──────────────────────────┐                      │
-│  │   Laptop hero image      │                      │
-│  └──────────────────────────┘                      │
-│                                                     │
-│  ★ Featured Collection (4 col grid)                │
-│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐              │
-│  │image │ │image │ │image │ │image │              │
-│  │brand │ │brand │ │brand │ │brand │              │
-│  │name  │ │name  │ │name  │ │name  │              │
-│  │processor│ │proc  │ │proc  │ │proc  │              │
-│  │RAM   │ │RAM   │ │RAM   │ │RAM   │              │
-│  │storage│ │stor  │ │stor  │ │stor  │              │
-│  │Rp xxx│ │Rp xxx│ │Rp xxx│ │Rp xxx│              │
-│  │[♥][⚖][→Detail]││[♥][⚖][→Detail]│              │
-│  └──────┘ └──────┘ └──────┘ └──────┘              │
-│                                                     │
-│  ★ Categories (4 col grid) — bg white              │
-│  ★ Testimonials (3 col grid) — bg gray-50/100      │
-│  ★ Articles/Blog (3 col grid) — bg white           │
-│  ★ Newsletter — dark bg (#363230)                  │
-├─────────────────────────────────────────────────────┤
-│ [FOOTER]                                             │
-└─────────────────────────────────────────────────────┘
-```
-
-#### A.2 Landing Katalog (Search/Catalog)
-**File**: `resources/views/landing/search.blade.php` (sudah ada — revisi harga & gambar)
-
-**Data Controller** (`LaptopController@search`):
-- `$laptops` — paginated results (12/page) after filtering
-- `$brands` — distinct brand list from DB
-- `$maxPrice` — max price from all laptops
-- `$categories` — semua kategori aktif
-
-**UI Design**:
-```
-┌─────────────────────────────────────────────────────────┐
-│ [NAV]                                              │
-├──────────┬──────────────────────────────────────────────┤
-│ FILTERS  │  RESULTS: "Showing X of Y results"           │
-│ (sticky) │                                              │
-│          │  ┌──────┐ ┌──────┐ ┌──────┐                 │
-│ Search   │  │image │ │image │ │image │                 │
-│ ──────── │  │brand │ │brand │ │brand │                 │
-│ Category │  │name  │ │name  │ │name  │                 │
-│ ○ All    │  │proc  │ │proc  │ │proc  │                 │
-│ ○ Gaming │  │RAM   │ │RAM   │ │RAM   │                 │
-│ ○ Busin..│  │storage│ │stor  │ │stor  │                 │
-│          │  │Rp xxx│ │Rp xxx│ │Rp xxx│                 │
-│ Brand    │  │[♥][⚖][→]││[♥][⚖][→]││[♥][⚖][→]│         │
-│ [dropdown]│  └──────┘ └──────┘ └──────┘                 │
-│          │                                              │
-│ Price    │  [1] [2] [3] ... [Next] (pagination)         │
-│ Min $__  │                                              │
-│ Max $__  │  OR Empty State: "No hardware found"        │
-│          │                                              │
-│ [Apply]  │  ★ Floating Compare Card (bottom-right)      │
-│ [Reset]  │  ┌─────────────────┐                        │
-│          │  │ Compare 1/2     │                        │
-│          │  │ [View][Clear]   │                        │
-│          │  └─────────────────┘                        │
-└──────────┴──────────────────────────────────────────────┘
-```
-
-**Card Product Detail (used in home & search)**:
-| Elemen | Sumber Data | Tipe |
-|--------|------------|------|
-| Image | `$laptop->image_url` | Gambar URL, fallback ke default |
-| Brand badge | `$laptop->brand` | Text (uppercase, small) |
-| Nama produk | `$laptop->name` | Text (clamp 2 lines) |
-| Processor | `$laptop->processor` | Text with CPU icon |
-| RAM | `$laptop->ram` | Text with RAM icon |
-| Storage | `$laptop->storage` | Text with Database icon |
-| Harga (Rp) | `$laptop->price` | Format `Rp 15.000.000` |
-| Wishlist btn | — | Heart icon, localStorage toggle |
-| Compare btn | — | Scale icon, localStorage toggle |
-| Detail btn | `route('landing.detail')` | Link ke detail page |
-| Stock overlay | `$laptop->stock` | "Out of Stock" overlay jika 0 |
-
-#### A.3 Landing Detail Katalog
-**File**: `resources/views/landing/detail.blade.php` (sudah ada — revisi harga, gambar, + kelebihan/kekurangan)
-
-**Data Controller** (`LaptopController@show`):
-- `$laptop` — single laptop with categories, variants eager loaded
-- `$similar` — 4 laptops in same categories (excl. current)
-
-**UI Design**:
-```
-┌─────────────────────────────────────────────────────┐
-│ [NAV]                                              │
-├─────────────────────────────────────────────────────┤
-│  Breadcrumb: Home > Products > Laptop Name          │
-│                                                     │
-│  ┌─────────────────────┬──────────────────────────┐│
-│  │ IMAGE GALLERY       │  PRODUCT INFO            ││
-│  │                     │                          ││
-│  │  ┌───────────────┐  │  brand badge             ││
-│  │  │  Main Image   │  │  Nama Produk (h1)        ││
-│  │  │  (zoom on     │  │  Description             ││
-│  │  │   hover)      │  │                          ││
-│  │  └───────────────┘  │  Total Price: Rp xxx     ││
-│  │                     │  [In Stock (5)]          ││
-│  │  [img1][img2][+all]│                          ││
-│  │                     │  Varian (radio buttons):  ││
-│  │                     │  [○ Standard] [● Pro]     ││
-│  │                     │                          ││
-│  │                     │  [🛒 Add to Cart] [♥][⚖] ││
-│  │                     │                          ││
-│  │                     │  "Recently purchased"    ││
-│  │                     │  [Share] [Copy Link]     ││
-│  └─────────────────────┴──────────────────────────┘│
-│                                                     │
-│  ★ Technical Specifications                         │
-│  ┌──────────────────────────────────────────┐      │
-│  │ Processor  │ Intel Core i7-13700H        │      │
-│  │ RAM       │ 32GB DDR5                    │      │
-│  │ Storage   │ 1TB NVMe SSD                 │      │
-│  │ Graphics  │ NVIDIA RTX 4070              │      │
-│  │ Display   │ 16" QHD+ 240Hz              │      │
-│  │ Battery   │ Up to 10 hours               │      │
-│  │ Weight    │ 1.8 kg                       │      │
-│  └──────────────────────────────────────────┘      │
-│                                                     │
-│  ★ Kelebihan & Kekurangan (NEW)                    │
-│  ┌──────────────┬──────────────────────────┐      │
-│  │ ✅ KELEBIHAN │ ❌ KEKURANGAN            │      │
-│  │              │                          │      │
-│  │  • Performa  │  • Harga mahal          │      │
-│  │  • Build     │  • Berat                │      │
-│  │  • Display   │  • Fan noise            │      │
-│  └──────────────┴──────────────────────────┘      │
-│                                                     │
-│  ★ Similar Models (4 col grid)                      │
-│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐              │
-│  │card  │ │card  │ │card  │ │card  │              │
-│  └──────┘ └──────┘ └──────┘ └──────┘              │
-└─────────────────────────────────────────────────────┘
-```
-
-**Detail Kelebihan/Kekurangan di Landing Detail**:
-Data ditampilkan dalam 2 kolom (split layout):
-- Kolom kiri: **✅ Kelebihan** — list bullet points dari `$laptop->kelebihan` (diparsed per baris)
-- Kolom kanan: **❌ Kekurangan** — list bullet points dari `$laptop->kekurangan` (diparsed per baris)
-
-Format penyimpanan: text, 1 baris = 1 poin. Ditampilkan dengan `nl2br()` atau explode.
+- **Backend**: Laravel 11 (PHP 8.x)
+- **Frontend**: Tailwind CSS (CDN), Iconify, Vanilla JS
+- **Database**: MySQL (via Laravel migrations)
+- **Storage**: Laravel Storage (public disk)
 
 ---
 
-### Modul B: Admin Pages
+## Modul & Urutan Pengerjaan
 
-#### B.1 Admin Category
-**Files**: `index.blade.php`, `create.blade.php`, `edit.blade.php` (sudah ada)
-**Controller**: `Admin\CategoryController`
+### Modul A — Multi-Image Gallery untuk Laptop
+**Dependency**: None  
+**Agent**: Backend Builder  
 
-**Form Input Detail — Create/Edit Category**:
-| Field | Input Type | Required | Notes |
-|-------|-----------|----------|-------|
-| Name | `<input type="text">` | Yes | max 255 chars |
-| Slug | `<input type="text">` | No | Auto-generated dari name jika kosong |
-| Description | `<textarea rows="3">` | No | Text area |
-| Icon | `<input type="text">` | No | Iconify class, e.g. `solar:gamepad-linear` |
-| Image URL | `<input type="url">` | No | Full URL |
-| Is Active | `<input type="checkbox">` | No | Default checked |
+**Problem**: Laptop cuma punya 1 `image_url`, detail page pake 3 gambar Unsplash hardcoded.  
+**Solusi**: Migration baru `laptop_images`, update Admin LaptopController untuk upload banyak gambar, update detail view jadi gallery dinamis.
 
-**UI Design — Index**:
-```
-┌───────────────────────────────────────────────────────┐
-│ Categories                    [+ Add Category]        │
-├───────────────────────────────────────────────────────┤
-│ ┌───────────────────────────────────────────────────┐│
-│ │ Name    │ Slug     │ Products │ Status  │ Actions ││
-│ ├────────┼─────────┼──────────┼────────┼────────┤│
-│ │ 📁Gaming│ gaming  │ 12      │ Active  │ ✏️ 🗑️ ││
-│ │ 📁Bus.. │ business│ 8       │ Active  │ ✏️ 🗑️ ││
-│ └────────┴─────────┴──────────┴────────┴────────┘│
-│ [Pagination]                                        │
-└───────────────────────────────────────────────────────┘
-```
+Yang harus dibuat/diubah:
+- Migration: `create_laptop_images_table` (id uuid, laptop_id FK, image_url, sort_order, caption nullable)
+- Model: `App\Models\LaptopImage`
+- Laptop model: tambah `hasMany LaptopImage`, hapus `$appends = ['image_url_full']` -> pindah ke accessor biasa
+- Admin LaptopController: tambah upload multiple images (dropzone)
+- Admin create/edit view: tambah multi-image upload component
+- Detail view: ganti 3 Unsplash hardcoded dengan dynamic images dari laptop_images
+- Tambah image deletion di admin
 
-#### B.2 Admin Product (Laptop)
-**Files**: `index.blade.php`, `create.blade.php`, `edit.blade.php` (sudah ada)
-**Baru**: `show.blade.php` (perlu dibuat)
-**Controller**: `Admin\LaptopController`
-**Model**: `App\Models\Laptop` (+ fillable update)
-**Migration**: NEW — `add_kelebihan_kekurangan_to_laptops_table`
-
-**Struktur Database (kolom baru)**:
-| Kolom | Tipe | Nullable | Default |
-|-------|------|----------|---------|
-| `kelebihan` | `text` | Yes | null |
-| `kekurangan` | `text` | Yes | null |
-
-**Form Input Detail — Create/Edit Laptop**:
-| Field | Input Type | Required | Notes |
-|-------|-----------|----------|-------|
-| Name | `<input type="text">` | Yes | |
-| Brand | `<input type="text">` | Yes | |
-| Description | **Trix Editor** | Yes | WYSIWYG, menyimpan HTML |
-| Price | `<input type="number" step="0.01">` | Yes | Dijadikan Rupiah di display |
-| Stock | `<input type="number">` | Yes | |
-| Processor | `<input type="text">` | Yes | |
-| RAM | `<input type="text">` | Yes | e.g. "32GB DDR5" |
-| Storage | `<input type="text">` | Yes | e.g. "1TB NVMe SSD" |
-| Graphics | `<input type="text">` | No | |
-| Display | `<input type="text">` | No | |
-| Weight | `<input type="number" step="0.01">` | No | kg |
-| Battery Life | `<input type="text">` | No | e.g. "Up to 10 hours" |
-| Image URL | `<input type="url">` | No | Full URL |
-| **Kelebihan** | **Trix Editor** | **No** | **WYSIWYG, 1 baris ≈ 1 poin (NEW)** |
-| **Kekurangan** | **Trix Editor** | **No** | **WYSIWYG, 1 baris ≈ 1 poin (NEW)** |
-| Categories | `<input type="checkbox">[]` | No | Checkbox group dari semua kategori |
-| Is Featured | `<input type="checkbox">` | No | |
-
-**UI Design — Index**:
-```
-┌───────────────────────────────────────────────────────────────┐
-│ Laptops                                        [+ Add Laptop] │
-├───────────────────────────────────────────────────────────────┤
-│ ┌──────────┬───────┬─────────┬───────┬────────────┬────────┐│
-│ │ Name     │ Brand │ Price   │ Stock │ Categories │ Actions││
-│ ├──────────┼───────┼─────────┼───────┼────────────┼────────┤│
-│ │ ThinkPad │ Lenovo│ Rp 15jt │ 5     │ Business   │ ✏️🌿🗑️ ││
-│ │ (click → detail)│         │       │            │        ││
-│ │ ROG Zeph..│ ASUS │ Rp 25jt │ 0     │ Gaming     │ ✏️🌿🗑️ ││
-│ └──────────┴───────┴─────────┴───────┴────────────┴────────┘│
-│ [Pagination]                                                   │
-└───────────────────────────────────────────────────────────────┘
-```
-
-#### B.3 Admin Product Detail (NEW)
-**File**: `resources/views/admin/laptops/show.blade.php` (BARU)
-
-**UI Design**:
-```
-┌───────────────────────────────────────────────────────┐
-│ Laptop Detail: ThinkPad X1 Carbon      [Edit] [Delete]│
-├───────────────────────────────────────────────────────┤
-│ ┌───────────────┬─────────────────────────────────┐  │
-│ │  IMAGE        │  INFO                           │  │
-│ │               │  Brand: Lenovo                  │  │
-│ │  [image]      │  Price: Rp 15.000.000          │  │
-│ │               │  Stock: 5 [In Stock]            │  │
-│ │               │  Featured: Yes ✓                │  │
-│ │               │  Categories: Business, Premium   │  │
-│ └───────────────┴─────────────────────────────────┘  │
-│                                                       │
-│  ★ Technical Specifications                           │
-│  ┌──────────────────────────────────────────────┐   │
-│  │ Processor   │ Intel Core i7-13700H           │   │
-│  │ RAM         │ 32GB DDR5                      │   │
-│  │ Storage     │ 1TB NVMe SSD                  │   │
-│  │ Graphics    │ Intel Iris Xe                 │   │
-│  │ Display     │ 14" WUXGA IPS                 │   │
-│  │ Weight      │ 1.2 kg                         │   │
-│  │ Battery     │ Up to 15 hours                 │   │
-│  └──────────────────────────────────────────────┘   │
-│                                                       │
-│  ★ Kelebihan                                          │
-│  • Performa tinggi untuk multitasking                 │
-│  • Build quality premium (carbon fiber)              │
-│  • Battery tahan 15 jam                              │
-│                                                       │
-│  ★ Kekurangan                                          │
-│  • Harga premium                                     │
-│  • Tidak ada dedicated GPU                           │
-│  • Port terbatas                                     │
-│                                                       │
-│  ★ Variants                                           │
-│  ┌──────────────┬────────────────┬────────┐         │
-│  │ Name         │ Price Modifier │ Stock  │         │
-│  ├──────────────┼────────────────┼────────┤         │
-│  │ Standard     │ Rp 0           │ 5      │         │
-│  │ Pro          │ +Rp 2.000.000  │ 2      │         │
-│  └──────────────┴────────────────┴────────┘         │
-│                                                       │
-│  ★ Description                                        │
-│  "A premium ultrabook for professionals..."           │
-│                                                       │
-│  [← Back to Laptops]                                  │
-└───────────────────────────────────────────────────────┘
-```
+**Definition of Done**:
+- Migration bisa dijalankan
+- Admin bisa upload multiple images per laptop
+- Detail page menampilkan gambar-gambar tersebut sebagai gallery
+- Gambar bisa dihapus dari admin
 
 ---
 
-### Modul C: Fixes & Polish
+### Modul B — Admin Variant Management + Variant Switching di Detail Page
+**Dependency**: Modul A (untuk image variant)  
+**Agent**: Fullstack Builder  
 
-#### C.1 Nav Role Fix
-**File**: `resources/views/components/landing-nav.blade.php`
-- `@can('admin')` → `@role('admin')` (Spatie)
-- `@endcan` → `@endrole`
+**Problem Ganda**:
+1. **Admin**: Variant section di halaman show laptop hanya muncul kalau sudah ada variant. User bingung "variant-nya ada dimana?" karena ketika laptop belum punya variant, tidak ada tombol/tau untuk add variant.
+2. **Frontend**: Pilih variant cuma update price, gambar dan spec table tidak berubah.
 
-#### C.2 Rupiah Currency (Semua Halaman)
-Ubah semua display harga dari `$` (USD) ke `Rp` (Rupiah):
+#### Bagian 1 — Admin: Variant Section Selalu Muncul
 
-| Sebelum | Sesudah |
-|---------|---------|
-| `${{ number_format($price, 2) }}` | `Rp {{ number_format($price, 0, ',', '.') }}` |
-| `${{ number_format($laptop->price, 0) }}` | `Rp {{ number_format($laptop->price, 0, ',', '.') }}` |
+Di `resources/views/admin/laptops/show.blade.php`:
+- Hapus kondisi `@if ($laptop->variants->count() > 0)` — section Variants harus **selalu tampil**
+- Ketika variants > 0: tampilkan table variant + link "Manage Variants"
+- Ketika variants == 0: tampilkan empty state + tombol "Add Variant" yang menuju `route('admin.laptops.variants.create', $laptop)`
 
-#### C.3 Default Image
-Tambahkan default image di setiap tempat yang menampilkan gambar produk:
+#### Bagian 2 — Frontend: Update Variant Switching
 
-**Strategi**: Fallback ke placeholder service dengan warna brand.
-```blade
-$laptop->image_url ?? 'https://placehold.co/600x400/DF5E1D/FFFFFF?text=ZLM'
-```
+Di `resources/views/landing/detail.blade.php`:
+- Tambah data-variant attributes pada tiap variant option (image, ram, storage, graphics, display, weight, battery, stock)
+- Tambah JS handler yang update:
+  - Main image (src)
+  - Spec table values
+  - Stock badge
+  - Price
+- Kalau variant tanpa override field tertentu, pakai data laptop default
 
-**File yang perlu diubah**:
-- `landing/home.blade.php` — featured products image
-- `landing/search.blade.php` — search results image
-- `landing/detail.blade.php` — detail main image
-- `admin/laptops/show.blade.php` — detail admin image (new)
+**Definition of Done**:
+- Admin: halaman show laptop selalu menampilkan variant section
+- Admin: ada tombol "Add Variant" ketika belum ada variant
+- Admin: ada link "Manage Variants" ketika sudah punya variant
+- Frontend: pilih variant → gambar utama berganti
+- Frontend: pilih variant → spec table menyesuaikan
+- Frontend: pilih variant → stock badge & price berubah
 
 ---
 
-### Modul D: Kelebihan & Kekurangan (NEW)
+### Modul C — Perbaikan Compare Feature
+**Dependency**: None (independent)  
+**Agent**: Fullstack Builder  
 
-#### D.1 Migration — Tambah Kolom ke Tabel laptops
-**File baru**: `database/migrations/YYYY_MM_DD_HHMMSS_add_kelebihan_kekurangan_to_laptops_table.php`
-```php
-Schema::table('laptops', function (Blueprint $table) {
-    $table->text('kelebihan')->nullable()->after('image_url');
-    $table->text('kekurangan')->nullable()->after('kelebihan');
-});
-```
+**Problem**:
+1. `removeFromCompare()` tidak didefinisikan di compare.blade.js → tombol X rusak
+2. Dual storage (session + localStorage) bisa out-of-sync → hapus localStorage, pakai session aja
+3. Tombol Compare di detail page tidak diperlukan (per user)
+4. Floating compare widget perlu sync dengan session, bukan localStorage
 
-#### D.2 Model Update
-**File**: `app/Models/Laptop.php`
-- Tambah `'kelebihan', 'kekurangan'` ke `$fillable`
+Yang harus diubah:
+- `compare.blade.php`:
+  - Tambah fungsi `removeFromCompare(laptopId)` — panggil `DELETE /compare/remove/{id}`
+  - Hapus semua referensi ke localStorage (`laptopsToCompare`)
+  - `loadCompareProducts()`: baca existing IDs dari server (`/compare/ids`) bukan localStorage
+  - `addCompareFromModal()`: tambah ke session saja, reload page setelah sukses
+  - Hapus kode localStorage di line 198, 238-240
+- `detail.blade.php`:
+  - Hapus tombol Compare dari action buttons
+  - Tapi pastikan fungsi `addToCompare` masih ada di global (untuk floating widget)
+- `search.blade.php` & `home.blade.php`:
+  - Tidak diubah (compare buttons tetap ada di sini)
+- `floating-compare.blade.php`:
+  - Tidak diubah (masih pakai session)
 
-#### D.3 Controller Update
-**File**: `app/Http/Controllers/Admin/LaptopController.php`
-- Tambah `'kelebihan' => 'nullable|string'` ke validasi store & update
-- Tambah `'kekurangan' => 'nullable|string'` ke validasi store & update
+**Definition of Done**:
+- Tombol X (remove) di compare page berfungsi
+- Tidak ada lagi referensi localStorage untuk compare
+- Tombol Compare tidak muncul di detail page
+- Floating compare widget sync dengan benar
 
-#### D.4 Admin Form — Create & Edit
-**File**: `resources/views/admin/laptops/create.blade.php`, `edit.blade.php`
-- Ubah Description dari `<textarea>` jadi **Trix Editor** (WYSIWYG)
-- Tambah field **Kelebihan** — **Trix Editor** (WYSIWYG)
-- Tambah field **Kekurangan** — **Trix Editor** (WYSIWYG)
-- Push Trix CSS & JS via `@push('scripts')` dan `@push('styles')`
+---
 
-#### D.5 Admin Detail View
-**File**: `resources/views/admin/laptops/show.blade.php` (BARU)
-- Tampilkan kelebihan sebagai bullet list
-- Tampilkan kekurangan sebagai bullet list
+### Modul D — Share & Copy Link Buttons
+**Dependency**: None  
+**Agent**: Frontend Builder  
 
-#### D.6 Landing Detail View
-**File**: `resources/views/landing/detail.blade.php`
-- Tambah section "Kelebihan & Kekurangan" setelah specs table
-- Split layout: ✅ kiri / ❌ kanan
-- Parsing data: `{!! nl2br(e($laptop->kelebihan)) !!}` — output HTML dari Trix
+**Problem**: Tombol share dan copy di detail page tidak punya event handler.  
+**Solusi**: Tambah JS handler untuk Web Share API + Clipboard API.
 
-#### D.7 Text Editor — Trix Integration
-**Pilihan Editor**: **Trix** (by Basecamp) — ringan, tanpa API key, output HTML bersih.
+Yang harus diubah:
+- `detail.blade.php`:
+  - Tambah `onclick` pada tombol share: `shareProduct()`
+  - Tambah `onclick` pada tombol copy: `copyProductLink()`
+  - Implementasi:
+    - `shareProduct()`: Web Share API (`navigator.share`) dengan fallback copy
+    - `copyProductLink()`: Clipboard API (`navigator.clipboard.writeText`) dengan fallback
 
-**CDN**:
-```html
-<link rel="stylesheet" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
-<script src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
-```
+**Definition of Done**:
+- Klik tombol share → muncul native share dialog (atau fallback copy)
+- Klik tombol copy → link tercopy ke clipboard + toast notifikasi
+- Handle error case (browser tidak support)
 
-**Cara Pakai di Blade**:
-```blade
-{{-- Hidden input untuk submit value --}}
-<input id="description" name="description" type="hidden" value="{{ old('description', $laptop->description ?? '') }}">
+---
 
-{{-- Trix editor UI --}}
-<trix-editor input="description" class="trix-content"></trix-editor>
-```
+### Modul E — Fix Compare Modal "Add to Compare"
+**Dependency**: Modul C  
+**Agent**: Fullstack Builder  
 
-**File yang diubah**:
-- `admin/laptops/create.blade.php` — Description, Kelebihan, Kekurangan jadi Trix
-- `admin/laptops/edit.blade.php` — Description, Kelebihan, Kekurangan jadi Trix
+**Problem**: Tombol add product di modal compare page mungkin tidak jalan karena localStorage sync issue.  
+**Analisis**: `addCompareFromModal()` di compare.blade.php line 229-249 seharusnya jalan, tapi:
+1. `loadCompareProducts()` baca `compareIds` dari localStorage → kalau localStorage kosong/salah, produk yang sudah ditambahkan tetap muncul
+2. Setelah Modul C (hapus localStorage), fungsi ini harus pakai data dari session saja
+
+Yang harus diubah:
+- `compare.blade.php` `loadCompareProducts()`:
+  - Ganti `localStorage.getItem('laptopsToCompare')` dengan fetch ke `/compare/ids`
+  - Filter produk yang sudah ada di session
+- `addCompareFromModal()`:
+  - Hapus manipulasi localStorage
+  - Cukup panggil API, kalau sukses reload page
+
+**Definition of Done**:
+- Modal menampilkan produk yang belum ditambahkan saja
+- Klik produk di modal → berhasil ditambahkan
+- Tidak ada error di console
 
 ---
 
 ## Dependency Graph
+
 ```
-D.1 (Migration) ──┐
-D.2 (Model)     ──┤
-                  ├──→ depends on: Nothing, independent
-D.4 (Form + Trix) ──┼──→ depends on: D.1, D.2, D.3
-D.5 (Show view)   ──┤
-D.6 (Landing)     ──┘
-D.7 (Trix Editor) ──┴──→ depends on: —, applied in D.4
-
-B.3 (Admin Detail View)
-  └── depends on: B.2 (Admin Product exists), D.5
-
-C.2 (Rupiah)
-  └── affects: A.1, A.2, A.3, B.2, B.3
-
-C.3 (Default Image)
-  └── affects: A.1, A.2, A.3, B.3
+Modul A (Multi-Image) ──┐
+                        ├──> Modul B (Variant Switch)
+Modul C (Compare Fix) ──┤
+                        ├──> Modul E (Compare Modal Fix)
+Modul D (Share/Copy) ───┘
 ```
 
-## Definisi Selesai
-- ✅ Semua harga ditampilkan dalam format **Rp X.XXX.XXX**
-- ✅ Produk tanpa gambar menampilkan **default placeholder** (tidak broken image)
-- ✅ Admin product detail **menampilkan semua field + variants + categories + kelebihan + kekurangan**
-- ✅ Landing detail **menampilkan kelebihan & kekurangan** di section terpisah
-- ✅ Admin create/edit **bisa input kelebihan & kekurangan**
-- ✅ Navigasi admin di landing **hanya muncul untuk user role admin**
-- ✅ Nama produk di admin index **bisa diklik ke detail page**
-- ✅ Semua halaman landing **tidak ada broken link/error**
+Modul C dan D bisa dikerjakan paralel setelah Modul A.
+Modul B tergantung Modul A (karena image variant).
+Modul E tergantung Modul C.
 
-## Urutan Pengerjaan
-1. **D.1** Buat migration `add_kelebihan_kekurangan_to_laptops_table`
-2. **D.2** Update Laptop model fillable
-3. **D.3** Update Admin/LaptopController validasi
-4. **D.7 + D.4** Integrasi Trix Editor + tambah field kelebihan/kekurangan di admin create & edit
-5. **C.2** Ubah currency USD → Rupiah di semua landing & admin views
-6. **C.3** Tambah default image fallback di semua views
-7. **C.1** Fix nav role directive
-8. **B.3 + route** Build admin product detail view (includes D.5, tampilkan HTML)
-9. **D.6** Tambah kelebihan/kekurangan di landing detail (render HTML dari Trix)
-10. **C.2 link** Tambah link nama produk → detail di admin index
-11. **Review** All pages
+---
+
+## Assignment Agent
+
+| Modul | Agent | Estimasi |
+|-------|-------|----------|
+| A — Multi-Image Gallery | Backend Builder | 45 menit |
+| B — Variant Switching | Frontend Builder | 30 menit |
+| C — Compare Fix | Fullstack Builder | 30 menit |
+| D — Share/Copy | Frontend Builder | 15 menit |
+| E — Compare Modal Fix | Fullstack Builder | 15 menit |
+
+---
+
+## Definisi Selesai (Global)
+
+- Semua perubahan sudah di-commit dengan pesan `fix:` atau `feat:`
+- STATUS.md diupdate
+- Tidak ada error JavaScript di console browser
+- Admin panel: multi-upload berfungsi
+- Storefront: semua tombol berfungsi

@@ -1,17 +1,16 @@
-# STATUS — Test & Fix Loop
+# STATUS — ZLM.ID Bug Fixes (Juni 2026)
 
 ## Overview
-Phase 5: Running tests and quality audit on the completed modules.
+Semua modul selesai diimplementasikan. Menunggu review user.
 
-## Agent Status
-[PLANNER]  ✓ selesai — all specs implemented
-[BUILDER-A] ✓ selesai — category dropzone upload + model accessor
-[BUILDER-B] ✓ selesai — seeder fix + duplicate cleanup
-[CHECKER]  ⏳ working — running tests & quality audit
+## Status Per Modul
 
-## Modules under test
-1. Category image upload (Controller, Model, Views)
-2. Kelebihan/kekurangan seeder data
-3. All image_url → image_url_full migrations
-4. Dropzone image upload (Laptop, Variant, Category)
-5. Route integrity (no 404/500 on CRUD)
+| Modul | Status | Hasil |
+|-------|--------|-------|
+| A — Multi-Image Gallery | ✅ Selesai | Migration + Model `LaptopImage` + Admin multi-upload + Detail page gallery dinamis |
+| B — Admin Variant + Frontend Switching | ✅ Selesai | Admin: section variant selalu muncul + tombol Add. Frontend: variant switching update gambar, spec, stock, price |
+| C — Compare Fix | ✅ Selesai | `removeFromCompare()` ditambah + localStorage dihapus + tombol Compare di detail dihapus |
+| D — Share/Copy Buttons | ✅ Selesai | Web Share API + Clipboard API + fallback execCommand |
+| E — Compare Modal Fix | ✅ Selesai | Modal baca IDs dari server, fungsi `showToast()` + `clearCompare()` ditambah |
+
+## CKECKPOINT — Siap untuk review

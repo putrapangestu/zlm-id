@@ -1,96 +1,179 @@
-# DELIVERY — ZLM-ID Laravel 13.x
+# DELIVERY — Payment & Transaction System + Xendit + RajaOngkir
+
+**Project:** ZLM.ID (Laravel 13)
+**Status:** ✅ Selesai — 50 tests passed (116 assertions)
+**Tanggal:** 2026-06-04
+
+---
 
 ## Cara Run Project
 
 ```bash
-# 1. Serve aplikasi
+cd C:\kerjaan\gitlab\zlm-id
+
+# 1. Install dependencies (jika fresh clone)
+composer install
+npm install && npm run build
+
+# 2. Environment
+copy .env.example .env   # copy dulu, lalu isi credentials
+php artisan key:generate
+
+# 3. Database
+php artisan migrate
+php artisan db:seed
+
+# 4. Storage link (untuk upload proof of transfer)
+php artisan storage:link
+
+# 5. Jalankan
 php artisan serve
-
-# 2. Link storage (jika belum)
-php artisan storage:link
-
-# 3. Seed database (jika perlu reset)
-php artisan db:seed
-
-# 4. Run tests
-php artisan test
 ```
 
-## Daftar Endpoint / Halaman
+## Environment Variables (wajib diisi)
 
-### Landing (Public)
-| Halaman | Route |
-|---------|-------|
-| Home | `/` |
-| Search / Catalog | `/search?q=&category=...` |
-| Detail Laptop | `/laptops/{laptop:slug}` |
-| Compare | `/compare?ids=...` |
-| Cart | `/cart` |
-| Checkout | `/checkout` |
-| Wishlist | `/wishlist` |
-| Orders | `/orders` |
-| Order Detail | `/orders/{order}` |
-| Login | `/login` |
-| Register | `/register` |
+```env
+# Xendit
+XENDIT_SECRET_KEY=xnd_development_...
+XENDIT_PUBLIC_KEY=xnd_public_development_...
+XENDIT_PRODUCTION=false
+XENDIT_WEBHOOK_VERIFICATION_TOKEN=
 
-### Admin
-| Halaman | Route |
-|---------|-------|
-| Dashboard | `/admin` |
-| Laptops CRUD | `/admin/laptops` |
-| Laptop Detail | `/admin/laptops/{laptop}` |
-| Laptop Variants | `/admin/laptops/{laptop}/variants` |
-| Variant Edit (shallow) | `/admin/variants/{variant}/edit` |
-| Categories CRUD | `/admin/categories` |
-| Orders | `/admin/orders` |
-
-## Hal yang Perlu Dikonfigurasi User
-
-### 1. Storage Link
-```bash
-php artisan storage:link
-```
-Pastikan folder berikut ada di `storage/app/public/`:
-- `laptops/`
-- `variants/`
-- `categories/`
-
-### 2. Environment
-File `.env` harus berisi:
-- Database MySQL credentials
-- `APP_URL=http://localhost:8000` (untuk storage path resolution)
-
-### 3. Role & Permission
-Seeder akan membuat role: `admin`, `buyer`
-```bash
-php artisan db:seed
+# RajaOngkir
+RAJAONGKIR_API_KEY=...
+RAJAONGKIR_BASE_URL=https://api.rajaongkir.com/starter
+RAJAONGKIR_ORIGIN_CITY_ID=152   # Kota asal pengiriman (default: Jakarta)
 ```
 
-### 4. Rekomendasi Produksi
-- Ubah storage disk dari `public` ke `s3` jika di production
-- Konfigurasi queue untuk order processing
-- Set `APP_DEBUG=false` di production
+## Daftar Routes
 
-## Fitur Baru di Release Ini
+### 🔵 User (auth required)
+| Method | URL | Fungsi |
+|--------|-----|--------|
+| GET | `/checkout` | Halaman checkout dengan RajaOngkir shipping calculator |
+| POST | `/orders` | Place order → create invoice Xendit |
+| GET | `/orders/{order}` | Halaman konfirmasi/detail order |
+| GET | `/orders` | Riwayat order user |
+| POST | `/orders/{order}/proof` | Upload bukti transfer (manual) |
+| GET | `/orders/{order}/xendit/callback` | Callback setelah bayar Xendit |
 
-### ✨ Drag & Drop Image Upload
-- Admin Laptop, Variant, dan Category: ganti dari input URL teks → dropzone drag & drop
-- Vanilla JS (zero dependency), reusable partial `_image_upload.blade.php`
-- Validasi: image|mimes:jpg,jpeg,png,webp|max:2048
-- Auto-delete file lama saat update/delete
-- Tombol "Remove" didukung penuh (hapus image dari DB + storage)
+### 🟢 Shipping API (auth required, AJAX)
+| Method | URL | Fungsi |
+|--------|-----|--------|
+| GET | `/shipping/provinces` | Daftar provinsi |
+| GET | `/shipping/cities?province_id=` | Daftar kota per provinsi |
+| POST | `/shipping/cost` | Hitung ongkir (body: destination, weight) |
 
-### ✨ Kelebihan & Kekurangan
-- Data sample untuk 12 laptop (Trix HTML format)
-- Ditampilkan di halaman detail produk
-- Admin bisa edit via form laptop
+### 🟣 Xendit Webhook (public, no CSRF)
+| Method | URL | Fungsi |
+|--------|-----|--------|
+| POST | `/webhooks/xendit` | Menerima callback dari Xendit (PAID/EXPIRED/FAILED) |
 
-### ✨ image_url_full Accessor
-- Semua model (Laptop, LaptopVariant, Category) punya `$appends = ['image_url_full']`
-- Backward compatible: support path storage maupun URL eksternal
-- Semua view landing sudah menggunakan `image_url_full`
+### 🟠 Admin (role: admin)
+| Method | URL | Fungsi |
+|--------|-----|--------|
+| GET | `/admin/dashboard` | Dashboard dengan stats real (orders, revenue, dll) |
+| GET | `/admin/transactions` | List semua transaksi |
+| GET | `/admin/transactions/create` | Form create transaksi |
+| POST | `/admin/transactions` | Simpan transaksi baru |
+| GET | `/admin/transactions/{order}` | Detail transaksi |
+| POST | `/admin/transactions/{order}/confirm-payment` | Konfirmasi pembayaran manual |
+| GET | `/admin/settings` | Halaman settings (tax rate) |
+| POST | `/admin/settings` | Simpan settings |
 
-### ✨ Route & Bug Fixes
-- Route order: `show` setelah `resource()` untuk cegah 404
-- Shallow routing di variant: `admin.variants.*` untuk edit/update/destroy
-- 50/50 test passing (116 assertions)
+### ⚪ Static
+| Method | URL | Fungsi |
+|--------|-----|--------|
+| GET | `/` | Home / landing page |
+| GET | `/search` | Pencarian laptop |
+| GET | `/laptops/{laptop}` | Detail laptop |
+| GET | `/compare` | Perbandingan laptop |
+
+## Flow Transaksi
+
+### User Checkout (Xendit - forced)
+```
+Checkout → Pilih Provinsi → Pilih Kota → Pilih Kurir → Place Order
+    → XenditInvoice → Redirect ke Xendit → Bayar → Webhook → Status PAID
+```
+
+### User Checkout (Manual Transfer - admin only)
+```
+Admin Create Transaction → pilih manual_transfer
+    → Customer lihat no rekening → Upload bukti
+    → Admin Confirm Payment → Status PAID
+```
+
+## Hal yang Perlu Dikonfigurasi Admin
+
+### 1. Tax Rate
+- Buka `/admin/settings`
+- Ubah `Tax Rate` (default 11%)
+- Berlaku untuk semua transaksi baru
+
+### 2. Xendit Webhook
+- Di dashboard Xendit, set webhook URL ke: `https://domain-anda.com/webhooks/xendit`
+- Untuk development: gunakan Xendit API key development (sudah di .env)
+
+### 3. RajaOngkir Origin City
+- Ubah `RAJAONGKIR_ORIGIN_CITY_ID` di .env (default 152 = Jakarta Pusat)
+- Starter tier hanya support 1 origin city
+
+### 4. Storage
+- `php artisan storage:link` — diperlukan agar file upload proof muncul
+
+## Struktur File — File Baru/Diubah
+
+### File Baru (15)
+```
+config/xendit.php
+config/rajaongkir.php
+app/Services/XenditService.php
+app/Services/RajaOngkirService.php
+app/Http/Controllers/ShippingController.php
+app/Http/Controllers/ProofUploadController.php
+app/Http/Controllers/XenditWebhookController.php
+app/Http/Controllers/Admin/SettingController.php
+app/Models/Setting.php
+app/helpers.php
+database/migrations/2026_06_04_100001_add_payment_and_shipping_fields_to_orders_table.php
+database/migrations/2026_06_04_100002_create_settings_table.php
+database/seeders/SettingsSeeder.php
+resources/views/admin/transactions/show.blade.php
+resources/views/admin/transactions/create.blade.php
+resources/views/admin/settings/index.blade.php
+```
+
+### File Diubah (13)
+```
+app/Models/Order.php
+app/Http/Controllers/OrderController.php
+app/Http/Controllers/Admin/TransactionController.php
+app/Http/Controllers/Admin/DashboardController.php
+app/Providers/AppServiceProvider.php
+app/Exceptions/Handler.php (via bootstrap/app.php)
+routes/web.php
+bootstrap/app.php
+composer.json
+resources/views/orders/checkout.blade.php
+resources/views/orders/confirmation.blade.php
+resources/views/orders/history.blade.php
+resources/views/admin/dashboard.blade.php
+resources/views/layouts/admin.blade.php
+resources/views/admin/transactions/index.blade.php
+tests/Feature/OrderTest.php
+```
+
+## Test Coverage
+
+```
+Tests: 50 passed (116 assertions)
+├── Unit ExampleTest       ✓
+├── AdminTest              ✓ (6 tests)
+├── Auth                   ✓ (13 tests)
+├── CartTest               ✓ (6 tests)
+├── LandingPagesTest       ✓ (5 tests)
+├── OrderTest              ✓ (6 tests — includes Xendit mock)
+├── ProfileTest            ✓ (5 tests)
+└── ReviewWishlistTest     ✓ (5 tests)
+```

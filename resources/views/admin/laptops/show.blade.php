@@ -156,41 +156,71 @@
     </div>
 
     {{-- Variants --}}
-    @if ($laptop->variants->count() > 0)
     <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="text-base font-semibold text-[#363230] flex items-center gap-2">
                 <iconify-icon icon="solar:git-branch-linear" class="text-[#DF5E1D]"></iconify-icon>
                 Variants
             </h3>
-            <a href="{{ route('admin.laptops.variants.index', $laptop) }}" class="text-xs text-[#DF5E1D] hover:text-[#c45218] font-medium">
-                Manage Variants
-            </a>
+            <div class="flex items-center gap-2">
+                @if ($laptop->variants->count() > 0)
+                    <a href="{{ route('admin.laptops.variants.index', $laptop) }}" 
+                       class="text-xs text-gray-500 hover:text-[#DF5E1D] font-medium transition-colors flex items-center gap-1">
+                        <iconify-icon icon="solar:settings-linear" class="text-sm"></iconify-icon>
+                        Manage Variants
+                    </a>
+                @endif
+                <a href="{{ route('admin.laptops.variants.create', $laptop) }}" 
+                   class="bg-[#DF5E1D] text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-[#c45218] transition-colors flex items-center gap-1">
+                    <iconify-icon icon="solar:add-circle-linear" class="text-sm"></iconify-icon>
+                    Add Variant
+                </a>
+            </div>
         </div>
-        <table class="w-full text-sm text-left">
-            <thead>
-                <tr class="bg-gray-50/50">
-                    <th class="py-3 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Name</th>
-                    <th class="py-3 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Price Modifier</th>
-                    <th class="py-3 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Stock</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
-                @foreach ($laptop->variants as $variant)
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-3 px-6 font-medium text-[#363230]">{{ $variant->name }}</td>
-                        <td class="py-3 px-6 text-gray-600">Rp {{ number_format($variant->price_modifier, 0, ',', '.') }}</td>
-                        <td class="py-3 px-6">
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium {{ $variant->stock > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
-                                {{ $variant->stock }}
-                            </span>
-                        </td>
+
+        @if ($laptop->variants->count() > 0)
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="bg-gray-50/50">
+                        <th class="py-3 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Name</th>
+                        <th class="py-3 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Price Modifier</th>
+                        <th class="py-3 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Stock</th>
+                        <th class="py-3 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Actions</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @foreach ($laptop->variants as $variant)
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="py-3 px-6 font-medium text-[#363230]">{{ $variant->name }}</td>
+                            <td class="py-3 px-6 text-gray-600">Rp {{ number_format($variant->price_modifier, 0, ',', '.') }}</td>
+                            <td class="py-3 px-6">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium {{ $variant->stock > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
+                                    {{ $variant->stock }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-6">
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('admin.variants.edit', $variant) }}" class="text-gray-400 hover:text-blue-500 transition-colors" title="Edit">
+                                        <iconify-icon icon="solar:pen-linear"></iconify-icon>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <div class="p-8 text-center">
+                <iconify-icon icon="solar:git-branch-linear" class="text-3xl text-gray-200 mb-3"></iconify-icon>
+                <p class="text-sm text-gray-500 mb-4">Belum ada variant untuk laptop ini.</p>
+                <a href="{{ route('admin.laptops.variants.create', $laptop) }}" 
+                   class="inline-flex items-center gap-1.5 bg-[#DF5E1D] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#c45218] transition-colors">
+                    <iconify-icon icon="solar:add-circle-linear"></iconify-icon>
+                    Tambah Variant Pertama
+                </a>
+            </div>
+        @endif
     </div>
-    @endif
 
     {{-- Description --}}
     <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6">

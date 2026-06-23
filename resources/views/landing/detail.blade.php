@@ -43,9 +43,9 @@
                     <!-- Main Image Area -->
                     <label for="zoom-image" class="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square flex items-center justify-center bg-white rounded-2xl border border-gray-200/50 shadow-sm overflow-hidden mb-6 group cursor-zoom-in transition-all duration-300 hover:border-gray-300 hover:shadow-md">
                         @if ($laptop->image_url)
-                            <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain p-8 mix-blend-multiply transition-transform duration-700 ease-out group-hover:scale-110">
+                            <img id="main-product-image" src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain p-8 mix-blend-multiply transition-transform duration-700 ease-out group-hover:scale-110">
                         @else
-                            <img src="https://placehold.co/800x600/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110">
+                            <img id="main-product-image" src="https://placehold.co/800x600/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110">
                         @endif
 
                         <!-- Floating Category Badge -->
@@ -69,29 +69,29 @@
                         </label>
                         <div class="relative w-full max-w-5xl max-h-[90vh] p-4 scale-95 peer-checked:scale-100 transition-transform duration-500 ease-out z-0">
                             @if ($laptop->image_url)
-                                <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain">
+                                <img id="lightbox-image" src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain">
                             @else
-                                <img src="https://placehold.co/1200x800/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-contain rounded-xl shadow-2xl">
+                                <img id="lightbox-image" src="https://placehold.co/1200x800/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-contain rounded-xl shadow-2xl">
                             @endif
                         </div>
                     </div>
 
                     <!-- Supplemental Images -->
                     <div class="grid grid-cols-3 gap-4">
-                        <div class="aspect-square bg-white rounded-xl border border-gray-200/60 overflow-hidden cursor-pointer group relative">
-                            <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=400" alt="Detail 1" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
-                            <div class="absolute inset-0 ring-2 ring-transparent group-hover:ring-[#DF5E1D]/20 inset-ring transition-all duration-300 rounded-xl"></div>
-                        </div>
-                        <div class="aspect-square bg-white rounded-xl border border-gray-200/60 overflow-hidden cursor-pointer group relative">
-                            <img src="https://images.unsplash.com/photo-1625842268584-8f3296236761?auto=format&fit=crop&q=80&w=400" alt="Detail 2" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
-                            <div class="absolute inset-0 ring-2 ring-transparent group-hover:ring-[#DF5E1D]/20 inset-ring transition-all duration-300 rounded-xl"></div>
-                        </div>
-                        <div class="aspect-square bg-white rounded-xl border border-gray-200/60 overflow-hidden flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 cursor-pointer group transition-all duration-300 hover:border-[#DF5E1D]/30 hover:shadow-inner">
-                            <div class="flex flex-col items-center gap-2 text-gray-400 group-hover:text-[#DF5E1D] transition-colors transform group-hover:scale-105 duration-300">
-                                <iconify-icon icon="solar:gallery-linear" class="text-2xl" style="stroke-width: 1.5;"></iconify-icon>
-                                <span class="text-xs font-medium">Lihat Semua</span>
+                        @forelse ($laptop->images as $image)
+                            <div class="aspect-square bg-white rounded-xl border border-gray-200/60 overflow-hidden cursor-pointer group relative">
+                                <img src="{{ Storage::url($image->image_url) }}" alt="{{ $image->caption ?? 'Product image' }}" 
+                                     class="w-full h-full object-contain p-2 group-hover:scale-105 transition-all duration-500">
                             </div>
-                        </div>
+                        @empty
+                            {{-- placeholder jika tidak ada images --}}
+                            <div class="aspect-square bg-white rounded-xl border border-gray-200/60 overflow-hidden flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
+                                <div class="flex flex-col items-center gap-2 text-gray-400">
+                                    <iconify-icon icon="solar:gallery-linear" class="text-2xl" style="stroke-width: 1.5;"></iconify-icon>
+                                    <span class="text-xs font-medium">Belum ada gambar</span>
+                                </div>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -114,11 +114,11 @@
                         <div class="flex flex-col gap-1">
                             <span class="text-sm text-gray-400 font-medium tracking-wide uppercase">Total Harga</span>
                             <div class="flex items-baseline gap-2">
-                                <span class="text-4xl font-medium tracking-tight text-[#363230]">Rp {{ number_format($laptop->price, 0, ',', '.') }}</span>
+                                <span id="product-price" class="text-4xl font-medium tracking-tight text-[#363230]">Rp {{ number_format($laptop->price, 0, ',', '.') }}</span>
                                 {{-- <span class="text-sm text-gray-400">USD</span> --}}
                             </div>
                         </div>
-                        <div class="text-right">
+                        <div id="stock-badge" class="text-right">
                             @if ($laptop->stock > 0)
                                 <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-medium border border-emerald-200/60 shadow-sm">
                                     <iconify-icon icon="solar:check-circle-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>
@@ -140,7 +140,18 @@
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($laptop->variants as $variant)
                                     <label class="variant-option cursor-pointer">
-                                        <input type="radio" name="variant_id" value="{{ $variant->id }}" data-price="{{ $laptop->price + $variant->price_modifier }}" data-stock="{{ $variant->stock }}" class="peer hidden">
+                                        <input type="radio" name="variant_id" 
+                                               value="{{ $variant->id }}" 
+                                               data-price="{{ $laptop->price + $variant->price_modifier }}"
+                                               data-stock="{{ $variant->stock }}"
+                                               data-image="{{ $variant->image_url_full ?? $laptop->image_url_full }}"
+                                               data-ram="{{ $variant->ram ?? $laptop->ram }}"
+                                               data-storage="{{ $variant->storage ?? $laptop->storage }}"
+                                               data-graphics="{{ $variant->graphics ?? $laptop->graphics }}"
+                                               data-display="{{ $variant->display ?? $laptop->display }}"
+                                               data-weight="{{ $variant->weight ?? $laptop->weight }}"
+                                               data-battery="{{ $variant->battery_life ?? $laptop->battery_life }}"
+                                               class="peer hidden">
                                         <div class="px-4 py-2.5 rounded-xl border-2 border-gray-200 peer-checked:border-[#DF5E1D] peer-checked:bg-[#DF5E1D]/5 text-sm text-gray-600 peer-checked:text-[#DF5E1D] hover:border-gray-300 transition-all">
                                             <span class="font-medium">{{ $variant->name }}</span>
                                             @if ($variant->price_modifier > 0)
@@ -160,7 +171,7 @@
                         <input type="hidden" name="variant_id" id="selectedVariantId" value="">
                         <input type="hidden" name="quantity" value="1">
 
-                        <button type="submit" class="flex-1 bg-gradient-to-b from-[#DF5E1D] to-[#d05619] shadow-sm text-white py-4 px-6 rounded-2xl text-sm font-medium hover:from-[#d05619] hover:to-[#c45218] hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed group" @if ($laptop->stock <= 0) disabled @endif>
+                        <button id="addToCartBtn" type="submit" class="flex-1 bg-gradient-to-b from-[#DF5E1D] to-[#d05619] shadow-sm text-white py-4 px-6 rounded-2xl text-sm font-medium hover:from-[#d05619] hover:to-[#c45218] hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed group" @if ($laptop->stock <= 0) disabled @endif>
                             <iconify-icon icon="solar:cart-large-2-linear" class="text-xl group-hover:-translate-y-0.5 group-hover:scale-110 transition-all duration-300"></iconify-icon>
                             <span id="addToCartText">Add to Cart</span>
                         </button>
@@ -168,19 +179,70 @@
                             <iconify-icon icon="solar:heart-linear" class="text-xl text-gray-400 group-hover:text-rose-500 group-hover:scale-110 transition-all duration-300" style="stroke-width: 1.5;"></iconify-icon>
                             <span>Save</span>
                         </button>
-                        <button type="button" onclick="addToCompare('{{ $laptop->id }}')" class="sm:w-auto w-full bg-white border border-gray-200 shadow-sm text-[#363230] py-4 px-6 rounded-2xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow transition-all duration-300 flex items-center justify-center gap-2.5 group">
-                            <iconify-icon icon="solar:scale-linear" class="text-xl text-gray-400 group-hover:text-blue-500 group-hover:scale-110 transition-all duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                            <span>Compare</span>
-                        </button>
+
                     </form>
 
                     <script>
                     document.querySelectorAll('.variant-option input').forEach(radio => {
                         radio.addEventListener('change', function() {
-                            document.getElementById('selectedVariantId').value = this.value;
-                            const price = this.dataset.price;
-                            const stock = this.dataset.stock;
-                            document.querySelector('.text-4xl').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
+                            // 1. Update hidden input for cart form
+                            const variantInput = document.getElementById('selectedVariantId');
+                            if (variantInput) variantInput.value = this.value;
+                            
+                            // 2. Update price
+                            const priceEl = document.getElementById('product-price');
+                            if (priceEl && this.dataset.price) {
+                                priceEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.dataset.price);
+                            }
+                            
+                            // 3. Update main image
+                            const mainImage = document.getElementById('main-product-image');
+                            if (mainImage && this.dataset.image) {
+                                mainImage.src = this.dataset.image;
+                                // Also update lightbox image
+                                const lightboxImage = document.getElementById('lightbox-image');
+                                if (lightboxImage) lightboxImage.src = this.dataset.image;
+                            }
+                            
+                            // 4. Update specs table
+                            const specFields = [
+                                { key: 'ram', selector: '.spec-ram' },
+                                { key: 'storage', selector: '.spec-storage' },
+                                { key: 'graphics', selector: '.spec-graphics' },
+                                { key: 'display', selector: '.spec-display' },
+                                { key: 'battery', selector: '.spec-battery' },
+                                { key: 'weight', selector: '.spec-weight' },
+                            ];
+                            
+                            specFields.forEach(function(field) {
+                                const el = document.querySelector(field.selector);
+                                if (el && this.dataset[field.key]) {
+                                    let value = this.dataset[field.key];
+                                    if (field.key === 'weight') value = value + ' kg';
+                                    el.textContent = value;
+                                }
+                            }.bind(this));
+                            
+                            // 5. Update stock badge
+                            const stock = parseInt(this.dataset.stock);
+                            const stockBadge = document.getElementById('stock-badge');
+                            if (stockBadge) {
+                                if (stock > 0) {
+                                    stockBadge.innerHTML = '<div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-medium border border-emerald-200/60 shadow-sm">' +
+                                        '<iconify-icon icon="solar:check-circle-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>' +
+                                        'Stok Tersedia (' + stock + ')</div>';
+                                } else {
+                                    stockBadge.innerHTML = '<div class="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-3.5 py-2 rounded-xl text-xs font-medium border border-rose-200/60 shadow-sm">' +
+                                        '<iconify-icon icon="solar:close-circle-linear" class="text-sm" style="stroke-width: 1.5;"></iconify-icon>' +
+                                        'Stok Habis</div>';
+                                }
+                            }
+                            
+                            // 6. Update add-to-cart button state
+                            const cartBtn = document.getElementById('addToCartBtn');
+                            if (cartBtn) {
+                                cartBtn.disabled = stock <= 0;
+                            }
                         });
                     });
                     </script>
@@ -197,10 +259,10 @@
                         </div>
 
                         <div class="flex items-center gap-3">
-                            <button class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#DF5E1D] hover:border-[#DF5E1D]/30 hover:bg-[#DF5E1D]/5 transition-all duration-300 hover:-translate-y-0.5">
+                            <button onclick="shareProduct()" title="Bagikan produk ini" class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#DF5E1D] hover:border-[#DF5E1D]/30 hover:bg-[#DF5E1D]/5 transition-all duration-300 hover:-translate-y-0.5">
                                 <iconify-icon icon="solar:share-circle-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
                             </button>
-                            <button class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#DF5E1D] hover:border-[#DF5E1D]/30 hover:bg-[#DF5E1D]/5 transition-all duration-300 hover:-translate-y-0.5">
+                            <button onclick="copyProductLink()" title="Salin link produk" class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#DF5E1D] hover:border-[#DF5E1D]/30 hover:bg-[#DF5E1D]/5 transition-all duration-300 hover:-translate-y-0.5">
                                 <iconify-icon icon="solar:link-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
                             </button>
                         </div>
@@ -249,7 +311,7 @@
                                     Memori (RAM)
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->ram }}</td>
+                            <td class="px-6 py-5 text-[#363230] spec-ram">{{ $laptop->ram }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -260,7 +322,7 @@
                                     Penyimpanan
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->storage }}</td>
+                            <td class="px-6 py-5 text-[#363230] spec-storage">{{ $laptop->storage }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -271,7 +333,7 @@
                                     Grafis
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->graphics }}</td>
+                            <td class="px-6 py-5 text-[#363230] spec-graphics">{{ $laptop->graphics }}</td>
                         </tr>
                         <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
@@ -282,7 +344,7 @@
                                     Layar
                                 </div>
                             </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->display }}</td>
+                            <td class="px-6 py-5 text-[#363230] spec-display">{{ $laptop->display }}</td>
                         </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
                                 <div class="flex items-center gap-3">
@@ -292,7 +354,7 @@
                                     Daya Baterai
                                 </div>
                             </th>
-                                <td class="px-6 py-5 text-[#363230]">{{ $laptop->battery_life }}</td>
+                                <td class="px-6 py-5 text-[#363230] spec-battery">{{ $laptop->battery_life }}</td>
                         </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
                             <th scope="row" class="px-6 py-5 font-medium text-gray-600">
                                 <div class="flex items-center gap-3">
@@ -302,7 +364,7 @@
                                     Berat
                                 </div>
                             </th>
-                                <td class="px-6 py-5 text-[#363230]">{{ $laptop->weight }} kg</td>
+                                <td class="px-6 py-5 text-[#363230] spec-weight">{{ $laptop->weight }} kg</td>
                         </tr></tbody>
                 </table>
             </div>
@@ -617,6 +679,63 @@ function setRating(val) {
                 if (compareCount) compareCount.textContent = count;
             }
         });
+    }
+
+    // ===== Share Product Function =====
+    function shareProduct() {
+        const url = window.location.href;
+        const title = document.title;
+
+        if (navigator.share) {
+            navigator.share({
+                title: title,
+                text: 'Lihat produk ini di ZLM.ID',
+                url: url,
+            })
+            .then(() => showToast('Berhasil dibagikan!', 'success'))
+            .catch((err) => {
+                if (err.name !== 'AbortError') {
+                    copyToClipboard(url);
+                }
+            });
+        } else {
+            copyToClipboard(url);
+        }
+    }
+
+    // ===== Copy Product Link Function =====
+    function copyProductLink() {
+        const url = window.location.href;
+        copyToClipboard(url);
+    }
+
+    // ===== Copy to Clipboard Utility =====
+    function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text)
+                .then(() => showToast('Link disalin ke clipboard!', 'success'))
+                .catch(() => fallbackCopy(text));
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    // ===== Fallback Copy for Older Browsers =====
+    function fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        textarea.style.pointerEvents = 'none';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast('Link disalin ke clipboard!', 'success');
+        } catch (e) {
+            showToast('Gagal menyalin link', 'error');
+        }
+        document.body.removeChild(textarea);
     }
 
     document.addEventListener('DOMContentLoaded', function() {

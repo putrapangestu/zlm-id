@@ -101,15 +101,13 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
-                @include('admin.variants._image_upload', [
-                    'inputId' => 'laptop-image-input',
+                <label class="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                @include('admin.laptops._multi_image_upload', [
+                    'inputName' => 'images[]',
                     'dropzoneId' => 'laptop-dropzone',
-                    'previewId' => 'laptop-preview',
-                    'emptyId' => 'laptop-empty',
-                    'infoId' => 'laptop-info',
-                    'removeBtnId' => 'laptop-remove',
+                    'gridId' => 'laptop-preview-grid',
                 ])
+                <p class="mt-2 text-xs text-gray-400">Gambar pertama akan jadi gambar utama produk.</p>
             </div>
 
             <div>

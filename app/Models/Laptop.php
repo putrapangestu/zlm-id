@@ -73,6 +73,11 @@ class Laptop extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function images(): HasMany
+    {
+        return $this->hasMany(LaptopImage::class)->orderBy('sort_order');
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);

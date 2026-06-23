@@ -76,7 +76,7 @@ class LaptopController extends Controller
 
     public function show($id)
     {
-        $laptop = Laptop::with('categories', 'variants', 'reviews.user')->findOrFail($id);
+        $laptop = Laptop::with('categories', 'variants', 'reviews.user', 'images')->findOrFail($id);
 
         $categoryIds = $laptop->categories->pluck('id');
         $similar = Laptop::whereHas('categories', function ($q) use ($categoryIds) {
