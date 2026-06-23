@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'User Detail - ZLM.ID Admin')
-@section('heading', 'User Detail')
+@section('title', 'Detail Pengguna — ZLM.ID Admin')
+@section('heading', 'Detail Pengguna')
 
 @section('content')
 <div class="space-y-6">

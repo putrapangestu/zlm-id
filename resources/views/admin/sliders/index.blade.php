@@ -1,18 +1,18 @@
 @extends('layouts.admin')
 
-@section('title', 'Hero Sliders')
-@section('heading', 'Hero Sliders')
+@section('title', 'Hero Slider')
+@section('heading', 'Hero Slider')
 
 @section('content')
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <p class="text-sm text-gray-500">Manage the hero slider banners displayed on the homepage.</p>
+            <p class="text-sm text-gray-500">Kelola banner hero slider yang ditampilkan di halaman utama.</p>
         </div>
         <a href="{{ route('admin.sliders.create') }}" class="inline-flex items-center gap-2 bg-[#DF5E1D] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-[#c45218] transition-colors">
             <iconify-icon icon="solar:add-circle-linear" class="text-lg"></iconify-icon>
-            Add Slider
+            Tambah Slider
         </a>
     </div>
 

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Edit Product - ZLM.ID Admin')
-@section('page-title', 'Edit Product')
+@section('title', 'Edit Produk — ZLM.ID Admin')
+@section('page-title', 'Edit Produk')
 
 @section('content')
 <div class="max-w-4xl mx-auto">

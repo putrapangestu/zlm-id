@@ -36,7 +36,7 @@
         </div>
 
         <div class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-1">
-            <div class="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-2 mb-2">Overview</div>
+            <div class="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-2 mb-2">Utama</div>
 
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.dashboard')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:widget-5-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
@@ -45,42 +45,37 @@
 
             <a href="{{ route('admin.laptops.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.laptops.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Laptops</span>
+                <span class="text-sm font-medium">Laptop</span>
             </a>
 
             <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.categories.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:folder-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Categories</span>
+                <span class="text-sm font-medium">Kategori</span>
             </a>
 
             <a href="{{ route('admin.transactions.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.transactions.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:wallet-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Transactions</span>
-            </a>
-
-            <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.orders.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
-                <iconify-icon icon="solar:cart-large-minimalistic-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Orders</span>
+                <span class="text-sm font-medium">Transaksi</span>
             </a>
 
             <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.customers.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:users-group-two-rounded-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Customers</span>
+                <span class="text-sm font-medium">Pelanggan</span>
             </a>
 
             <a href="{{ route('admin.testimonials.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.testimonials.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:chat-round-dots-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Testimonials</span>
+                <span class="text-sm font-medium">Testimoni</span>
             </a>
 
             <a href="{{ route('admin.sliders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.sliders.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:gallery-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Hero Sliders</span>
+                <span class="text-sm font-medium">Hero Slider</span>
             </a>
 
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.settings.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:settings-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
-                <span class="text-sm font-medium">Settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
             </a>
 
             <div class="text-[10px] font-medium text-gray-400 uppercase tracking-widest px-2 mt-4 mb-2">Laporan</div>

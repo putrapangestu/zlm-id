@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Add Hero Slider')
-@section('heading', 'Add Hero Slider')
+@section('title', 'Tambah Hero Slider')
+@section('heading', 'Tambah Hero Slider')
 
 @section('content')
 <div class="max-w-2xl">

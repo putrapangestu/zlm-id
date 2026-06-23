@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Categories')
-@section('heading', 'Categories')
+@section('title', 'Kategori')
+@section('heading', 'Kategori')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">

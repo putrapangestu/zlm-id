@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Variant')
-@section('heading', 'Edit Variant')
+@section('title', 'Edit Varian')
+@section('heading', 'Edit Varian')
 
 @section('content')
 <div class="w-full max-w-full">

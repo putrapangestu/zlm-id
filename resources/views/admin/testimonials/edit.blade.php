@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Testimonial')
-@section('heading', 'Edit Testimonial')
+@section('title', 'Edit Testimoni')
+@section('heading', 'Edit Testimoni')
 
 @section('content')
 <div class="max-w-2xl">

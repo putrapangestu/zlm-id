@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Customer Detail — ' . $customer->name)
+@section('title', 'Detail Pelanggan — ' . $customer->name)
 @section('heading', $customer->name)
 
 @section('content')

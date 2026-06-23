@@ -184,11 +184,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Hero Sliders
     Route::resource('sliders', SliderController::class)->except(['show']);
 
-    // Orders (existing module)
-    Route::get('/orders', function () {
-        $orders = App\Models\Order::with('user', 'items')->latest()->paginate(20);
-        return view('admin.orders.index', compact('orders'));
-    })->name('orders.index');
+    // Orders — diarahkan ke Transaksi
+    Route::permanentRedirect('/orders', '/admin/transactions')->name('orders.redirect');
     Route::patch('/orders/{order}/status', [App\Http\Controllers\Admin\OrderStatusController::class, 'update'])->name('orders.status');
     Route::get('/orders/{order}/tracking', [App\Http\Controllers\Admin\OrderStatusController::class, 'tracking'])->name('orders.tracking');
 

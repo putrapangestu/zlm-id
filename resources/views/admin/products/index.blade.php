@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Product Management - ZLM.ID Admin')
-@section('page-title', 'Product Management')
+@section('title', 'Manajemen Produk — ZLM.ID Admin')
+@section('page-title', 'Manajemen Produk')
 
 @section('content')
 <div class="space-y-6">

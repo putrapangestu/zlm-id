@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Settings')
-@section('heading', 'Store Settings')
+@section('title', 'Pengaturan')
+@section('heading', 'Pengaturan Toko')
 
 @section('content')
 <div x-data="{ tab: '{{ $tab }}' }" class="max-w-3xl">

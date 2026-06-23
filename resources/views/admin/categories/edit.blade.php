@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Category')
-@section('heading', 'Edit Category')
+@section('title', 'Edit Kategori')
+@section('heading', 'Edit Kategori')
 
 @section('content')
 <form method="POST" action="{{ route('admin.categories.update', $category) }}" enctype="multipart/form-data" class="space-y-8">

@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Transaction: #' . $order->order_number)
+@section('title', 'Transaksi: #' . $order->order_number)
 @section('content')
 <div class="space-y-6">
     {{-- Header --}}

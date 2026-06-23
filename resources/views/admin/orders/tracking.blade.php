@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Update Tracking - ZLM.ID Admin')
+@section('title', 'Update Tracking — ZLM.ID Admin')
 @section('heading', 'Update Tracking')
 
 @section('content')
 <div class="max-w-2xl mx-auto">
     {{-- Breadcrumb --}}
     <div class="flex items-center gap-2 text-sm text-gray-400 mb-6">
-        <a href="{{ route('admin.orders.index') }}" class="hover:text-[#DF5E1D] transition-colors">Orders</a>
+        <a href="{{ route('admin.transactions.index') }}" class="hover:text-[#DF5E1D] transition-colors">Transaksi</a>
         <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
         <span class="text-[#363230] font-medium">{{ $order->order_number }}</span>
         <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
@@ -74,11 +74,11 @@
 
             {{-- Submit --}}
             <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
-                <a href="{{ route('admin.orders.index') }}" class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">
-                    Back
+                <a href="{{ route('admin.transactions.index') }}" class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">
+                    Kembali
                 </a>
                 <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-medium text-white bg-[#DF5E1D] hover:bg-[#c45218] transition-colors shadow-sm">
-                    Update Status
+                    Perbarui Status
                 </button>
             </div>
         </form>

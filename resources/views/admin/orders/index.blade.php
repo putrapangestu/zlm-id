@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Orders')
-@section('heading', 'Orders')
+@section('title', 'Transaksi (Legacy)')
+@section('heading', 'Transaksi')
 
 @section('content')
 <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden">

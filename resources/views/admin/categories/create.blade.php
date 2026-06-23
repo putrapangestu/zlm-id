@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Create Category')
-@section('heading', 'Create Category')
+@section('title', 'Tambah Kategori')
+@section('heading', 'Tambah Kategori')
 
 @section('content')
 <form method="POST" action="{{ route('admin.categories.store') }}" enctype="multipart/form-data" class="space-y-8">

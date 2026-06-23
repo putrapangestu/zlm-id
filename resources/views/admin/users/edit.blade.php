@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit User - ZLM.ID Admin')
-@section('heading', 'Edit User')
+@section('title', 'Edit Pengguna — ZLM.ID Admin')
+@section('heading', 'Edit Pengguna')
 
 @section('content')
 <div class="max-w-2xl mx-auto">

@@ -13,8 +13,8 @@
 <script src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
 @endpush
 
-@section('title', 'Create Laptop')
-@section('heading', 'Create Laptop')
+@section('title', 'Tambah Laptop')
+@section('heading', 'Tambah Laptop')
 
 @section('content')
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">

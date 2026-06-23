@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Transactions')
+@section('title', 'Transaksi')
 @section('content')
 <div class="space-y-6">
     {{-- Header --}}

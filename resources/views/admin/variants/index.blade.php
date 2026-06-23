@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Variants — ' . $laptop->name)
-@section('heading', 'Variants: ' . $laptop->name)
+@section('title', 'Varian — ' . $laptop->name)
+@section('heading', 'Varian: ' . $laptop->name)
 
 @section('content')
 <div class="flex items-center justify-between mb-6">

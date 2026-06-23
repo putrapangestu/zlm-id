@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Create User - ZLM.ID Admin')
-@section('heading', 'Create User')
+@section('title', 'Tambah Pengguna — ZLM.ID Admin')
+@section('heading', 'Tambah Pengguna')
 
 @section('content')
 <div class="max-w-2xl mx-auto">
