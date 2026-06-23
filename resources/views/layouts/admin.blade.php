@@ -73,6 +73,11 @@
                 <span class="text-sm font-medium">Testimonials</span>
             </a>
 
+            <a href="{{ route('admin.sliders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.sliders.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
+                <iconify-icon icon="solar:gallery-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
+                <span class="text-sm font-medium">Hero Sliders</span>
+            </a>
+
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl @if(request()->routeIs('admin.settings.*')) bg-orange-50/50 text-[#DF5E1D] @else text-gray-500 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors duration-200 group">
                 <iconify-icon icon="solar:settings-linear" class="text-lg" style="stroke-width: 1.5;"></iconify-icon>
                 <span class="text-sm font-medium">Settings</span>

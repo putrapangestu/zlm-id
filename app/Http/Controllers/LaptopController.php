@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\HeroSlider;
 use App\Models\Laptop;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
@@ -14,8 +15,9 @@ class LaptopController extends Controller
         $featured = Laptop::featured()->with('categories', 'variants')->take(6)->get();
         $categories = Category::where('is_active', true)->get();
         $testimonials = Testimonial::where('is_active', true)->latest()->take(3)->get();
+        $sliders = HeroSlider::active()->sorted()->get();
 
-        return view('landing.home', compact('featured', 'categories', 'testimonials'));
+        return view('landing.home', compact('featured', 'categories', 'testimonials', 'sliders'));
     }
 
     public function search(Request $request)

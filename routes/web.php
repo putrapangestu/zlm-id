@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LaptopController as AdminLaptopController;
 use App\Http\Controllers\Admin\LaptopVariantController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\SettingController;
@@ -179,6 +180,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Testimonials
     Route::resource('testimonials', TestimonialController::class)->except(['show']);
+
+    // Hero Sliders
+    Route::resource('sliders', SliderController::class)->except(['show']);
 
     // Orders (existing module)
     Route::get('/orders', function () {

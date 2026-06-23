@@ -3,47 +3,209 @@
 @section('title', 'ZLM.ID - Premium Laptop Store')
 
 @section('content')
-<!-- Hero Section -->
-<div class="relative bg-[#363230] pt-20 pb-20 lg:pt-32 lg:pb-28 overflow-hidden">
-    <!-- Subtle background glow -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#DF5E1D] opacity-20 blur-[120px] rounded-full pointer-events-none"></div>
+<!-- Hero Slider Section -->
+<div id="hero-slider" class="relative bg-[#363230] overflow-hidden">
+    @if ($sliders->count() > 0)
+        {{-- Slides container --}}
+        <div class="relative min-h-[500px] lg:min-h-[600px]">
+            @foreach ($sliders as $index => $slider)
+                <div class="slider-item absolute inset-0 transition-all duration-700 ease-in-out {{ $index === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full' }}"
+                     data-slide="{{ $index }}">
+                    {{-- Background image with overlay --}}
+                    @if ($slider->image_url)
+                        <div class="absolute inset-0">
+                            <img src="{{ $slider->image_url }}" alt="{{ $slider->title }}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#363230]/95 via-[#363230]/80 to-[#363230]/60"></div>
+                        </div>
+                    @else
+                        <div class="absolute inset-0">
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#363230] via-[#2d2a25] to-[#363230]"></div>
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#DF5E1D] opacity-20 blur-[120px] rounded-full pointer-events-none"></div>
+                        </div>
+                    @endif
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-            <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#DF5E1D] text-xs font-medium mb-6">
-                    <iconify-icon icon="solar:stars-linear"></iconify-icon>
-                    New 2026 Models Available
+                    {{-- Content --}}
+                    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 lg:pt-32 lg:pb-28">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                            <div class="max-w-2xl">
+                                @if ($slider->subtitle)
+                                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#DF5E1D] text-xs font-medium mb-6">
+                                        <iconify-icon icon="solar:stars-linear"></iconify-icon>
+                                        {{ $slider->subtitle }}
+                                    </div>
+                                @endif
+
+                                <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white mb-6 leading-tight">
+                                    {{ $slider->title }}
+                                </h1>
+
+                                @if ($slider->description)
+                                    <p class="text-lg text-gray-400 mb-8 max-w-xl leading-relaxed">
+                                        {{ $slider->description }}
+                                    </p>
+                                @endif
+
+                                <div class="flex flex-wrap gap-4">
+                                    @if ($slider->button_text && $slider->button_url)
+                                        <a href="{{ $slider->button_url }}" class="bg-[#DF5E1D] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#c45218] transition shadow-sm flex items-center gap-2">
+                                            {{ $slider->button_text }}
+                                            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                                        </a>
+                                    @endif
+                                    <a href="{{ route('landing.search') }}" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
+                                        <iconify-icon icon="solar:magic-stick-3-linear"></iconify-icon>
+                                        Smart Search
+                                    </a>
+                                    <a href="#featured" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
+                                        View Featured
+                                    </a>
+                                </div>
+                            </div>
+
+                            {{-- Right side image --}}
+                            @if ($slider->image_url)
+                                <div class="relative lg:ml-auto hidden lg:block">
+                                    <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white/5 p-2">
+                                        <img src="{{ $slider->image_url }}" alt="{{ $slider->title }}" class="w-full h-auto rounded-xl object-cover aspect-[4/3] max-h-[350px]">
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white mb-6 leading-tight">
-                    Toko Laptop Bekas Berkualitas di <br>
-                    <span class="text-[#DF5E1D]">Malang.</span>
-                </h1>
-                <p class="text-lg text-gray-400 mb-8 max-w-xl leading-relaxed">
-                    ZLM.ID hadir menyediakan berbagai pilihan laptop bekas second berkualitas dengan jaminan harga dan service terbaik di Malang. Temukan perangkat impian yang sesuai dengan pekerjaan Anda!
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="{{ route('landing.search') }}" class="bg-[#DF5E1D] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#c45218] transition shadow-sm flex items-center gap-2">
-                        Explore Catalog
-                        <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
-                    </a>
-                    <a href="{{ route('landing.smart-search') }}" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
-                        <iconify-icon icon="solar:magic-stick-3-linear"></iconify-icon>
-                        Smart Search
-                    </a>
-                    <a href="#featured" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
-                        View Featured
-                    </a>
-                </div>
-            </div>
-            <div class="relative lg:ml-auto">
-                <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white/5 p-2">
-                    <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&amp;fit=crop&amp;q=80&amp;w=1200" alt="Premium Laptop" class="w-full h-auto rounded-xl object-cover aspect-[4/3]">
+            @endforeach
+        </div>
+
+        {{-- Navigation dots --}}
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
+            @foreach ($sliders as $index => $slider)
+                <button onclick="goToSlide({{ $index }})" class="slider-dot w-2.5 h-2.5 rounded-full transition-all duration-300 {{ $index === 0 ? 'bg-[#DF5E1D] w-8' : 'bg-white/40 hover:bg-white/60' }}" data-dot="{{ $index }}"></button>
+            @endforeach
+        </div>
+
+        {{-- Arrow controls --}}
+        @if ($sliders->count() > 1)
+            <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center justify-center transition-all duration-300 backdrop-blur-sm">
+                <iconify-icon icon="solar:arrow-left-linear" class="text-lg"></iconify-icon>
+            </button>
+            <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center justify-center transition-all duration-300 backdrop-blur-sm">
+                <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+            </button>
+        @endif
+    @else
+        {{-- Fallback static hero when no sliders --}}
+        <div class="relative pt-20 pb-20 lg:pt-32 lg:pb-28">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#DF5E1D] opacity-20 blur-[120px] rounded-full pointer-events-none"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                    <div class="max-w-2xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#DF5E1D] text-xs font-medium mb-6">
+                            <iconify-icon icon="solar:stars-linear"></iconify-icon>
+                            New 2026 Models Available
+                        </div>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white mb-6 leading-tight">
+                            Toko Laptop Bekas Berkualitas di <br>
+                            <span class="text-[#DF5E1D]">Malang.</span>
+                        </h1>
+                        <p class="text-lg text-gray-400 mb-8 max-w-xl leading-relaxed">
+                            ZLM.ID hadir menyediakan berbagai pilihan laptop bekas second berkualitas dengan jaminan harga dan service terbaik di Malang. Temukan perangkat impian yang sesuai dengan pekerjaan Anda!
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="{{ route('landing.search') }}" class="bg-[#DF5E1D] text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-[#c45218] transition shadow-sm flex items-center gap-2">
+                                Explore Catalog
+                                <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                            </a>
+                            <a href="{{ route('landing.smart-search') }}" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
+                                <iconify-icon icon="solar:magic-stick-3-linear"></iconify-icon>
+                                Smart Search
+                            </a>
+                            <a href="#featured" class="bg-white/5 text-white border border-white/10 px-6 py-3 rounded-md text-sm font-medium hover:bg-white/10 transition flex items-center gap-2">
+                                View Featured
+                            </a>
+                        </div>
+                    </div>
+                    <div class="relative lg:ml-auto">
+                        <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white/5 p-2">
+                            <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&amp;fit=crop&amp;q=80&amp;w=1200" alt="Premium Laptop" class="w-full h-auto rounded-xl object-cover aspect-[4/3]">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.slider-item');
+        const dots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+        let autoPlayInterval;
+
+        if (slides.length === 0) return;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.remove('opacity-0', 'translate-x-full', '-translate-x-full');
+                    slide.classList.add('opacity-100', 'translate-x-0');
+                } else if (i < index) {
+                    slide.classList.remove('opacity-100', 'translate-x-0', 'translate-x-full');
+                    slide.classList.add('opacity-0', '-translate-x-full');
+                } else {
+                    slide.classList.remove('opacity-100', 'translate-x-0', '-translate-x-full');
+                    slide.classList.add('opacity-0', 'translate-x-full');
+                }
+            });
+
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.remove('bg-white/40', 'hover:bg-white/60', 'w-2.5');
+                    dot.classList.add('bg-[#DF5E1D]', 'w-8');
+                } else {
+                    dot.classList.remove('bg-[#DF5E1D]', 'w-8');
+                    dot.classList.add('bg-white/40', 'hover:bg-white/60', 'w-2.5');
+                }
+            });
+
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            const next = (currentSlide + 1) % slides.length;
+            showSlide(next);
+            resetAutoPlay();
+        }
+
+        function prevSlide() {
+            const prev = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(prev);
+            resetAutoPlay();
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+            resetAutoPlay();
+        }
+
+        function startAutoPlay() {
+            if (slides.length <= 1) return;
+            autoPlayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function resetAutoPlay() {
+            clearInterval(autoPlayInterval);
+            startAutoPlay();
+        }
+
+        // Expose functions globally for inline onclick
+        window.nextSlide = nextSlide;
+        window.prevSlide = prevSlide;
+        window.goToSlide = goToSlide;
+
+        startAutoPlay();
+    });
+</script>
 
 <!-- Featured Laptops Section -->
 <section id="featured" class="py-24">
