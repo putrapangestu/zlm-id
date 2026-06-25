@@ -284,7 +284,7 @@ function addCompareFromModal(id, name, image) {
 }
 
 function removeFromCompare(laptopId) {
-    fetch('{{ route('compare.remove', '') }}/' + laptopId, {
+    fetch('{{ route('compare.remove', ['laptop' => ':laptopId']) }}'.replace(':laptopId', laptopId), {
         method: 'DELETE',
         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
     })
