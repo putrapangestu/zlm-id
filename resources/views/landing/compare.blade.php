@@ -115,8 +115,10 @@
                 <div class="divide-y divide-gray-100">
                     @php $specs = [ 'processor' => ['label' => 'Processor', 'icon' => 'solar:cpu-linear'], 'ram' => ['label' => 'Memory (RAM)', 'icon' => 'solar:ram-linear'], 'storage' => ['label' => 'Storage', 'icon' => 'solar:database-linear'], 'graphics' => ['label' => 'Graphics', 'icon' => 'solar:graph-new-linear'], 'display' => ['label' => 'Display', 'icon' => 'solar:monitor-linear'], 'weight' => ['label' => 'Weight', 'icon' => 'solar:case-minimalistic-linear'], 'battery_life' => ['label' => 'Battery Life', 'icon' => 'solar:battery-charge-linear'], ]; @endphp
 
+                    @php $specCols = count($laptops) + 1; @endphp
+
                     @foreach ($specs as $field => $spec)
-                    <div class="grid {{ $gridCols }} group hover:bg-orange-50/30 transition-colors duration-300">
+                    <div class="grid grid-cols-{{ count($laptops) }} lg:grid-cols-{{ $specCols }} group hover:bg-orange-50/30 transition-colors duration-300">
                         <div class="col-span-{{ count($laptops) }} lg:col-span-1 text-xs text-center py-2 text-gray-400 bg-gray-50/50 border-b border-gray-50 lg:hidden">{{ $spec['label'] }}</div>
                         <div class="hidden lg:flex items-center p-6 border-r border-gray-100">
                             <div class="flex items-center gap-3 text-sm font-medium text-gray-600">
@@ -127,12 +129,22 @@
                             </div>
                         </div>
                         @foreach ($laptops as $laptop)
-                        <div class="p-5 lg:p-6 text-sm text-[#363230] text-center lg:text-left {{ !$loop->parent->last ? 'border-r border-gray-100' : '' }} flex items-center justify-center lg:justify-start {{ $loop->index % 2 === 1 ? 'bg-gray-50/10' : '' }}">
-                            @if ($field === 'weight' && $laptop->weight)
-                                {{ $laptop->weight }} kg
-                            @else
-                                {{ $laptop->$field ?? '-' }}
-                            @endif
+                        <div class="p-5 lg:p-6 {{ !$loop->parent->last ? 'border-r border-gray-100' : '' }} flex items-center justify-center lg:justify-start {{ $loop->index % 2 === 1 ? 'bg-gray-50/10' : '' }}">
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 group-hover:bg-white group-hover:border-orange-100 transition-colors">
+                                    <iconify-icon icon="{{ $spec['icon'] }}" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-[11px] font-medium text-gray-400 leading-tight">{{ $spec['label'] }}</div>
+                                    <div class="text-sm text-[#363230] font-medium leading-tight">
+                                        @if ($field === 'weight' && $laptop->weight)
+                                            {{ $laptop->weight }} kg
+                                        @else
+                                            {{ $laptop->$field ?? '-' }}
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         @endforeach
                     </div>
