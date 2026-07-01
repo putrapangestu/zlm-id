@@ -30,22 +30,22 @@ deploy:
 # ================================
 # 3️⃣ Mirror code to Github (branch main)
 # ================================
-# mirror_production_to_github:
-#   tags:
-#     - runner-development-shell
-#   stage: mirror
-#   variables:
-#     GIT_DEPTH: 0
-#   script:
-#     - git remote remove github || true
-#     - echo "Mirror code to GitHub repository => $GITHUB_USER/$GITHUB_REPO"
-#     - git remote add github https://oauth2:$GITHUB_TOKEN@github.com/$GITHUB_USER/$GITHUB_REPO.git
+mirror_production_to_github:
+  tags:
+    - runner-development-shell
+  stage: mirror
+  variables:
+    GIT_DEPTH: 0
+  script:
+    - git remote remove github || true
+    - echo "Mirror code to GitHub repository => $GITHUB_USER/$GITHUB_REPO"
+    - git remote add github https://oauth2:$GITHUB_TOKEN@github.com/$GITHUB_USER/$GITHUB_REPO.git
 
-#     # pastikan branch main ada
-#     - git fetch origin main
-#     - git checkout -B main origin/main
+    # pastikan branch main ada
+    - git fetch origin main
+    - git checkout -B main origin/main
 
-#     # push ke GitHub
-#     - git push github main:main --force
-#   only:
-#     - main
+    # push ke GitHub
+    - git push github main:main --force
+  only:
+    - main
