@@ -4,7 +4,7 @@
 @section('heading', 'Tambah Hero Slider')
 
 @section('content')
-<div class="max-w-2xl">
+<div class="w-full">
     <div class="mb-6">
         <a href="{{ route('admin.sliders.index') }}" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-[#DF5E1D] transition-colors">
             <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
@@ -17,9 +17,9 @@
 
         <div class="bg-white rounded-xl border border-gray-200/60 shadow-sm p-6 space-y-5">
             <div>
-                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title <span class="text-red-500">*</span></label>
-                <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                    class="w-full rounded-lg border-gray-200 focus:ring-[#DF5E1D] focus:border-[#DF5E1D] text-sm"
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input type="text" name="title" id="title" value="{{ old('title') }}"
+                    class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50/50 focus:bg-white focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/20 text-sm transition-colors"
                     placeholder="e.g., New 2026 Models Available">
                 @error('title')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
@@ -29,7 +29,7 @@
             <div>
                 <label for="subtitle" class="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
                 <input type="text" name="subtitle" id="subtitle" value="{{ old('subtitle') }}"
-                    class="w-full rounded-lg border-gray-200 focus:ring-[#DF5E1D] focus:border-[#DF5E1D] text-sm"
+                    class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50/50 focus:bg-white focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/20 text-sm transition-colors"
                     placeholder="e.g., Premium Laptop Store Malang">
                 @error('subtitle')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
@@ -39,7 +39,7 @@
             <div>
                 <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                 <textarea name="description" id="description" rows="3"
-                    class="w-full rounded-lg border-gray-200 focus:ring-[#DF5E1D] focus:border-[#DF5E1D] text-sm"
+                    class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50/50 focus:bg-white focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/20 text-sm transition-colors"
                     placeholder="Slider description text...">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
@@ -50,7 +50,7 @@
                 <div>
                     <label for="button_text" class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
                     <input type="text" name="button_text" id="button_text" value="{{ old('button_text') }}"
-                        class="w-full rounded-lg border-gray-200 focus:ring-[#DF5E1D] focus:border-[#DF5E1D] text-sm"
+                        class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50/50 focus:bg-white focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/20 text-sm transition-colors"
                         placeholder="e.g., Explore Catalog">
                     @error('button_text')
                         <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
@@ -60,7 +60,7 @@
                 <div>
                     <label for="button_url" class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
                     <input type="text" name="button_url" id="button_url" value="{{ old('button_url') }}"
-                        class="w-full rounded-lg border-gray-200 focus:ring-[#DF5E1D] focus:border-[#DF5E1D] text-sm"
+                        class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50/50 focus:bg-white focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/20 text-sm transition-colors"
                         placeholder="e.g., /search or https://...">
                     @error('button_url')
                         <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
@@ -71,7 +71,7 @@
             <div>
                 <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Background Image</label>
                 <input type="file" name="image" id="image" accept="image/*"
-                    class="w-full rounded-lg border-gray-200 focus:ring-[#DF5E1D] focus:border-[#DF5E1D] text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+                    class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#DF5E1D]/10 file:text-[#DF5E1D] hover:file:bg-[#DF5E1D]/20">
                 <p class="text-xs text-gray-500 mt-1">Max 5MB. JPG, PNG, or WebP. Recommended: 1920x800px.</p>
                 @error('image')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
@@ -82,7 +82,7 @@
                 <div>
                     <label for="sort_order" class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
                     <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', 0) }}" min="0"
-                        class="w-full rounded-lg border-gray-200 focus:ring-[#DF5E1D] focus:border-[#DF5E1D] text-sm"
+                        class="block w-full px-4 py-3 rounded-lg border-gray-200 bg-gray-50/50 focus:bg-white focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/20 text-sm transition-colors"
                         placeholder="0">
                     @error('sort_order')
                         <p class="text-sm text-red-500 mt-1">{{ $message }}</p>

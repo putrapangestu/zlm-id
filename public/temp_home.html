@@ -1,0 +1,1395 @@
+<html lang="en" class="scroll-smooth"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="PcsNfl5SrBICvhhSxOinxnCzSEETilTzwVf3sSbP">
+    <title>ZLM.ID - Premium Laptop Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        iconify-icon {
+            stroke-width: 1.5;
+        }
+
+        /* Preloader Styles */
+        .preloader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+        }
+
+        .preloader-wrapper.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .preloader-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #DF5E1D 0%, #c45218 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-scale 2s ease-in-out infinite;
+        }
+
+        .preloader-logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .preloader-text {
+            font-size: 28px;
+            font-weight: 600;
+            color: #363230;
+            letter-spacing: -0.5px;
+            animation: fade-in-out 2s ease-in-out infinite;
+        }
+
+        .preloader-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #DF5E1D 0%, transparent 100%);
+            border-radius: 2px;
+            animation: expand-width 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-scale {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes fade-in-out {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes expand-width {
+            0%, 100% {
+                width: 40px;
+            }
+            50% {
+                width: 80px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 selection:bg-[#DF5E1D] selection:text-white">
+
+    <!-- Preloader -->
+    <div class="preloader-wrapper" id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">
+                <img src="http://localhost:8000/assets/logo.png" alt="ZLM.ID">
+            </div>
+            <div class="preloader-text">ZLM.ID</div>
+            <div class="preloader-line"></div>
+        </div>
+    </div>
+
+    <!-- Top Orange Bar -->
+<div class="bg-[#DF5E1D] text-white text-[11px] sm:text-xs py-2 px-4 text-center font-medium">
+    Ekstra 500K untuk Click & Collect <a href="#" class="underline font-bold ml-1">CEK PROMO DI SINI</a>
+</div>
+
+<!-- Main Navigation -->
+<nav id="navbar" class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full transition-all duration-300 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Upper Navbar (Logo, Search, Icons) -->
+        <div class="flex items-center justify-between h-20 gap-4">
+            
+            <!-- Logo -->
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="http://localhost:8000" class="flex items-center gap-2 hover:opacity-80 transition">
+                    <img src="http://localhost:8000/assets/logo.png" alt="ZLM.ID" class="h-8 w-8 object-contain">
+                    <span class="text-xl font-bold tracking-tighter text-[#363230]">ZLM.ID</span>
+                </a>
+            </div>
+
+            <!-- Search Bar (Middle) -->
+            <div class="hidden md:flex flex-1 max-w-xl mx-8">
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <iconify-icon icon="solar:magnifer-linear" class="text-gray-400 text-lg"></iconify-icon>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border-none rounded-full bg-gray-100 text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:bg-white transition-colors" placeholder="Cari">
+                </div>
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-4 shrink-0">
+                <div class="hidden lg:flex items-center gap-2 text-xs font-semibold text-gray-600 hover:text-black cursor-pointer mr-2">
+                    <iconify-icon icon="solar:shop-linear" class="text-lg"></iconify-icon>
+                    <span class="uppercase tracking-wide">ZLM.ID STORE MALANG</span>
+                </div>
+                
+                                    <a href="http://localhost:8000/login" class="p-2 text-gray-600 hover:text-black transition">
+                        <iconify-icon icon="solar:user-linear" class="text-2xl"></iconify-icon>
+                    </a>
+                                
+                <!-- Cart -->
+                <a href="http://localhost:8000/cart" class="p-2 text-gray-600 hover:text-black transition relative">
+                    <iconify-icon icon="solar:cart-large-2-linear" class="text-2xl"></iconify-icon>
+                    <span class="absolute top-1 right-0 w-3.5 h-3.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center cart-count" style="display:none">0</span>
+                </a>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-black transition p-2" aria-label="Toggle menu">
+                        <iconify-icon icon="solar:hamburger-menu-linear" class="text-2xl"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lower Navbar (Categories) -->
+        <div class="hidden md:flex items-center justify-center space-x-8 py-3 text-[13px] font-medium text-gray-700">
+            <a href="#" class="hover:text-black transition">Mac</a>
+            <a href="#" class="hover:text-black transition">iPad</a>
+            <a href="#" class="hover:text-black transition">iPhone</a>
+            <a href="#" class="hover:text-black transition">Watch</a>
+            <a href="#" class="hover:text-black transition">Musik</a>
+            <a href="#" class="hover:text-black transition">Aksesoris</a>
+            <a href="#" class="hover:text-black transition">Event & Promo</a>
+            <a href="#" class="hover:text-black transition">Services</a>
+            <span class="text-gray-300">|</span>
+            <a href="#" class="hover:text-black transition">Edukasi</a>
+            <a href="#" class="hover:text-black transition">Bisnis</a>
+            <a href="#" class="hover:text-black transition">Lokasi Gerai</a>
+        </div>
+    </div>
+
+    
+    <div id="mobile-menu" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-72 max-w-[85vw] bg-white shadow-2xl overflow-y-auto">
+            <div class="flex items-center justify-between p-4 border-b border-gray-100">
+                <span class="text-xl font-bold tracking-tighter text-black">ZLM.ID</span>
+                <button onclick="toggleMobileMenu()" class="p-2 text-gray-500 hover:text-black rounded-lg transition-colors">
+                    <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
+                </button>
+            </div>
+            
+            <div class="p-4">
+                <!-- Mobile Search -->
+                <div class="relative w-full mb-6">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <iconify-icon icon="solar:magnifer-linear" class="text-gray-400"></iconify-icon>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Cari">
+                </div>
+
+                <div class="space-y-1 font-medium text-sm text-gray-700">
+                    <a href="#" class="block py-2.5 border-b border-gray-50 hover:text-black">Mac</a>
+                    <a href="#" class="block py-2.5 border-b border-gray-50 hover:text-black">iPad</a>
+                    <a href="#" class="block py-2.5 border-b border-gray-50 hover:text-black">iPhone</a>
+                    <a href="#" class="block py-2.5 border-b border-gray-50 hover:text-black">Watch</a>
+                    <a href="#" class="block py-2.5 border-b border-gray-50 hover:text-black">Aksesoris</a>
+                    <a href="#" class="block py-2.5 border-b border-gray-50 hover:text-black text-blue-600">Event & Promo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleMobileMenu() {
+        var menu = document.getElementById('mobile-menu');
+        if (menu) {
+            menu.classList.toggle('hidden');
+            document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+        }
+    }
+    </script>
+</nav>
+
+    <!-- Include Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Hero Slider Section -->
+<div id="hero-slider" class="relative w-full">
+    <div class="swiper heroSwiper">
+        <div class="swiper-wrapper">
+                                                <div class="swiper-slide relative">
+                                                
+                        <a 
+                             href="/search"  
+                            class="block w-full relative hero-aspect">
+                            
+                            
+                                                            <img src="/storage/sliders/tCY4IfqqMtefG42QfrfS68EDt0HOozXlqr9EXdD9.jpg" alt="" class="block w-full h-full object-cover object-center">
+                            
+                            
+                                                    </a>
+                    </div>
+                                    <div class="swiper-slide relative">
+                                                
+                        <a 
+                             href="/search"  
+                            class="block w-full relative hero-aspect">
+                            
+                            
+                                                            <img src="/storage/sliders/mudjawQSaZV9d5U7ZgTeu96I8Vf3ZE4R804n1fOx.jpg" alt="" class="block w-full h-full object-cover object-center">
+                            
+                            
+                                                    </a>
+                    </div>
+                                    <div class="swiper-slide relative">
+                                                
+                        <div 
+                             
+                            class="block w-full relative hero-aspect">
+                            
+                            
+                                                            <img src="/storage/sliders/rQKx9NMrHDrm8SzmBV3Gy09kCvWZgfWQ0qrUblJF.webp" alt="Smart Search — Cari Laptop Idealmu" class="block w-full h-full object-cover object-center">
+                            
+                            
+                                                            <!-- Overlay solid gelap penuh (50%) agar teks super kontras -->
+                                <div class="absolute inset-0 bg-black/50 flex items-end justify-center md:items-center">
+                                    <div class="text-center px-6 pb-16 md:pb-0 max-w-4xl w-full">
+                                                                                    <span class="inline-block bg-[#DF5E1D] text-white text-xs px-3 py-1 rounded-full font-bold mb-3 shadow-md">AI-Powered Recommendation</span>
+                                                                                
+                                                                                    <h1 class="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-3 md:mb-4 drop-shadow-lg leading-tight">
+                                                Smart Search — Cari Laptop Idealmu
+                                            </h1>
+                                                                                
+                                                                                    <p class="text-sm md:text-lg text-gray-100 mb-6 drop-shadow-md max-w-2xl mx-auto">
+                                                Bingung milih laptop? Gunakan fitur Smart Search kami. Cukup jawab beberapa pertanyaan, kami rekomendasikan laptop yang paling cocok untuk Anda!
+                                            </p>
+                                        
+                                        
+                                                                                    <a href="/smart-search" class="relative z-10 inline-flex items-center gap-2 bg-[#DF5E1D] text-white px-6 md:px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#c45218] transition shadow-xl">
+                                                Coba Smart Search
+                                                <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+                                            </a>
+                                                                            </div>
+                                </div>
+                                                    </div>
+                    </div>
+                                    </div>
+        
+        
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+
+<!-- Include Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const swiper = new Swiper('.heroSwiper', {
+            loop: true,
+            autoHeight: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            // Mengaktifkan fitur geser dengan 2 jari (trackpad) atau mouse scroll
+            mousewheel: {
+                forceToAxis: true, // Hanya bereaksi terhadap scroll horizontal (kiri-kanan)
+                thresholdDelta: 15, // Diturunkan agar jauh lebih ringan/sensitif saat disentuh pertama kali
+                thresholdTime: 400, // Memberikan jeda antar scroll (mencegah slide loncat berkali-kali karena momentum)
+            },
+            effect: 'slide',
+        });
+    });
+</script>
+
+<style>
+    /* Aspect Ratio yang paten untuk hero slider agar seragam meski gambar beda ukuran */
+    .hero-aspect {
+        aspect-ratio: 1 / 1; /* Mobile (Square) */
+    }
+    @media (min-width: 768px) {
+        .hero-aspect {
+            aspect-ratio: 16 / 9; /* Tablet (Widescreen) */
+        }
+    }
+    @media (min-width: 1024px) {
+        .hero-aspect {
+            aspect-ratio: 21 / 9; /* Desktop/Laptop (Ultrawide Cinematic) */
+        }
+    }
+
+    /* Custom Styling untuk pagination Swiper agar sesuai tema ZLM (Digimap layout) */
+    .heroSwiper {
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        display: block;
+    }
+    .heroSwiper .swiper-slide {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    .heroSwiper .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        background: #d1d5db; /* gray-300 */
+        opacity: 1;
+        transition: all 0.3s ease;
+        margin: 0 3px !important;
+    }
+    .heroSwiper .swiper-pagination-bullet-active {
+        background: #DF5E1D; /* Orange ZLM */
+        transform: scale(1.2);
+    }
+    .heroSwiper .swiper-pagination {
+        position: absolute !important;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 6px 12px;
+        border-radius: 9999px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border: 1px solid #f3f4f6;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        bottom: 24px !important; /* Force bottom position clearly inside image */
+        z-index: 20 !important;
+    }
+</style>
+
+<!-- Featured Laptops Section -->
+<section id="featured" class="py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold tracking-tight text-[#363230]">Deal Terkini</h2>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="flex flex-wrap justify-center gap-6 md:gap-12 mb-10 border-b border-gray-200 px-4">
+            <!-- Tab 'All' -->
+            <button onclick="filterFeatured('all', this)" class="featured-tab active flex flex-col items-center gap-2 pb-4 border-b-2 border-black text-[#363230] hover:text-black transition-colors" data-tab="all">
+                <iconify-icon icon="solar:widget-linear" class="text-2xl"></iconify-icon>
+                <span class="text-sm font-medium">Semua Deal</span>
+            </button>
+
+                        <button onclick="filterFeatured('gaming', this)" class="featured-tab flex flex-col items-center gap-2 pb-4 border-b-2 border-transparent text-gray-400 hover:text-black hover:border-gray-300 transition-colors" data-tab="gaming">
+                <iconify-icon icon="solar:gamepad-linear" class="text-2xl"></iconify-icon>
+                <span class="text-sm font-medium">Gaming</span>
+            </button>
+                        <button onclick="filterFeatured('business', this)" class="featured-tab flex flex-col items-center gap-2 pb-4 border-b-2 border-transparent text-gray-400 hover:text-black hover:border-gray-300 transition-colors" data-tab="business">
+                <iconify-icon icon="solar:briefcase-linear" class="text-2xl"></iconify-icon>
+                <span class="text-sm font-medium">Business</span>
+            </button>
+                        <button onclick="filterFeatured('student', this)" class="featured-tab flex flex-col items-center gap-2 pb-4 border-b-2 border-transparent text-gray-400 hover:text-black hover:border-gray-300 transition-colors" data-tab="student">
+                <iconify-icon icon="solar:diploma-linear" class="text-2xl"></iconify-icon>
+                <span class="text-sm font-medium">Student</span>
+            </button>
+                        <button onclick="filterFeatured('ultrabook', this)" class="featured-tab flex flex-col items-center gap-2 pb-4 border-b-2 border-transparent text-gray-400 hover:text-black hover:border-gray-300 transition-colors" data-tab="ultrabook">
+                <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-2xl"></iconify-icon>
+                <span class="text-sm font-medium">Ultrabook</span>
+            </button>
+            
+            <!-- View All Link -->
+            <a href="http://localhost:8000/search" class="flex flex-col items-center gap-2 pb-4 border-b-2 border-transparent text-gray-400 hover:text-[#DF5E1D] hover:border-[#DF5E1D] transition-colors">
+                <iconify-icon icon="solar:tag-price-linear" class="text-2xl"></iconify-icon>
+                <span class="text-sm font-medium">See All Deals</span>
+            </a>
+        </div>
+
+        <!-- Swiper Container with Navigation -->
+        <div class="relative group px-4 md:px-12 mb-10">
+            <div class="swiper featuredSwiper overflow-hidden">
+                <div class="swiper-wrapper pb-4">
+                                            <div class="swiper-slide featured-slide h-auto" data-category="gaming">
+                            <div class="bg-white h-full rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                    
+                    <!-- Badge Category (Solid Orange) -->
+                    <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                        Gaming
+                    </div>
+
+                    <!-- Image -->
+                    <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="ROG Zephyrus G16" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                                            </div>
+
+                    <div class="flex flex-col flex-grow">
+                        <!-- Title -->
+                        <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                            ROG Zephyrus G16
+                        </h3>
+
+                        <!-- Brand -->
+                        <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                            ASUS
+                        </p>
+
+                        <!-- Pricing -->
+                        <div class="mb-4">
+                            <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                            <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
+                                Rp 3.500
+                            </p>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="border-gray-200 mb-4">
+
+                        <!-- Specs (Text-only layout like ASUS) -->
+                        <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                                            <p class="text-[11px] text-gray-600 leading-relaxed">Intel Core i9-12900HK</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">32GB DDR5</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">1TB NVMe SSD</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">NVIDIA RTX 4090</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">16&quot; 4K OLED 120Hz</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">6 hours</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">2.50 kg</p>
+                                                    </div>
+
+                        <!-- See Less / More Toggle -->
+                        <div onclick="toggleSpecs(this)" class="text-[11px] text-[#DF5E1D] flex items-center gap-1 cursor-pointer mb-4 hover:underline w-fit">
+                            <span class="toggle-text">See more</span> 
+                            <iconify-icon icon="solar:alt-arrow-down-linear" class="toggle-icon"></iconify-icon>
+                        </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col gap-2 mt-auto pt-4">
+                                <!-- Beli (Primary Action) -->
+                                <button onclick="window.location.href='http://localhost:8000/laptop/01a02c8d-a0d4-707f-aa94-9934cd5e3a5e'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
+                                    Beli
+                                </button>
+                                <!-- Pelajari (Secondary Action) -->
+                                <a href="http://localhost:8000/laptop/01a02c8d-a0d4-707f-aa94-9934cd5e3a5e" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
+                                    Pelajari
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                                        <div class="swiper-slide featured-slide h-auto" data-category="gaming">
+                            <div class="bg-white h-full rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                    
+                    <!-- Badge Category (Solid Orange) -->
+                    <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                        Gaming
+                    </div>
+
+                    <!-- Image -->
+                    <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="Legion Pro 9" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                                            </div>
+
+                    <div class="flex flex-col flex-grow">
+                        <!-- Title -->
+                        <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                            Legion Pro 9
+                        </h3>
+
+                        <!-- Brand -->
+                        <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                            Lenovo
+                        </p>
+
+                        <!-- Pricing -->
+                        <div class="mb-4">
+                            <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                            <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
+                                Rp 3.300
+                            </p>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="border-gray-200 mb-4">
+
+                        <!-- Specs (Text-only layout like ASUS) -->
+                        <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                                            <p class="text-[11px] text-gray-600 leading-relaxed">Intel Core i9-13980HX</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">32GB DDR5</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">2TB NVMe SSD</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">NVIDIA RTX 4080</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">16&quot; QHD+ 240Hz</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">5 hours</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">2.80 kg</p>
+                                                    </div>
+
+                        <!-- See Less / More Toggle -->
+                        <div onclick="toggleSpecs(this)" class="text-[11px] text-[#DF5E1D] flex items-center gap-1 cursor-pointer mb-4 hover:underline w-fit">
+                            <span class="toggle-text">See more</span> 
+                            <iconify-icon icon="solar:alt-arrow-down-linear" class="toggle-icon"></iconify-icon>
+                        </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col gap-2 mt-auto pt-4">
+                                <!-- Beli (Primary Action) -->
+                                <button onclick="window.location.href='http://localhost:8000/laptop/01a02c8d-a154-7357-b2b1-4a3fdcb2d9b6'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
+                                    Beli
+                                </button>
+                                <!-- Pelajari (Secondary Action) -->
+                                <a href="http://localhost:8000/laptop/01a02c8d-a154-7357-b2b1-4a3fdcb2d9b6" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
+                                    Pelajari
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                                        <div class="swiper-slide featured-slide h-auto" data-category="business">
+                            <div class="bg-white h-full rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                    
+                    <!-- Badge Category (Solid Orange) -->
+                    <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                        Business
+                    </div>
+
+                    <!-- Image -->
+                    <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="ThinkPad X1 Extreme" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                                            </div>
+
+                    <div class="flex flex-col flex-grow">
+                        <!-- Title -->
+                        <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                            ThinkPad X1 Extreme
+                        </h3>
+
+                        <!-- Brand -->
+                        <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                            Lenovo
+                        </p>
+
+                        <!-- Pricing -->
+                        <div class="mb-4">
+                            <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                            <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
+                                Rp 2.300
+                            </p>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="border-gray-200 mb-4">
+
+                        <!-- Specs (Text-only layout like ASUS) -->
+                        <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                                            <p class="text-[11px] text-gray-600 leading-relaxed">Intel Core i7-13700H</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">32GB DDR4</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">1TB NVMe SSD</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">NVIDIA RTX 4060</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">16&quot; 2.5K IPS</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">8 hours</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">1.90 kg</p>
+                                                    </div>
+
+                        <!-- See Less / More Toggle -->
+                        <div onclick="toggleSpecs(this)" class="text-[11px] text-[#DF5E1D] flex items-center gap-1 cursor-pointer mb-4 hover:underline w-fit">
+                            <span class="toggle-text">See more</span> 
+                            <iconify-icon icon="solar:alt-arrow-down-linear" class="toggle-icon"></iconify-icon>
+                        </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col gap-2 mt-auto pt-4">
+                                <!-- Beli (Primary Action) -->
+                                <button onclick="window.location.href='http://localhost:8000/laptop/01a02c8d-a15b-739d-9e40-579dd6007c5f'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
+                                    Beli
+                                </button>
+                                <!-- Pelajari (Secondary Action) -->
+                                <a href="http://localhost:8000/laptop/01a02c8d-a15b-739d-9e40-579dd6007c5f" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
+                                    Pelajari
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                                        <div class="swiper-slide featured-slide h-auto" data-category="business">
+                            <div class="bg-white h-full rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                    
+                    <!-- Badge Category (Solid Orange) -->
+                    <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                        Business
+                    </div>
+
+                    <!-- Image -->
+                    <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="MacBook Pro 16&quot;" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                                            </div>
+
+                    <div class="flex flex-col flex-grow">
+                        <!-- Title -->
+                        <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                            MacBook Pro 16&quot;
+                        </h3>
+
+                        <!-- Brand -->
+                        <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                            Apple
+                        </p>
+
+                        <!-- Pricing -->
+                        <div class="mb-4">
+                            <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                            <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
+                                Rp 2.500
+                            </p>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="border-gray-200 mb-4">
+
+                        <!-- Specs (Text-only layout like ASUS) -->
+                        <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                                            <p class="text-[11px] text-gray-600 leading-relaxed">Apple M2 Max</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">32GB Unified Memory</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">1TB SSD</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">12-core GPU</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">16&quot; Liquid Retina XDR</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">17 hours</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">2.10 kg</p>
+                                                    </div>
+
+                        <!-- See Less / More Toggle -->
+                        <div onclick="toggleSpecs(this)" class="text-[11px] text-[#DF5E1D] flex items-center gap-1 cursor-pointer mb-4 hover:underline w-fit">
+                            <span class="toggle-text">See more</span> 
+                            <iconify-icon icon="solar:alt-arrow-down-linear" class="toggle-icon"></iconify-icon>
+                        </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col gap-2 mt-auto pt-4">
+                                <!-- Beli (Primary Action) -->
+                                <button onclick="window.location.href='http://localhost:8000/laptop/01a02c8d-a15f-71b5-ab2b-5dcec48c06e5'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
+                                    Beli
+                                </button>
+                                <!-- Pelajari (Secondary Action) -->
+                                <a href="http://localhost:8000/laptop/01a02c8d-a15f-71b5-ab2b-5dcec48c06e5" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
+                                    Pelajari
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                                        <div class="swiper-slide featured-slide h-auto" data-category="student">
+                            <div class="bg-white h-full rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                    
+                    <!-- Badge Category (Solid Orange) -->
+                    <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                        Student
+                    </div>
+
+                    <!-- Image -->
+                    <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="IdeaPad 3" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                                            </div>
+
+                    <div class="flex flex-col flex-grow">
+                        <!-- Title -->
+                        <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                            IdeaPad 3
+                        </h3>
+
+                        <!-- Brand -->
+                        <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                            Lenovo
+                        </p>
+
+                        <!-- Pricing -->
+                        <div class="mb-4">
+                            <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                            <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
+                                Rp 600
+                            </p>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="border-gray-200 mb-4">
+
+                        <!-- Specs (Text-only layout like ASUS) -->
+                        <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                                            <p class="text-[11px] text-gray-600 leading-relaxed">AMD Ryzen 5 5500U</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">8GB DDR4</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">512GB NVMe SSD</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">AMD Radeon Graphics</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">15.6&quot; HD</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">7 hours</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">1.90 kg</p>
+                                                    </div>
+
+                        <!-- See Less / More Toggle -->
+                        <div onclick="toggleSpecs(this)" class="text-[11px] text-[#DF5E1D] flex items-center gap-1 cursor-pointer mb-4 hover:underline w-fit">
+                            <span class="toggle-text">See more</span> 
+                            <iconify-icon icon="solar:alt-arrow-down-linear" class="toggle-icon"></iconify-icon>
+                        </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col gap-2 mt-auto pt-4">
+                                <!-- Beli (Primary Action) -->
+                                <button onclick="window.location.href='http://localhost:8000/laptop/01a02c8d-a167-73b3-b0db-988ae2c96d7f'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
+                                    Beli
+                                </button>
+                                <!-- Pelajari (Secondary Action) -->
+                                <a href="http://localhost:8000/laptop/01a02c8d-a167-73b3-b0db-988ae2c96d7f" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
+                                    Pelajari
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                                        <div class="swiper-slide featured-slide h-auto" data-category="ultrabook">
+                            <div class="bg-white h-full rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                    
+                    <!-- Badge Category (Solid Orange) -->
+                    <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                        Ultrabook
+                    </div>
+
+                    <!-- Image -->
+                    <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="MacBook Air M2" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                                            </div>
+
+                    <div class="flex flex-col flex-grow">
+                        <!-- Title -->
+                        <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                            MacBook Air M2
+                        </h3>
+
+                        <!-- Brand -->
+                        <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                            Apple
+                        </p>
+
+                        <!-- Pricing -->
+                        <div class="mb-4">
+                            <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                            <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
+                                Rp 1.300
+                            </p>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="border-gray-200 mb-4">
+
+                        <!-- Specs (Text-only layout like ASUS) -->
+                        <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                                            <p class="text-[11px] text-gray-600 leading-relaxed">Apple M2</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">8GB Unified Memory</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">512GB SSD</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">10-core GPU</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">13.6&quot; Liquid Retina</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">18 hours</p>
+                                                                                        <p class="text-[11px] text-gray-600 leading-relaxed">1.24 kg</p>
+                                                    </div>
+
+                        <!-- See Less / More Toggle -->
+                        <div onclick="toggleSpecs(this)" class="text-[11px] text-[#DF5E1D] flex items-center gap-1 cursor-pointer mb-4 hover:underline w-fit">
+                            <span class="toggle-text">See more</span> 
+                            <iconify-icon icon="solar:alt-arrow-down-linear" class="toggle-icon"></iconify-icon>
+                        </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col gap-2 mt-auto pt-4">
+                                <!-- Beli (Primary Action) -->
+                                <button onclick="window.location.href='http://localhost:8000/laptop/01a02c8d-a172-7024-8f85-dd29d3d5f298'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
+                                    Beli
+                                </button>
+                                <!-- Pelajari (Secondary Action) -->
+                                <a href="http://localhost:8000/laptop/01a02c8d-a172-7024-8f85-dd29d3d5f298" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
+                                    Pelajari
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <button class="featured-prev absolute left-0 top-[40%] -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-[#DF5E1D] hover:border-[#DF5E1D] shadow-md z-10 transition opacity-0 group-hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                <iconify-icon icon="solar:alt-arrow-left-linear" class="text-xl"></iconify-icon>
+            </button>
+            <button class="featured-next absolute right-0 top-[40%] -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-[#DF5E1D] hover:border-[#DF5E1D] shadow-md z-10 transition opacity-0 group-hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                <iconify-icon icon="solar:alt-arrow-right-linear" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+
+        <!-- Lihat Semuanya Button -->
+        <div class="flex justify-center mt-6">
+            <a href="http://localhost:8000/search" class="inline-flex items-center gap-2 border-2 border-black text-black px-8 py-3 rounded-md text-sm font-bold hover:bg-black hover:text-white transition-colors">
+                Lihat Semuanya
+                <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-20 bg-white border-y border-gray-200/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 max-w-2xl mx-auto">
+            <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Pilih Sesuai Kebutuhan</h2>
+            <p class="text-gray-500">Cari model laptop idaman Anda berdasarkan segmentasi penggunaan harian.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                            <a href="http://localhost:8000/search?category=gaming" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
+                    <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
+                        <iconify-icon icon="solar:gamepad-linear" class="text-2xl"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-semibold text-[#363230] mb-1">Gaming</h3>
+                    <p class="text-sm text-gray-500">High-performance laptops with dedicated GPUs for gaming</p>
+                </a>
+                            <a href="http://localhost:8000/search?category=business" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
+                    <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
+                        <iconify-icon icon="solar:briefcase-linear" class="text-2xl"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-semibold text-[#363230] mb-1">Business</h3>
+                    <p class="text-sm text-gray-500">Professional laptops for enterprise and productivity</p>
+                </a>
+                            <a href="http://localhost:8000/search?category=student" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
+                    <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
+                        <iconify-icon icon="solar:diploma-linear" class="text-2xl"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-semibold text-[#363230] mb-1">Student</h3>
+                    <p class="text-sm text-gray-500">Affordable laptops for study and everyday use</p>
+                </a>
+                            <a href="http://localhost:8000/search?category=ultrabook" class="group block p-6 bg-gray-50 rounded-xl border border-gray-200/60 hover:bg-white hover:border-[#DF5E1D]/50 hover:shadow-sm transition-all duration-300">
+                    <div class="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center mb-4 group-hover:text-[#DF5E1D] transition-colors shadow-sm">
+                        <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-2xl"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-semibold text-[#363230] mb-1">Ultrabook</h3>
+                    <p class="text-sm text-gray-500">Thin and light premium laptops for portability</p>
+                </a>
+                    </div>
+    </div>
+</section>
+
+<!-- Features / Why Choose Us -->
+<section class="py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div class="flex flex-col">
+                <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
+                    <iconify-icon icon="solar:shield-check-linear" class="text-3xl"></iconify-icon>
+                </div>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Teruji Kualitasnya</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Setiap unit laptop bekas telah melewati proses Quality Control ketat untuk menjamin performanya.</p>
+            </div>
+
+            <div class="flex flex-col">
+                <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
+                    <iconify-icon icon="solar:routing-linear" class="text-3xl"></iconify-icon>
+                </div>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Pengiriman Aman</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Tersedia layanan pick-up di Malang dan pengiriman super aman ke seluruh Indonesia dengan asuransi.</p>
+            </div>
+
+            <div class="flex flex-col">
+                <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
+                    <iconify-icon icon="solar:tag-price-linear" class="text-3xl"></iconify-icon>
+                </div>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Harga Bersahabat</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Kami terus memantau harga pasar agar Anda selalu mendapat rasio harga ke performa laptop yang paling jujur.</p>
+            </div>
+
+            <div class="flex flex-col">
+                <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
+                    <iconify-icon icon="solar:chat-round-dots-linear" class="text-3xl"></iconify-icon>
+                </div>
+                <h3 class="text-base font-semibold text-[#363230] mb-2">Garansi Toko Jelas</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">Kami memberikan jaminan dan garansi servis untuk unit laptop dari setiap masalah paska pembelian.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-24 bg-gray-100/50 border-t border-gray-200/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Apa Kata Pelanggan Kami</h2>
+            <p class="text-gray-500">Ribuan orang puas berbelanja laptop second di ZLM.ID Malang.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    </div>
+    </div>
+</section>
+
+<!-- Insights / Blog Section -->
+<section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <div>
+                <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Artikel Terkini</h2>
+                <p class="text-gray-500">Informasi tips, panduan hardware, serta perawatan laptop Anda.</p>
+            </div>
+            <a href="http://localhost:8000/articles" class="text-sm font-medium text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
+                Read Journal
+                <iconify-icon icon="solar:arrow-right-linear" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Article 1 -->
+            <article class="group cursor-pointer">
+                <div class="relative h-52 rounded-xl overflow-hidden mb-5 border border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Motherboard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-gray-400 mb-3">
+                    <span class="text-[#DF5E1D] bg-[#DF5E1D]/10 px-2 py-0.5 rounded">Architecture</span>
+                    <span>•</span>
+                    <span>May 12, 2026</span>
+                </div>
+                <h3 class="text-lg font-semibold text-[#363230] mb-2 group-hover:text-[#DF5E1D] transition-colors leading-snug">
+                    Understanding ARM vs x86 for Modern Workloads
+                </h3>
+                <p class="text-sm text-gray-500 line-clamp-2">
+                    A technical comparison of architecture types and how they impact battery life, thermal throttling, and compilation times.
+                </p>
+            </article>
+
+            <!-- Article 2 -->
+            <article class="group cursor-pointer">
+                <div class="relative h-52 rounded-xl overflow-hidden mb-5 border border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Keyboard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-gray-400 mb-3">
+                    <span class="text-gray-600 bg-gray-100 px-2 py-0.5 rounded">Guide</span>
+                    <span>•</span>
+                    <span>May 08, 2026</span>
+                </div>
+                <h3 class="text-lg font-semibold text-[#363230] mb-2 group-hover:text-[#DF5E1D] transition-colors leading-snug">
+                    Optimizing Your Mobile Workstation
+                </h3>
+                <p class="text-sm text-gray-500 line-clamp-2">
+                    Essential software configurations and hardware maintenance routines to prevent performance degradation over time.
+                </p>
+            </article>
+
+            <!-- Article 3 -->
+            <article class="group cursor-pointer">
+                <div class="relative h-52 rounded-xl overflow-hidden mb-5 border border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Laptop Screen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-gray-400 mb-3">
+                    <span class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Review</span>
+                    <span>•</span>
+                    <span>Apr 29, 2026</span>
+                </div>
+                <h3 class="text-lg font-semibold text-[#363230] mb-2 group-hover:text-[#DF5E1D] transition-colors leading-snug">
+                    OLED vs Mini-LED: The Creator's Dilemma
+                </h3>
+                <p class="text-sm text-gray-500 line-clamp-2">
+                    Analyzing color accuracy, contrast ratios, and burn-in risks for professional photo and video editors.
+                </p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="py-20 bg-[#363230] border-t border-white/10 relative overflow-hidden">
+    <!-- Subtle background element -->
+    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#DF5E1D] opacity-10 blur-[100px] rounded-full pointer-events-none translate-x-1/2 translate-y-1/2"></div>
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <h2 class="text-3xl font-semibold tracking-tight text-white mb-4">Selangkah Lebih Dulu</h2>
+        <p class="text-sm text-gray-400 mb-8 max-w-xl mx-auto">
+            Dapatkan informasi stock terbaru dan penawaran diskon laptop ZLM.ID secara eksklusif.
+        </p>
+
+        <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <iconify-icon icon="solar:letter-linear" class="text-gray-400"></iconify-icon>
+                </div>
+                <input type="email" placeholder="Email address" required="" class="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/50 focus:border-[#DF5E1D] transition-all">
+            </div>
+            <button type="submit" class="bg-[#DF5E1D] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#c45218] transition-colors whitespace-nowrap shadow-sm">
+                Subscribe
+            </button>
+        </form>
+        <p class="text-xs text-gray-500 mt-4">We respect your inbox. Unsubscribe at any time.</p>
+    </div>
+</section>
+
+<script>
+    const WISHLIST_STORAGE_KEY = 'wishlistLaptops';
+
+    function getWishlist() {
+        try {
+            return JSON.parse(localStorage.getItem(WISHLIST_STORAGE_KEY)) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveWishlist(list) {
+        localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(list));
+        updateWishlistButtons();
+    }
+
+    function toggleWishlist(id) {
+        const wishlist = getWishlist();
+        const index = wishlist.indexOf(id);
+
+        if (index > -1) {
+            wishlist.splice(index, 1);
+        } else {
+            wishlist.push(id);
+        }
+
+        saveWishlist(wishlist);
+    }
+
+    function updateWishlistButtons() {
+        const wishlist = getWishlist();
+        document.querySelectorAll('[data-wishlist-btn]').forEach(btn => {
+            const id = parseInt(btn.dataset.laptopId);
+            if (wishlist.includes(id)) {
+                btn.classList.add('text-red-500', 'bg-red-50', 'border-red-200');
+                btn.classList.remove('text-gray-600', 'hover:bg-red-50');
+            } else {
+                btn.classList.remove('text-red-500', 'bg-red-50', 'border-red-200');
+                btn.classList.add('text-gray-600');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateWishlistButtons();
+        updateCompareBadge();
+    });
+
+    // ===== Compare Functions (Session-based) =====
+    function addToCompare(laptopId) {
+        fetch('http://localhost:8000/compare/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': 'PcsNfl5SrBICvhhSxOinxnCzSEETilTzwVf3sSbP' },
+            body: JSON.stringify({ laptop_id: laptopId }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                showToast(res.message, 'success');
+                updateCompareBadge();
+            } else {
+                showToast(res.message, 'info');
+            }
+        })
+        .catch(function() {
+            showToast('Gagal menambahkan ke perbandingan', 'error');
+        });
+    }
+
+    function clearCompare() {
+        fetch('http://localhost:8000/compare/clear', {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': 'PcsNfl5SrBICvhhSxOinxnCzSEETilTzwVf3sSbP' },
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                location.reload();
+            }
+        });
+    }
+
+    function updateCompareBadge() {
+        fetch('http://localhost:8000/compare/ids')
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            var count = res.ids ? res.ids.length : 0;
+            var badge = document.querySelector('.compare-count');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'flex' : 'none';
+            }
+            // Update floating compare widget
+            var floatingWidget = document.getElementById('floating-compare');
+            var compareBadge = document.getElementById('compare-badge');
+            var compareCount = document.getElementById('compare-count');
+            if (floatingWidget) {
+                if (count > 0) {
+                    floatingWidget.classList.remove('hidden');
+                } else {
+                    floatingWidget.classList.add('hidden');
+                }
+                if (compareBadge) compareBadge.textContent = count;
+                if (compareCount) compareCount.textContent = count;
+            }
+        });
+    }
+
+    function showToast(message, type) {
+        var toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 px-4 py-3 rounded-lg text-white text-sm font-medium shadow-lg z-50 transition-all duration-300 ' + (type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3000);
+    }
+
+    // ===== Specs Toggle =====
+    function toggleSpecs(btn) {
+        const container = btn.previousElementSibling;
+        const textSpan = btn.querySelector('.toggle-text');
+        const icon = btn.querySelector('.toggle-icon');
+        
+        if (container.style.maxHeight === '42px') {
+            container.style.maxHeight = '500px';
+            textSpan.textContent = 'See less';
+            icon.setAttribute('icon', 'solar:alt-arrow-up-linear');
+        } else {
+            container.style.maxHeight = '42px';
+            textSpan.textContent = 'See more';
+            icon.setAttribute('icon', 'solar:alt-arrow-down-linear');
+        }
+    }
+
+    // ===== Featured Slider & Tab Filtering =====
+    let featuredSwiperInstance;
+    
+    function initFeaturedSwiper() {
+        if (featuredSwiperInstance) {
+            featuredSwiperInstance.destroy(true, true);
+        }
+        
+        featuredSwiperInstance = new Swiper('.featuredSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 24,
+            navigation: {
+                nextEl: '.featured-next',
+                prevEl: '.featured-prev',
+            },
+            breakpoints: {
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 4 }
+            },
+            watchOverflow: true,
+        });
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+        initFeaturedSwiper();
+    });
+
+    function filterFeatured(category, btn) {
+        // Update styling active tab
+        document.querySelectorAll('.featured-tab').forEach(t => {
+            t.classList.remove('border-black', 'text-[#363230]', 'active');
+            t.classList.add('border-transparent', 'text-gray-400');
+        });
+        btn.classList.remove('border-transparent', 'text-gray-400');
+        btn.classList.add('border-black', 'text-[#363230]', 'active');
+
+        // Toggle slides
+        document.querySelectorAll('.featured-slide').forEach(slide => {
+            if (category === 'all' || slide.dataset.category === category) {
+                slide.style.display = '';
+                slide.classList.add('swiper-slide');
+            } else {
+                slide.style.display = 'none';
+                slide.classList.remove('swiper-slide');
+            }
+        });
+
+        // Reinitialize Swiper
+        initFeaturedSwiper();
+    }
+</script>
+<div id="floating-compare"
+     class="fixed bottom-6 right-6 z-50 hidden transition-all duration-300">
+    <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-200 p-4">
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <iconify-icon icon="solar:scale-linear" class="text-2xl text-[#363230]"></iconify-icon>
+                <span id="compare-badge"
+                      class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    0
+                </span>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-[#363230]">Compare <span id="compare-count">0</span>/3</p>
+                <div class="flex gap-2 mt-1">
+                    <a href="http://localhost:8000/compare"
+                       class="text-xs font-medium text-[#DF5E1D] hover:text-[#c45218] transition-colors">
+                        View
+                    </a>
+                    <button onclick="clearCompare()"
+                            class="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <footer class="bg-[#1f1d1b] pt-16 pb-8 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 mb-12">
+
+            
+            <div>
+                <a href="http://localhost:8000" class="inline-block mb-4">
+                                            <h4 class="text-white font-bold text-xl tracking-tight">ZLM.ID</h4>
+                                    </a>
+                <p class="text-sm text-gray-400 leading-relaxed">Premium laptop store — engineered excellence for professionals, creators, and gamers.</p>
+            </div>
+
+            
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Links</h4>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="http://localhost:8000/search" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
+                            <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
+                            Katalog
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://localhost:8000/smart-search" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
+                            <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
+                            Smart Search
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://localhost:8000/compare" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
+                            <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
+                            Bandingkan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://localhost:8000/testimonials" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
+                            <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
+                            Testimoni
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://localhost:8000/articles" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
+                            <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
+                            Artikel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact</h4>
+                <ul class="space-y-3">
+                                            <li class="flex items-center gap-3 text-sm text-gray-400">
+                            <iconify-icon icon="solar:letter-linear" class="text-[#DF5E1D]"></iconify-icon>
+                            support@zlm.id
+                        </li>
+                                                                <li class="flex items-center gap-3 text-sm text-gray-400">
+                            <iconify-icon icon="solar:phone-linear" class="text-[#DF5E1D]"></iconify-icon>
+                            +62 123 4567 8910
+                        </li>
+                                                                <li>
+                            <a href="https://wa.me/6212345678910" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 text-sm text-gray-400 hover:text-[#25D366] transition-colors">
+                                <iconify-icon icon="solar:phone-calling-linear" class="text-[#DF5E1D]"></iconify-icon>
+                                WhatsApp
+                            </a>
+                        </li>
+                                    </ul>
+            </div>
+
+            
+            <div>
+                <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Ikuti Kami</h4>
+                <div class="flex gap-3 flex-wrap">
+                                            <a href="https://instagram.com/zlm.id" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#E4405F] hover:text-white hover:border-[#E4405F] hover:scale-110 transition-all duration-300" aria-label="Instagram">
+                            <iconify-icon icon="solar:instagram-linear" class="text-lg"></iconify-icon>
+                        </a>
+                                                                <a href="https://facebook.com/zlm.id" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] hover:scale-110 transition-all duration-300" aria-label="Facebook">
+                            <iconify-icon icon="solar:facebook-linear" class="text-lg"></iconify-icon>
+                        </a>
+                                                                <a href="https://tiktok.com/@zlm.id" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-black hover:text-white hover:border-black hover:scale-110 transition-all duration-300" aria-label="TikTok">
+                            <iconify-icon icon="solar:tiktok-linear" class="text-lg"></iconify-icon>
+                        </a>
+                                                                <a href="https://youtube.com/@zlm.id" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000] hover:scale-110 transition-all duration-300" aria-label="YouTube">
+                            <iconify-icon icon="solar:youtube-linear" class="text-lg"></iconify-icon>
+                        </a>
+                                                                <a href="https://wa.me/6212345678910" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#25D366] hover:text-white hover:border-[#25D366] hover:scale-110 transition-all duration-300" aria-label="WhatsApp">
+                            <iconify-icon icon="solar:phone-calling-linear" class="text-lg"></iconify-icon>
+                        </a>
+                                    </div>
+            </div>
+        </div>
+
+        
+                    <div class="bg-white/5 rounded-xl p-4 mb-8">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-gray-400">
+                                            <span class="flex items-center gap-2">
+                            <iconify-icon icon="solar:map-point-linear" class="text-[#DF5E1D] shrink-0"></iconify-icon>
+                            Jl. Raya Malang No. 123, Malang, Jawa Timur
+                        </span>
+                                                                <span class="flex items-center gap-2">
+                            <iconify-icon icon="solar:clock-circle-linear" class="text-[#DF5E1D] shrink-0"></iconify-icon>
+                            Sen - Sab: 09:00 - 18:00
+                        </span>
+                                    </div>
+            </div>
+        
+        
+        
+        
+        <div class="pt-8 border-t border-white/5 text-center">
+            <p class="text-sm text-gray-500">&copy; 2026 ZLM.ID. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Preloader Script -->
+    <script>
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.classList.add('hidden');
+            }
+        });
+
+        setTimeout(function() {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.classList.add('hidden');
+            }
+        }, 3000);
+    </script>
+
+    
+</body></html>
+

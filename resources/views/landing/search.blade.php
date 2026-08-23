@@ -4,13 +4,25 @@
 @section('title', 'Cari Laptop')
 
 @section('content')
-<div class="bg-gray-50 min-h-screen py-12 lg:py-20">
+<div class="bg-gray-50 min-h-screen pt-6 pb-12 lg:pt-8 lg:pb-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-12">
-            <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-[#363230] mb-3">Temukan Laptop Idamanmu</h1>
-            <p class="text-gray-500 max-w-2xl text-sm md:text-base leading-relaxed">Jelajahi koleksi laptop bekas berkualitas tinggi kami. Gunakan filter untuk menemukan spesifikasi yang paling cocok dengan kebutuhanmu.</p>
-        </div>
+        <!-- Breadcrumb -->
+        <nav class="mb-8 lg:mb-12">
+            <ol class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                <li>
+                    <a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 flex items-center gap-1.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#DF5E1D]/50">
+                        <iconify-icon icon="solar:home-2-linear" class="text-base" style="stroke-width: 1.5;"></iconify-icon>
+                        Beranda
+                    </a>
+                </li>
+                <li class="flex items-center text-gray-300">
+                    <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
+                </li>
+                <li class="text-[#363230] font-semibold" aria-current="page">
+                    Katalog
+                </li>
+            </ol>
+        </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             <!-- Sidebar Filters -->
@@ -134,81 +146,95 @@
                 @if ($laptops->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($laptops as $laptop)
-                            <div class="bg-white rounded-xl border border-gray-200/80 hover:border-gray-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group relative">
-
+                            <div class="bg-white rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                                
                                 <!-- Stock Status Overlay -->
                                 @if ($laptop->stock === 0)
-                                    <div class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+                                    <div class="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
                                         <div class="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-semibold shadow-xl tracking-wide">
                                             Stok Habis
                                         </div>
                                     </div>
                                 @endif
 
-                                <!-- Image -->
-                                <div class="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-center border-b border-gray-100">
-                                    @if ($laptop->image_url)
-                                        <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
-                                    @else
-                                        <!-- Minimalist high-quality placeholder from Unsplash -->
-                                        <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded">
-                                    @endif
-
-                                    <!-- Badge -->
-                                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-gray-200 text-[#363230] px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
-                                        {{ $laptop->categories->first()?->name ?? 'General' }}
-                                    </div>
+                                <!-- Badge Category (Solid Orange) -->
+                                <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                                    {{ $laptop->categories->first()?->name ?? 'Featured' }}
                                 </div>
 
-                                <!-- Content -->
-                                <div class="p-5 flex flex-col flex-grow">
-                                    <!-- Brand -->
-                                    <p class="text-xs text-gray-400 font-medium tracking-wide uppercase mb-1">{{ $laptop->brand }}</p>
+                                <!-- Image -->
+                                <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                    @if ($laptop->image_url)
+                                        <img src="{{ $laptop->image_url_full }}" alt="{{ $laptop->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                                    @else
+                                        <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $laptop->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    @endif
+                                </div>
 
+                                <div class="flex flex-col flex-grow">
                                     <!-- Title -->
-                                    <h3 class="text-base font-semibold text-[#363230] mb-4 line-clamp-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                                    <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
                                         {{ $laptop->name }}
                                     </h3>
 
-                                    <!-- Specs (Using Icons) -->
-                                    <div class="mb-6 space-y-2.5 flex-grow">
-                                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                                            <iconify-icon icon="solar:cpu-linear" class="text-gray-400 text-base"></iconify-icon>
-                                            <span class="truncate">{{ $laptop->processor }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                                            <iconify-icon icon="solar:ram-linear" class="text-gray-400 text-base"></iconify-icon>
-                                            <span>{{ $laptop->ram }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                                            <iconify-icon icon="solar:database-linear" class="text-gray-400 text-base"></iconify-icon>
-                                            <span>{{ $laptop->storage }}</span>
-                                        </div>
-                                    </div>
+                                    <!-- Brand -->
+                                    <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                                        {{ $laptop->brand }}
+                                    </p>
 
-                                    <!-- Price & Actions -->
-                                    <div class="pt-4 border-t border-gray-100">
-                                        <p class="text-xl font-semibold tracking-tight text-[#363230] mb-4">
+                                    <!-- Pricing -->
+                                    <div class="mb-4">
+                                        <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                                        <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
                                             Rp {{ number_format($laptop->price, 0, ',', '.') }}
                                         </p>
-                                        <div class="flex gap-2 items-center">
-                                            <!-- Wishlist Button -->
-                                            <button onclick="toggleWishlist({{ $laptop->id }})" data-wishlist-btn data-laptop-id="{{ $laptop->id }}" class="w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all" title="Add to Wishlist">
-                                                <iconify-icon icon="solar:heart-linear" class="text-lg"></iconify-icon>
-                                            </button>
-
-                                            <!-- Add to Compare Button -->
-                                            <button onclick="addToCompare('{{ $laptop->id }}')" data-compare-btn data-laptop-id="{{ $laptop->id }}" class="compare-btn w-9 h-9 rounded-lg border border-gray-200 text-gray-600 flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all" title="Add to Compare">
-                                                <iconify-icon icon="solar:scale-linear" class="text-lg"></iconify-icon>
-                                            </button>
-
-                                            <!-- View Details Button -->
-                                            <a href="{{ route('landing.detail', $laptop->id) }}" class="flex-1 px-3 py-2 rounded-lg bg-gradient-to-b from-[#DF5E1D] to-[#d05619] text-white flex items-center justify-center hover:from-[#d05619] hover:to-[#c45218] transition-all font-medium text-xs gap-1" title="View Details">
-                                                <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
-                                                <span class="hidden sm:inline">Detail</span>
-                                            </a>
-                                        </div>
                                     </div>
+
+                                    <!-- Divider -->
+                                    <hr class="border-gray-200 mb-4">
+
+                                    <!-- Specs (Text-only layout like ASUS) -->
+                                    <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                        @if($laptop->processor)
+                                            <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->processor }}</p>
+                                        @endif
+                                        @if($laptop->ram)
+                                            <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->ram }}</p>
+                                        @endif
+                                        @if($laptop->storage)
+                                            <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->storage }}</p>
+                                        @endif
+                                        @if($laptop->graphics_card)
+                                            <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->graphics_card }}</p>
+                                        @endif
+                                        @if($laptop->display)
+                                            <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->display }}</p>
+                                        @endif
+                                    </div>
+
+                                    <!-- Toggle Button for Specs -->
+                                    <button onclick="toggleSpecs(this)" class="text-[10px] font-bold text-gray-400 hover:text-[#DF5E1D] uppercase tracking-wider flex items-center gap-1 transition-colors mt-1 mb-5">
+                                        <span>LIHAT LAINNYA</span>
+                                        <iconify-icon icon="solar:alt-arrow-down-linear" class="text-xs transition-transform duration-300"></iconify-icon>
+                                    </button>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="flex gap-2 mt-auto pt-4 border-t border-gray-100">
+                                    <!-- View Details Button -->
+                                    <a href="{{ route('landing.detail', $laptop->id) }}" class="flex-1 py-2 rounded-sm bg-[#DF5E1D] text-white flex items-center justify-center hover:bg-[#c45218] transition-colors font-bold text-[11px] tracking-wider uppercase">
+                                        Detail
+                                    </a>
+                                    
+                                    <!-- Wishlist Button -->
+                                    <button onclick="toggleWishlist({{ $laptop->id }})" data-wishlist-btn data-laptop-id="{{ $laptop->id }}" class="w-9 h-9 rounded-sm border border-gray-200 text-gray-600 flex items-center justify-center hover:border-red-500 hover:text-red-500 transition-colors group relative" title="Add to Wishlist">
+                                        <iconify-icon icon="solar:heart-linear" class="text-base"></iconify-icon>
+                                    </button>
+
+                                    <!-- Add to Compare Button -->
+                                    <button onclick="addToCompare('{{ $laptop->id }}')" data-compare-btn data-laptop-id="{{ $laptop->id }}" class="w-9 h-9 rounded-sm border border-gray-200 text-gray-600 flex items-center justify-center hover:border-[#DF5E1D] hover:text-[#DF5E1D] transition-colors group relative" title="Add to Compare">
+                                        <iconify-icon icon="solar:scale-linear" class="text-base"></iconify-icon>
+                                    </button>
                                 </div>
                             </div>
                         @endforeach
@@ -347,4 +373,24 @@
 </script>
 @include('components.floating-compare')
 @endsection
+
+@push('scripts')
+<script>
+    function toggleSpecs(btn) {
+        const specsContainer = btn.previousElementSibling;
+        const icon = btn.querySelector('iconify-icon');
+        const textSpan = btn.querySelector('span');
+        
+        if (specsContainer.style.maxHeight === '42px') {
+            specsContainer.style.maxHeight = specsContainer.scrollHeight + 'px';
+            icon.style.transform = 'rotate(180deg)';
+            textSpan.textContent = 'SEMBUNYIKAN';
+        } else {
+            specsContainer.style.maxHeight = '42px';
+            icon.style.transform = 'rotate(0deg)';
+            textSpan.textContent = 'LIHAT LAINNYA';
+        }
+    }
+</script>
+@endpush
 
