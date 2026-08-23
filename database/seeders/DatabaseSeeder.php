@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             LaptopSeeder::class,
-            RoleSeeder::class,
+            RoleAndUserSeeder::class,
             SettingsSeeder::class,
             HeroSliderSeeder::class,
         ]);
