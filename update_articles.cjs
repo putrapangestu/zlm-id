@@ -1,20 +1,16 @@
-@extends('layouts.landing')
+const fs = require('fs');
 
-@section('title', 'Artikel - ZLM.ID')
+const filePath = 'c:/wira/projek/web/zlm-id/resources/views/landing/articles.blade.php';
+let content = fs.readFileSync(filePath, 'utf8');
 
-@section('content')
-<div class="bg-gray-50 min-h-screen py-6 lg:py-8">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Breadcrumb -->
-        <nav class="mb-8">
-            <ol class="flex items-center gap-2 text-sm text-gray-500 font-medium">
-                <li><a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors flex items-center gap-1"><iconify-icon icon="solar:home-2-linear" class="text-lg"></iconify-icon> Beranda</a></li>
-                <li><iconify-icon icon="solar:alt-arrow-right-linear" class="text-gray-400"></iconify-icon></li>
-                <li class="text-[#363230]">Artikel & Panduan</li>
-            </ol>
-        </nav>
+const startMarker = '        <!-- Search & Filter -->';
+const endMarker = '        <!-- Load More Button -->';
 
-        <style>
+const startIndex = content.indexOf(startMarker);
+const endIndex = content.indexOf(endMarker);
+
+if (startIndex !== -1 && endIndex !== -1) {
+    const newSection = `        <style>
             /* Hide scrollbar for category pills */
             .hide-scrollbar::-webkit-scrollbar {
                 display: none;
@@ -170,15 +166,11 @@
                     </p>
                 </div>
             </a>
-        </div>
-
-        <!-- Load More Button -->
-        <div class="mt-16 flex justify-center">
-            <button class="group relative px-8 py-3.5 bg-white border-2 border-gray-200 text-gray-700 rounded-full font-bold hover:border-[#DF5E1D] hover:text-[#DF5E1D] hover:bg-[#DF5E1D]/5 transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2">
-                <span>Muat Artikel Lebih Banyak</span>
-                <iconify-icon icon="solar:refresh-circle-bold-duotone" class="text-xl group-hover:rotate-180 transition-transform duration-500"></iconify-icon>
-            </button>
-        </div>
-    </div>
-</div>
-@endsection
+        </div>\n\n`;
+    
+    content = content.substring(0, startIndex) + newSection + content.substring(endIndex);
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log('Successfully updated the articles layout.');
+} else {
+    console.log('Could not find markers.', {startIndex, endIndex});
+}

@@ -1,34 +1,16 @@
-@extends('layouts.landing')
+const fs = require('fs');
 
-@section('title', 'Detail Artikel - ZLM.ID')
+const filePath = 'c:/wira/projek/web/zlm-id/resources/views/landing/article-detail.blade.php';
+let content = fs.readFileSync(filePath, 'utf8');
 
-@section('content')
-<div class="bg-gray-50 min-h-screen py-6 lg:py-8 relative">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        <!-- Breadcrumbs -->
-        <nav class="mb-10">
-            <ol class="flex items-center justify-start gap-2 text-sm text-gray-500 font-medium">
-                <li>
-                    <a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 flex items-center gap-1.5 rounded-md">
-                        <iconify-icon icon="solar:home-2-linear" class="text-base" style="stroke-width: 1.5;"></iconify-icon>
-                        Beranda
-                    </a>
-                </li>
-                <li class="flex items-center text-gray-300">
-                    <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
-                </li>
-                <li>
-                    <a href="{{ route('landing.articles') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 rounded-md">Pusat Pengetahuan</a>
-                </li>
-                <li class="flex items-center text-gray-300">
-                    <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
-                </li>
-                <li class="text-[#363230] truncate">Detail Artikel</li>
-            </ol>
-        </nav>
+const startMarker = '        <!-- Article Header -->';
+const endMarker = '    </div>\n</div>\n@endsection';
 
-        <!-- Main 2-Column Grid Layout -->
+const startIndex = content.indexOf(startMarker);
+const endIndex = content.indexOf(endMarker);
+
+if (startIndex !== -1 && endIndex !== -1) {
+    const newSection = `        <!-- Main 2-Column Grid Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-start mt-6">
             
             <!-- Left Column: Article Content (Col 8) -->
@@ -203,7 +185,11 @@
                 </div>
             </div>
 
-        </div>
-    </div>
-</div>
-@endsection
+        </div>\n`;
+    
+    content = content.substring(0, startIndex) + newSection + content.substring(endIndex);
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log('Successfully updated the 2 column layout.');
+} else {
+    console.log('Could not find markers.', {startIndex, endIndex});
+}
