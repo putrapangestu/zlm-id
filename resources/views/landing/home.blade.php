@@ -99,7 +99,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         const swiper = new Swiper('.heroSwiper', {
             loop: true,
-            autoHeight: true,
             autoplay: {
                 delay: 5000,
                 disableOnInteraction: false,
@@ -120,16 +119,15 @@
 </script>
 
 <style>
-    /* Aspect Ratio yang paten untuk hero slider agar seragam meski gambar beda ukuran */
+    /* Hero Slider Styles */
+    .heroSwiper {
+        width: 100%;
+        height: auto;
+    }
     .hero-aspect {
-        aspect-ratio: 1 / 1; /* Mobile (Square) */
+        aspect-ratio: 16 / 9;
     }
     @media (min-width: 768px) {
-        .hero-aspect {
-            aspect-ratio: 16 / 9; /* Tablet (Widescreen) */
-        }
-    }
-    @media (min-width: 1024px) {
         .hero-aspect {
             aspect-ratio: 21 / 9; /* Desktop/Laptop (Ultrawide Cinematic) */
         }
@@ -249,11 +247,12 @@
         </div>
 
         <!-- Dynamic Container (Grid or Slider) -->
-        <div id="featured-container" class="px-4 md:px-12 mb-10">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 items-start">
+        <div id="featured-container" class="px-4 md:px-12 mb-10 relative group">
+            <div class="swiper featuredSwiper !pb-2">
+                <div class="swiper-wrapper !items-start">
                 @foreach ($featured as $laptop)
-                    <div class="featured-slide" data-category="{{ $laptop->categories->first()?->slug ?? 'uncategorized' }}">
-                            <div class="bg-white rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
+                    <div class="swiper-slide featured-slide" data-category="{{ $laptop->categories->first()?->slug ?? 'uncategorized' }}">
+                        <div class="bg-white rounded-xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col group relative p-5">
                     
                     <!-- Badge Category (Solid Orange) -->
                     <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
@@ -335,7 +334,17 @@
                         </div>
                     </div>
                 </div>
+            </div>
             @endforeach
+                </div>
+            </div>
+            <!-- Navigation Buttons -->
+            <div class="swiper-button-prev !text-[#DF5E1D] !left-0 md:-left-6 !w-12 !h-12 !mt-[-24px] after:hidden hidden md:flex opacity-0 group-hover:opacity-100 transition-all duration-300 hover:!bg-[#DF5E1D] hover:!text-white bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-gray-100 items-center justify-center cursor-pointer z-10">
+                <iconify-icon icon="solar:alt-arrow-left-linear" class="text-2xl"></iconify-icon>
+            </div>
+            <div class="swiper-button-next !text-[#DF5E1D] !right-0 md:-right-6 !w-12 !h-12 !mt-[-24px] after:hidden hidden md:flex opacity-0 group-hover:opacity-100 transition-all duration-300 hover:!bg-[#DF5E1D] hover:!text-white bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-gray-100 items-center justify-center cursor-pointer z-10">
+                <iconify-icon icon="solar:alt-arrow-right-linear" class="text-2xl"></iconify-icon>
+            </div>
         </div>
     </div>
 </section>
@@ -701,99 +710,83 @@
     }
 
     // ===== Featured Slider & Tab Filtering =====
-    let featuredSwiperInstance = null;
     let allSlides = []; // store raw HTML for each slide
+    let featuredSwiperInstance = null;
+
+    function initFeaturedSwiper() {
+        if (featuredSwiperInstance) {
+            featuredSwiperInstance.destroy(true, true);
+        }
+        featuredSwiperInstance = new Swiper('.featuredSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 16,
+            autoHeight: true,
+            navigation: {
+                nextEl: '#featured-container .swiper-button-next',
+                prevEl: '#featured-container .swiper-button-prev',
+            },
+            breakpoints: {
+                640: { slidesPerView: 2, spaceBetween: 16 },
+                1024: { slidesPerView: 4, spaceBetween: 24 },
+            },
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         // Collect all slides
         document.querySelectorAll('.featured-slide').forEach(slide => {
             // Make sure display is block in case it was hidden
             slide.style.display = 'block';
+            // Ensure swiper-slide is present when stored
+            slide.classList.add('swiper-slide');
             allSlides.push({
                 category: slide.dataset.category,
                 html: slide.outerHTML
             });
         });
-        
-        // Initial render (shows all)
-        renderFeatured('all');
+        initFeaturedSwiper();
     });
 
     function renderFeatured(category) {
-        let count = 0;
         let htmlContent = '';
         
         allSlides.forEach(item => {
             if (category === 'all' || item.category === category) {
-                count++;
                 htmlContent += item.html;
             }
         });
 
         const container = document.getElementById('featured-container');
-        
-        // Destroy existing swiper if any
-        if (featuredSwiperInstance) {
-            featuredSwiperInstance.destroy(true, true);
-            featuredSwiperInstance = null;
-        }
 
-        if (count > 4) {
-            // Render as Slider
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlContent;
-            tempDiv.querySelectorAll('.featured-slide').forEach(el => el.classList.add('swiper-slide'));
-            htmlContent = tempDiv.innerHTML;
+        // Render as Swiper
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
+        tempDiv.querySelectorAll('.featured-slide').forEach(el => el.classList.add('swiper-slide'));
+        htmlContent = tempDiv.innerHTML;
 
-            container.innerHTML = `
-                <div class="relative group">
-                    <div class="swiper featuredSwiper overflow-hidden">
-                        <div class="swiper-wrapper pb-4 items-start">
-                            ${htmlContent}
-                        </div>
-                    </div>
-                    <!-- Navigation Buttons -->
-                    <button class="featured-prev absolute left-0 md:-left-4 top-[40%] -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-[#DF5E1D] hover:border-[#DF5E1D] shadow-md z-10 transition opacity-0 group-hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
-                        <iconify-icon icon="solar:alt-arrow-left-linear" class="text-xl"></iconify-icon>
-                    </button>
-                    <button class="featured-next absolute right-0 md:-right-4 top-[40%] -translate-y-1/2 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-[#DF5E1D] hover:border-[#DF5E1D] shadow-md z-10 transition opacity-0 group-hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
-                        <iconify-icon icon="solar:alt-arrow-right-linear" class="text-xl"></iconify-icon>
-                    </button>
-                </div>
-            `;
-            
-            // Initialize Swiper
-            featuredSwiperInstance = new Swiper('.featuredSwiper', {
-                slidesPerView: 1,
-                spaceBetween: 24,
-                autoHeight: true,
-                navigation: {
-                    nextEl: '.featured-next',
-                    prevEl: '.featured-prev',
-                },
-                breakpoints: {
-                    640: { slidesPerView: 2 },
-                    1024: { slidesPerView: 4 }
-                },
-                watchOverflow: true,
-            });
-        } else {
-            // Render as Grid
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlContent;
-            tempDiv.querySelectorAll('.featured-slide').forEach(el => el.classList.remove('swiper-slide'));
-            htmlContent = tempDiv.innerHTML;
-
-            container.innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 items-start">
+        container.innerHTML = `
+            <div class="swiper featuredSwiper !pb-2">
+                <div class="swiper-wrapper !items-start">
                     ${htmlContent}
                 </div>
-            `;
-        }
+            </div>
+            <!-- Navigation Buttons -->
+            <div class="swiper-button-prev !text-[#DF5E1D] !left-0 md:-left-6 !w-12 !h-12 !mt-[-24px] after:hidden hidden md:flex opacity-0 group-hover:opacity-100 transition-all duration-300 hover:!bg-[#DF5E1D] hover:!text-white bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-gray-100 items-center justify-center cursor-pointer z-10">
+                <iconify-icon icon="solar:alt-arrow-left-linear" class="text-2xl"></iconify-icon>
+            </div>
+            <div class="swiper-button-next !text-[#DF5E1D] !right-0 md:-right-6 !w-12 !h-12 !mt-[-24px] after:hidden hidden md:flex opacity-0 group-hover:opacity-100 transition-all duration-300 hover:!bg-[#DF5E1D] hover:!text-white bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-gray-100 items-center justify-center cursor-pointer z-10">
+                <iconify-icon icon="solar:alt-arrow-right-linear" class="text-2xl"></iconify-icon>
+            </div>
+        `;
+        
+        initFeaturedSwiper();
         
         // Re-apply wishlist styling since DOM was recreated
         if (typeof updateWishlistButtons === 'function') {
             updateWishlistButtons();
+        }
+        if (typeof updateCompareBadge === 'function') {
+            updateCompareBadge();
         }
     }
 

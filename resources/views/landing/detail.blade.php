@@ -281,122 +281,123 @@
                 <p class="text-sm text-gray-500 max-w-lg mx-auto">Semua yang perlu Anda ketahui tentang {{ $laptop->name }}, ada di bawah ini.</p>
             </div>
 
-            <div class="bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden transition-all hover:shadow-md duration-300">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6">
+                <!-- Processor -->
+                <div class="bg-white p-5 lg:p-6 rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-md hover:border-[#DF5E1D]/40 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4 group-hover:bg-[#DF5E1D]/10 group-hover:border-[#DF5E1D]/20 transition-colors duration-300">
+                        <iconify-icon icon="solar:cpu-linear" class="text-xl text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Prosesor</p>
+                        <p class="text-sm font-medium text-[#363230] leading-snug">{{ $laptop->processor }}</p>
+                    </div>
+                </div>
 
-                        @if ($laptop->battery_life)
+                <!-- RAM -->
+                <div class="bg-white p-5 lg:p-6 rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-md hover:border-[#DF5E1D]/40 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4 group-hover:bg-[#DF5E1D]/10 group-hover:border-[#DF5E1D]/20 transition-colors duration-300">
+                        <iconify-icon icon="solar:ram-linear" class="text-xl text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Memori (RAM)</p>
+                        <p class="text-sm font-medium text-[#363230] leading-snug spec-ram">{{ $laptop->ram }}</p>
+                    </div>
+                </div>
 
-                        @endif
-                        @if ($laptop->weight)
+                <!-- Storage -->
+                <div class="bg-white p-5 lg:p-6 rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-md hover:border-[#DF5E1D]/40 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4 group-hover:bg-[#DF5E1D]/10 group-hover:border-[#DF5E1D]/20 transition-colors duration-300">
+                        <iconify-icon icon="solar:database-linear" class="text-xl text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Penyimpanan</p>
+                        <p class="text-sm font-medium text-[#363230] leading-snug spec-storage">{{ $laptop->storage }}</p>
+                    </div>
+                </div>
 
-                        @endif
-                    <table class="w-full text-sm text-left">
-                    <tbody class="divide-y divide-gray-100">
-                        <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
-                            <th scope="row" class="px-6 py-5 font-medium text-gray-600 w-1/3 sm:w-1/4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
-                                        <iconify-icon icon="solar:cpu-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                                    </div>
-                                    Prosesor
-                                </div>
-                            </th>
-                            <td class="px-6 py-5 text-[#363230]">{{ $laptop->processor }}</td>
-                        </tr>
-                        <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
-                            <th scope="row" class="px-6 py-5 font-medium text-gray-600">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
-                                        <iconify-icon icon="solar:ram-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                                    </div>
-                                    Memori (RAM)
-                                </div>
-                            </th>
-                            <td class="px-6 py-5 text-[#363230] spec-ram">{{ $laptop->ram }}</td>
-                        </tr>
-                        <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
-                            <th scope="row" class="px-6 py-5 font-medium text-gray-600">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
-                                        <iconify-icon icon="solar:database-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                                    </div>
-                                    Penyimpanan
-                                </div>
-                            </th>
-                            <td class="px-6 py-5 text-[#363230] spec-storage">{{ $laptop->storage }}</td>
-                        </tr>
-                        <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
-                            <th scope="row" class="px-6 py-5 font-medium text-gray-600">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
-                                        <iconify-icon icon="solar:monitor-camera-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                                    </div>
-                                    Grafis
-                                </div>
-                            </th>
-                            <td class="px-6 py-5 text-[#363230] spec-graphics">{{ $laptop->graphics }}</td>
-                        </tr>
-                        <tr class="group hover:bg-gray-50/50 transition-colors duration-200">
-                            <th scope="row" class="px-6 py-5 font-medium text-gray-600">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
-                                        <iconify-icon icon="solar:monitor-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                                    </div>
-                                    Layar
-                                </div>
-                            </th>
-                            <td class="px-6 py-5 text-[#363230] spec-display">{{ $laptop->display }}</td>
-                        </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
-                            <th scope="row" class="px-6 py-5 font-medium text-gray-600">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
-                                        <iconify-icon icon="solar:battery-charge-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                                    </div>
-                                    Daya Baterai
-                                </div>
-                            </th>
-                                <td class="px-6 py-5 text-[#363230] spec-battery">{{ $laptop->battery_life }}</td>
-                        </tr><tr class="group hover:bg-gray-50/50 transition-colors duration-200">
-                            <th scope="row" class="px-6 py-5 font-medium text-gray-600">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:border-gray-200 transition-colors duration-300">
-                                        <iconify-icon icon="solar:case-minimalistic-linear" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
-                                    </div>
-                                    Berat
-                                </div>
-                            </th>
-                                <td class="px-6 py-5 text-[#363230] spec-weight">{{ $laptop->weight }} kg</td>
-                        </tr></tbody>
-                </table>
+                <!-- Graphics -->
+                <div class="bg-white p-5 lg:p-6 rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-md hover:border-[#DF5E1D]/40 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4 group-hover:bg-[#DF5E1D]/10 group-hover:border-[#DF5E1D]/20 transition-colors duration-300">
+                        <iconify-icon icon="solar:monitor-camera-linear" class="text-xl text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Grafis</p>
+                        <p class="text-sm font-medium text-[#363230] leading-snug spec-graphics">{{ $laptop->graphics }}</p>
+                    </div>
+                </div>
+
+                <!-- Display -->
+                <div class="bg-white p-5 lg:p-6 rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-md hover:border-[#DF5E1D]/40 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4 group-hover:bg-[#DF5E1D]/10 group-hover:border-[#DF5E1D]/20 transition-colors duration-300">
+                        <iconify-icon icon="solar:monitor-linear" class="text-xl text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Layar</p>
+                        <p class="text-sm font-medium text-[#363230] leading-snug spec-display">{{ $laptop->display }}</p>
+                    </div>
+                </div>
+
+                <!-- Battery -->
+                <div class="bg-white p-5 lg:p-6 rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-md hover:border-[#DF5E1D]/40 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4 group-hover:bg-[#DF5E1D]/10 group-hover:border-[#DF5E1D]/20 transition-colors duration-300">
+                        <iconify-icon icon="solar:battery-charge-linear" class="text-xl text-gray-400 group-hover:text-[#DF5E1D] transition-colors duration-300" style="stroke-width: 1.5;"></iconify-icon>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Daya Baterai</p>
+                        <p class="text-sm font-medium text-[#363230] leading-snug spec-battery">{{ $laptop->battery_life ?: 'Tergantung Pemakaian' }}</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Kelebihan & Kekurangan Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-16">
-            <div class="bg-emerald-50/50 rounded-2xl border border-emerald-200/60 p-6 lg:p-8">
-                <h3 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center gap-2.5">
-                    <iconify-icon icon="solar:like-linear" class="text-xl text-emerald-500"></iconify-icon>
-                    Kelebihan
-                </h3>
-                @if ($laptop->kelebihan)
-                <div class="prose prose-sm max-w-none text-gray-700">
-                    {!! $laptop->kelebihan !!}
+        <div class="bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden mb-16 lg:mb-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                <!-- Kelebihan -->
+                <div class="p-8 lg:p-10 bg-gradient-to-br from-emerald-50/30 to-transparent hover:from-emerald-50/60 transition-colors duration-500">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100/50 text-emerald-600 flex items-center justify-center">
+                            <iconify-icon icon="solar:like-linear" class="text-2xl" style="stroke-width: 1.5;"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-[#363230]">Kelebihan</h3>
+                            <p class="text-xs text-gray-500">Alasan memilih produk ini</p>
+                        </div>
+                    </div>
+                    @if ($laptop->kelebihan)
+                    <div class="prose prose-sm prose-emerald max-w-none text-gray-600 leading-relaxed">
+                        {!! $laptop->kelebihan !!}
+                    </div>
+                    @else
+                    <div class="flex items-center gap-2 text-sm text-gray-400 italic bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                        <iconify-icon icon="solar:info-circle-linear" class="text-lg"></iconify-icon>
+                        Belum ada informasi kelebihan.
+                    </div>
+                    @endif
                 </div>
-                @else
-                <p class="text-sm text-gray-400 italic">Belum ada informasi kelebihan.</p>
-                @endif
-            </div>
-            <div class="bg-rose-50/50 rounded-2xl border border-rose-200/60 p-6 lg:p-8">
-                <h3 class="text-lg font-semibold text-rose-800 mb-4 flex items-center gap-2.5">
-                    <iconify-icon icon="solar:dislike-linear" class="text-xl text-rose-500"></iconify-icon>
-                    Kekurangan
-                </h3>
-                @if ($laptop->kekurangan)
-                <div class="prose prose-sm max-w-none text-gray-700">
-                    {!! $laptop->kekurangan !!}
+
+                <!-- Kekurangan -->
+                <div class="p-8 lg:p-10 bg-gradient-to-br from-rose-50/30 to-transparent hover:from-rose-50/60 transition-colors duration-500">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-100/50 text-rose-600 flex items-center justify-center">
+                            <iconify-icon icon="solar:dislike-linear" class="text-2xl" style="stroke-width: 1.5;"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-[#363230]">Kekurangan</h3>
+                            <p class="text-xs text-gray-500">Hal yang perlu dipertimbangkan</p>
+                        </div>
+                    </div>
+                    @if ($laptop->kekurangan)
+                    <div class="prose prose-sm prose-rose max-w-none text-gray-600 leading-relaxed">
+                        {!! $laptop->kekurangan !!}
+                    </div>
+                    @else
+                    <div class="flex items-center gap-2 text-sm text-gray-400 italic bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                        <iconify-icon icon="solar:info-circle-linear" class="text-lg"></iconify-icon>
+                        Belum ada informasi kekurangan.
+                    </div>
+                    @endif
                 </div>
-                @else
-                <p class="text-sm text-gray-400 italic">Belum ada informasi kekurangan.</p>
-                @endif
             </div>
         </div>
 
@@ -416,55 +417,95 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                     @foreach ($similar as $similarProduct)
-                        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1.5 transition-all duration-400 overflow-hidden flex flex-col group relative">
-
-                            <!-- Card Image -->
-                            <a href="{{ route('landing.detail', $similarProduct->id) }}" class="relative h-56 bg-gradient-to-b from-gray-50 to-white overflow-hidden flex items-center justify-center border-b border-gray-100">
-                                @if ($similarProduct->image_url)
-                                    <img src="{{ $similarProduct->image_url_full }}" alt="{{ $similarProduct->name }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700 ease-out">
-                                @else
-                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $similarProduct->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
-                                @endif
-
-                                <!-- Hover Overlay & Badge -->
-                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
-                                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md border border-gray-200/80 text-[#363230] px-2.5 py-1 rounded-md text-[10px] font-semibold shadow-sm tracking-wide uppercase">
-                                    {{ $similarProduct->categories->first()?->name ?? 'General' }}
+                        <div class="group bg-white rounded-2xl border border-gray-200/80 hover:border-[#DF5E1D]/50 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative p-5">
+                            
+                            <!-- Stock Status Overlay -->
+                            @if ($similarProduct->stock === 0)
+                                <div class="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+                                    <div class="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-semibold shadow-xl tracking-wide">
+                                        Stok Habis
+                                    </div>
                                 </div>
-                            </a>
+                            @endif
 
-                            <!-- Card Content -->
-                            <div class="p-6 flex flex-col flex-grow">
-                                <p class="text-[11px] text-gray-400 font-semibold tracking-widest uppercase mb-2">{{ $similarProduct->brand }}</p>
-                                <h3 class="text-base font-medium text-[#363230] mb-4 line-clamp-2 leading-snug group-hover:text-[#DF5E1D] transition-colors duration-300">
-                                    <a href="{{ route('landing.detail', $similarProduct->id) }}" class="focus:outline-none">
-                                        <span class="absolute inset-0" aria-hidden="true"></span>
-                                        {{ $similarProduct->name }}
-                                    </a>
+                            <!-- Badge Category (Solid Orange) -->
+                            <div class="absolute top-5 left-5 bg-[#DF5E1D] text-white px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm z-10 shadow-sm">
+                                {{ $similarProduct->categories->first()?->name ?? 'Featured' }}
+                            </div>
+
+                            <!-- Image -->
+                            <div class="relative h-40 bg-white overflow-hidden flex items-center justify-center mb-6 mt-4">
+                                @if ($similarProduct->image_url)
+                                    <img src="{{ $similarProduct->image_url_full }}" alt="{{ $similarProduct->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                                @else
+                                    <img src="https://placehold.co/600x400/363230/DF5E1D?text=ZLM" alt="{{ $similarProduct->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                @endif
+                            </div>
+
+                            <div class="flex flex-col flex-grow">
+                                <!-- Title -->
+                                <h3 class="text-[15px] font-bold text-[#363230] mb-2 leading-snug group-hover:text-[#DF5E1D] transition-colors">
+                                    {{ $similarProduct->name }}
                                 </h3>
 
-                                <div class="mb-6 space-y-3 flex-grow">
-                                    <div class="flex items-center gap-2.5 text-xs text-gray-500 bg-gray-50/50 py-1.5 px-2 rounded-md">
-                                        <iconify-icon icon="solar:cpu-linear" class="text-gray-400 text-sm"></iconify-icon>
-                                        <span class="truncate font-medium">{{ $similarProduct->processor }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-2.5 text-xs text-gray-500 bg-gray-50/50 py-1.5 px-2 rounded-md">
-                                        <iconify-icon icon="solar:ram-linear" class="text-gray-400 text-sm"></iconify-icon>
-                                        <span class="truncate font-medium">{{ $similarProduct->ram }} • {{ $similarProduct->storage }}</span>
-                                    </div>
+                                <!-- Brand -->
+                                <p class="text-[11px] text-gray-500 font-bold tracking-widest uppercase mb-4">
+                                    {{ $similarProduct->brand }}
+                                </p>
+
+                                <!-- Pricing -->
+                                <div class="mb-4">
+                                    <p class="text-[12px] text-[#363230] font-medium mb-0.5">Harga ZLM</p>
+                                    <p class="text-[17px] font-bold text-[#DF5E1D] tracking-tight mb-1">
+                                        Rp {{ number_format($similarProduct->price, 0, ',', '.') }}
+                                    </p>
                                 </div>
 
-                                <div class="flex justify-between items-end pt-5 border-t border-gray-100 mt-auto relative z-10">
-                                    <div>
-                                        <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block mb-0.5">Harga</span>
-                                        <p class="text-lg font-medium tracking-tight text-[#363230]">
-                                            Rp {{ number_format($similarProduct->price, 0, ',', '.') }}
-                                        </p>
-                                    </div>
-                                    <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-400 flex items-center justify-center group-hover:bg-[#DF5E1D] group-hover:text-white group-hover:border-[#DF5E1D] group-hover:shadow-md transition-all duration-300 shadow-sm" title="View Details">
-                                        <iconify-icon icon="solar:arrow-right-up-linear" class="text-lg"></iconify-icon>
-                                    </div>
+                                <!-- Divider -->
+                                <hr class="border-gray-200 mb-4">
+
+                                <!-- Specs (Text-only layout like ASUS) -->
+                                <div class="mb-2 space-y-1.5 overflow-hidden transition-all duration-300" style="max-height: 42px;">
+                                    @if($similarProduct->processor)
+                                        <p class="text-[11px] text-gray-600 leading-relaxed">{{ $similarProduct->processor }}</p>
+                                    @endif
+                                    @if($similarProduct->ram)
+                                        <p class="text-[11px] text-gray-600 leading-relaxed">{{ $similarProduct->ram }}</p>
+                                    @endif
+                                    @if($similarProduct->storage)
+                                        <p class="text-[11px] text-gray-600 leading-relaxed">{{ $similarProduct->storage }}</p>
+                                    @endif
+                                    @if($similarProduct->graphics)
+                                        <p class="text-[11px] text-gray-600 leading-relaxed">{{ $similarProduct->graphics }}</p>
+                                    @endif
+                                    @if($similarProduct->display)
+                                        <p class="text-[11px] text-gray-600 leading-relaxed">{{ $similarProduct->display }}</p>
+                                    @endif
                                 </div>
+
+                                <!-- Toggle Button for Specs -->
+                                <button onclick="toggleSpecs(this)" class="text-[10px] font-bold text-gray-400 hover:text-[#DF5E1D] uppercase tracking-wider flex items-center gap-1 transition-colors mt-1 mb-5">
+                                    <span>LIHAT LAINNYA</span>
+                                    <iconify-icon icon="solar:alt-arrow-down-linear" class="text-xs transition-transform duration-300"></iconify-icon>
+                                </button>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex gap-2 mt-auto pt-4 border-t border-gray-100">
+                                <!-- View Details Button -->
+                                <a href="{{ route('landing.detail', $similarProduct->id) }}" class="flex-1 py-2 rounded-sm bg-[#DF5E1D] text-white flex items-center justify-center hover:bg-[#c45218] transition-colors font-bold text-[11px] tracking-wider uppercase">
+                                    Detail
+                                </a>
+                                
+                                <!-- Wishlist Button -->
+                                <button onclick="toggleWishlist({{ $similarProduct->id }})" data-wishlist-btn data-laptop-id="{{ $similarProduct->id }}" class="w-9 h-9 rounded-sm border border-gray-200 text-gray-600 flex items-center justify-center hover:border-red-500 hover:text-red-500 transition-colors group relative" title="Add to Wishlist">
+                                    <iconify-icon icon="solar:heart-linear" class="text-base"></iconify-icon>
+                                </button>
+
+                                <!-- Add to Compare Button -->
+                                <button onclick="addToCompare('{{ $similarProduct->id }}')" data-compare-btn data-laptop-id="{{ $similarProduct->id }}" class="w-9 h-9 rounded-sm border border-gray-200 text-gray-600 flex items-center justify-center hover:border-[#DF5E1D] hover:text-[#DF5E1D] transition-colors group relative" title="Add to Compare">
+                                    <iconify-icon icon="solar:scale-linear" class="text-base"></iconify-icon>
+                                </button>
                             </div>
                         </div>
                     @endforeach
@@ -736,6 +777,25 @@ function setRating(val) {
             showToast('Gagal menyalin link', 'error');
         }
         document.body.removeChild(textarea);
+    }
+
+    // ===== Toggle Specs Function for Cards =====
+    function toggleSpecs(btn) {
+        const specsContainer = btn.previousElementSibling;
+        const icon = btn.querySelector('iconify-icon');
+        const text = btn.querySelector('span');
+        
+        if (specsContainer.style.maxHeight === '42px' || specsContainer.style.maxHeight === '') {
+            specsContainer.style.maxHeight = specsContainer.scrollHeight + 'px';
+            icon.setAttribute('icon', 'solar:alt-arrow-up-linear');
+            text.textContent = 'SEMBUNYIKAN';
+            btn.classList.add('text-[#DF5E1D]');
+        } else {
+            specsContainer.style.maxHeight = '42px';
+            icon.setAttribute('icon', 'solar:alt-arrow-down-linear');
+            text.textContent = 'LIHAT LAINNYA';
+            btn.classList.remove('text-[#DF5E1D]');
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
