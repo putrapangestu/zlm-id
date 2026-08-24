@@ -7,7 +7,7 @@
 <div class="relative bg-[#363230] pt-24 pb-16 lg:pt-32 lg:pb-20 overflow-hidden">
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#DF5E1D] opacity-15 blur-[100px] rounded-full pointer-events-none"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#DF5E1D] text-xs font-medium mb-4">
                 <iconify-icon icon="solar:magic-stick-3-bold"></iconify-icon>
@@ -132,7 +132,7 @@
 
 <!-- Results Section -->
 <section class="py-12 lg:py-16 bg-gray-50 min-h-[60vh]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         @if(isset($results) && isset($totalLaptops))
             <!-- Results Header -->

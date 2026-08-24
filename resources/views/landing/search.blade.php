@@ -4,8 +4,28 @@
 @section('title', 'Cari Laptop')
 
 @section('content')
+<style>
+    /* Custom Scrollbar for Filter Sidebar */
+    .filter-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .filter-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .filter-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.3); /* Transparent grey */
+        border-radius: 10px;
+    }
+    .filter-scrollbar:hover::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.6); /* Darker grey on hover */
+    }
+    .filter-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+    }
+</style>
 <div class="bg-gray-50 min-h-screen pt-6 pb-12 lg:pt-8 lg:pb-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <nav class="mb-8 lg:mb-12">
             <ol class="flex items-center gap-2 text-sm text-gray-500 font-medium">
@@ -26,8 +46,8 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             <!-- Sidebar Filters -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md p-6 sticky top-20 z-40 backdrop-blur-sm bg-white/95 transition-all duration-300">
+            <div class="lg:col-span-1 sticky top-24 z-40">
+                <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md p-6 backdrop-blur-sm bg-white/95 transition-all duration-300 max-h-[calc(100vh-7rem)] overflow-y-auto filter-scrollbar">
                     <div class="flex items-center gap-2 mb-6 pb-4 border-b border-gray-100">
                         <div class="w-10 h-10 rounded-lg bg-[#DF5E1D]/10 flex items-center justify-center">
                             <iconify-icon icon="solar:filter-linear" class="text-[#DF5E1D] text-lg"></iconify-icon>

@@ -5,7 +5,7 @@
 @section('content')
 <!-- Hero Section -->
 <div class="bg-[#363230] pt-24 pb-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
             <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">Apa Kata Pelanggan Kami</h1>
             <p class="text-lg text-gray-400 max-w-2xl mx-auto">Ribuan orang puas berbelanja laptop second di ZLM.ID Malang.</p>
@@ -15,7 +15,7 @@
 
 <!-- Testimonials Grid -->
 <section class="py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         @if ($testimonials->count())
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($testimonials as $testimonial)

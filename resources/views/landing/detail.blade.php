@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen py-12 lg:py-20">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 min-h-screen py-12 lg:py-20">
         <!-- Breadcrumb -->
         <nav class="mb-10 lg:mb-14">
             <ol class="flex items-center gap-2 text-sm text-gray-500 font-medium">

@@ -180,7 +180,7 @@
 
 <!-- Features / Why Choose Us -->
 <section class="py-12 md:py-16 bg-gray-50/50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <div class="flex flex-col">
                 <div class="w-10 h-10 rounded text-[#DF5E1D] flex items-center mb-4">
@@ -219,7 +219,7 @@
 
 <!-- Featured Laptops Section -->
 <section id="featured" class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="text-center mb-10">
             <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Koleksi Pilihan ZLM.ID</h2>
@@ -353,7 +353,7 @@
 
 <!-- Bento Grid Promo Section -->
 <section class="py-12 bg-gray-50 border-y border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         @php
             // Mengambil 3 produk acak dari daftar laptop unggulan
             $bentoLaptops = isset($featured) && $featured->count() >= 3 ? $featured->random(3) : (isset($featured) ? $featured->take(3) : collect([]));
@@ -412,7 +412,7 @@
 
 <!-- Categories Section -->
 <section class="py-20 bg-white border-y border-gray-200/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12 max-w-2xl mx-auto">
             <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Pilih Sesuai Kebutuhan</h2>
             <p class="text-gray-500">Cari model laptop idaman Anda berdasarkan segmentasi penggunaan harian.</p>
@@ -434,7 +434,7 @@
 
 <!-- Testimonials Section -->
 <section class="py-24 bg-gray-100/50 border-t border-gray-200/50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-3">Apa Kata Pelanggan Kami</h2>
             <p class="text-gray-500">Ribuan orang puas berbelanja laptop second di ZLM.ID Malang.</p>
@@ -472,7 +472,7 @@
 
 <!-- Insights / Blog Section -->
 <section class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
                 <h2 class="text-3xl font-semibold tracking-tight text-[#363230] mb-2">Artikel Terkini</h2>

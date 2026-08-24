@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="bg-gray-50 min-h-screen py-12 lg:py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-16">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DF5E1D]/10 border border-[#DF5E1D]/30 text-[#DF5E1D] text-xs font-medium mb-4">
