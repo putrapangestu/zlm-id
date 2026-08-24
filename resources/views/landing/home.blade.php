@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 <!-- Hero Slider Section -->
-<div id="hero-slider" class="relative w-full">
-    <div class="swiper heroSwiper">
+<div id="hero-slider" class="relative w-full hero-aspect">
+    <div class="swiper heroSwiper w-full h-full">
         <div class="swiper-wrapper">
             @if ($sliders->count() > 0)
                 @foreach ($sliders as $index => $slider)
@@ -20,13 +20,13 @@
                         
                         <{{ $tag }} 
                             @if($isEntireLink) href="{{ $slider->button_url }}" @endif 
-                            class="block w-full relative hero-aspect">
+                            class="block w-full h-full relative overflow-hidden">
                             
                             {{-- Image (Akan otomatis terpotong proporsional memenuhi wadah) --}}
                             @if ($slider->image_url)
-                                <img src="{{ $slider->image_url }}" alt="{{ $slider->title }}" class="block w-full h-full object-cover object-center">
+                                <img src="{{ $slider->image_url }}" alt="{{ $slider->title }}" class="absolute inset-0 w-full h-full object-cover object-center">
                             @else
-                                <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=1600" alt="Default Banner" class="block w-full h-full object-cover object-center">
+                                <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=1600" alt="Default Banner" class="absolute inset-0 w-full h-full object-cover object-center">
                             @endif
 
                             {{-- Overlay Text (Muncul di atas gambar HANYA jika ada teks) --}}
@@ -66,8 +66,8 @@
             @else
                 {{-- Fallback Static Slide jika kosong --}}
                 <div class="swiper-slide relative">
-                    <div class="w-full relative hero-aspect">
-                        <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=1600" alt="Premium Laptop" class="block w-full h-full object-cover object-center">
+                    <div class="w-full h-full relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=1600" alt="Premium Laptop" class="absolute inset-0 w-full h-full object-cover object-center">
                         <div class="absolute inset-0 bg-black/50 flex items-end justify-center md:items-center">
                             <div class="text-center px-6 pb-16 md:pb-0 max-w-3xl w-full">
                                 <span class="inline-block bg-[#DF5E1D] text-white text-xs px-3 py-1 rounded-full font-bold mb-3 shadow-md">PROMO SPESIAL</span>
@@ -125,18 +125,20 @@
         height: auto;
     }
     .hero-aspect {
-        aspect-ratio: 16 / 9;
+        aspect-ratio: 4 / 5;
+        min-height: 400px;
     }
     @media (min-width: 768px) {
         .hero-aspect {
             aspect-ratio: 21 / 9; /* Desktop/Laptop (Ultrawide Cinematic) */
+            min-height: auto;
         }
     }
 
     /* Custom Styling untuk pagination Swiper agar sesuai tema ZLM (Digimap layout) */
     .heroSwiper {
         width: 100%;
-        height: auto;
+        height: 100%;
         margin: 0;
         padding: 0;
         display: block;
@@ -144,7 +146,7 @@
     .heroSwiper .swiper-slide {
         display: block;
         width: 100%;
-        height: auto;
+        height: 100%;
     }
     .heroSwiper .swiper-pagination-bullet {
         width: 8px;
