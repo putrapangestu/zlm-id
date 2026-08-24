@@ -87,7 +87,7 @@
             <a href="{{ route('landing.search', ['category' => 'bisnis']) }}" class="hover:text-[#DF5E1D] transition">Ultrabook / Bisnis</a>
             <a href="{{ route('landing.articles') }}" class="hover:text-[#DF5E1D] transition">Artikel / Blog</a>
             <span class="text-gray-300">|</span>
-            <a href="#" class="hover:text-[#DF5E1D] transition">Tentang Kami</a>
+            <a href="{{ route('landing.compare') }}" class="hover:text-[#DF5E1D] transition">Bandingkan Laptop</a>
         </div>
     </div>
 
@@ -117,7 +117,7 @@
                     <a href="{{ route('landing.search', ['category' => 'gaming']) }}" class="block py-2.5 border-b border-gray-50 hover:text-[#DF5E1D]">Laptop Gaming</a>
                     <a href="{{ route('landing.search', ['category' => 'bisnis']) }}" class="block py-2.5 border-b border-gray-50 hover:text-[#DF5E1D]">Ultrabook / Bisnis</a>
                     <a href="{{ route('landing.articles') }}" class="block py-2.5 border-b border-gray-50 hover:text-[#DF5E1D]">Artikel / Blog</a>
-                    <a href="#" class="block py-2.5 border-b border-gray-50 hover:text-[#DF5E1D]">Tentang Kami</a>
+                    <a href="{{ route('landing.compare') }}" class="block py-2.5 border-b border-gray-50 hover:text-[#DF5E1D]">Bandingkan Laptop</a>
                 </div>
             </div>
         </div>
