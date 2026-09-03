@@ -146,7 +146,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const val = updateHiddenValue();
         if (val.length !== 6) {
             e.preventDefault();
-            alert('Silakan masukkan 6 digit kode OTP secara lengkap.');
+            if (typeof window.showToast === 'function') {
+                window.showToast('Silakan masukkan 6 digit kode OTP secara lengkap.', 'warning');
+            }
             inputs.find(i => !i.value)?.focus();
         }
     });

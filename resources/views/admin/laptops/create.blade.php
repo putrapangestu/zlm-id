@@ -54,15 +54,20 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Model Laptop <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" value="{{ old('name') }}" required placeholder="Contoh: ThinkPad T14s Gen 3 AMD"
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" required placeholder="Contoh: ThinkPad T14s Gen 3 AMD"
                             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                         @error('name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Brand / Merek <span class="text-red-500">*</span></label>
-                        <input type="text" name="brand" value="{{ old('brand') }}" required placeholder="Contoh: Lenovo, Dell, Asus, Apple"
-                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
-                        @error('brand') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                        <select name="brand_id" id="brand_id" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                            <option value="">-- Pilih Brand Laptop --</option>
+                            @foreach ($brands as $b)
+                                <option value="{{ $b->id }}" data-name="{{ $b->name }}" @selected(old('brand_id') === $b->id || old('brand') === $b->name)>{{ $b->name }}</option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" name="brand" id="brand" value="{{ old('brand') }}">
+                        @error('brand_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
@@ -304,5 +309,17 @@
 
 {{-- Auto-Fill Modal --}}
 @include('admin.laptops._autofill_modal')
+
+@push('scripts')
+<script>
+document.getElementById('brand_id')?.addEventListener('change', function() {
+    const sel = this.options[this.selectedIndex];
+    const brandInput = document.getElementById('brand');
+    if (brandInput) {
+        brandInput.value = sel ? sel.getAttribute('data-name') : '';
+    }
+});
+</script>
+@endpush
 
 @endsection

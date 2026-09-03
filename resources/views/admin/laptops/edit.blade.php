@@ -30,9 +30,15 @@
                     @error('name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-                    <input type="text" name="brand" value="{{ old('brand', $laptop->brand) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
-                    @error('brand') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Brand / Merek</label>
+                    <select name="brand_id" id="brand_id" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                        <option value="">-- Pilih Brand Laptop --</option>
+                        @foreach ($brands as $b)
+                            <option value="{{ $b->id }}" data-name="{{ $b->name }}" @selected(old('brand_id', $laptop->brand_id) === $b->id || old('brand', $laptop->brand) === $b->name)>{{ $b->name }}</option>
+                        @endforeach
+                    </select>
+                    <input type="hidden" name="brand" id="brand" value="{{ old('brand', $laptop->brand) }}">
+                    @error('brand_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
@@ -140,7 +146,7 @@
                 <div>
                     <div class="flex items-center justify-between mb-1">
                         <label class="block text-xs font-bold text-gray-700 uppercase">
-                            I/O Ports / Port Colokan (Gambar 2 & 3)
+                            I/O Ports / Port Colokan 
                         </label>
                         <span class="text-[10px] text-gray-400">1 baris per jenis port colokan</span>
                     </div>
@@ -258,8 +264,8 @@
                     <dd class="font-medium text-[#363230]">{{ $laptop->categories->pluck('name')->join(', ') ?: '-' }}</dd>
                 </div>
                 <div class="flex justify-between py-2 border-b border-gray-100">
-                    <dt class="text-gray-400">Varian</dt>
-                    <dd class="font-medium text-[#363230]">{{ $laptop->variants->count() }} varian</dd>
+                    <dt class="text-gray-400">Unit QC</dt>
+                    <dd class="font-medium text-[#363230]">{{ $laptop->productItems->count() }} unit</dd>
                 </div>
                 <div class="flex justify-between py-2 border-b border-gray-100">
                     <dt class="text-gray-400">Dibuat</dt>
@@ -285,4 +291,13 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.getElementById('brand_id')?.addEventListener('change', function() {
+    const sel = this.options[this.selectedIndex];
+    document.getElementById('brand').value = sel ? sel.getAttribute('data-name') : '';
+});
+</script>
+@endpush
 @endsection

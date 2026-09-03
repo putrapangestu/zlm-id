@@ -20,6 +20,10 @@
             <iconify-icon icon="solar:printer-linear"></iconify-icon>
             <span>Printer Dot Matrix</span>
         </button>
+        <button @click="tab = 'comparison'" :class="{ 'bg-white shadow-sm text-[#DF5E1D] font-bold': tab === 'comparison', 'text-gray-500 hover:text-gray-700 font-medium': tab !== 'comparison' }" class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5">
+            <iconify-icon icon="solar:scale-linear"></iconify-icon>
+            <span>Perbandingan Perangkat (Compare)</span>
+        </button>
         <button @click="tab = 'location'" :class="{ 'bg-white shadow-sm text-[#363230] font-bold': tab === 'location', 'text-gray-500 hover:text-gray-700 font-medium': tab !== 'location' }" class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5">
             <iconify-icon icon="solar:map-point-linear"></iconify-icon>
             <span>Lokasi & Maps</span>
@@ -259,6 +263,77 @@
         </div>
     </form>
 
+    <!-- Tab: Comparison Specs Settings -->
+    @php
+        $rawCompareFields = config('settings.compare_fields');
+        $activeCompareFields = $rawCompareFields ? (is_array($rawCompareFields) ? $rawCompareFields : json_decode($rawCompareFields, true)) : null;
+        $allCompareSpecs = [
+            'price' => ['label' => 'Harga Produk (Rp)', 'desc' => 'Menampilkan harga beli normal / diskon'],
+            'processor' => ['label' => 'Processor / CPU', 'desc' => 'Tipe dan seri processor laptop'],
+            'ram' => ['label' => 'RAM / Memori', 'desc' => 'Kapasitas dan tipe RAM'],
+            'storage' => ['label' => 'Storage / SSD', 'desc' => 'Kapasitas dan jenis penyimpanan'],
+            'graphics' => ['label' => 'Kartu Grafis (GPU)', 'desc' => 'VGA / Kartu grafis terpasang'],
+            'display' => ['label' => 'Layar / Display', 'desc' => 'Ukuran, resolusi, dan panel layar'],
+            'ports' => ['label' => 'I/O Ports / Port Colokan', 'desc' => 'Kelengkapan port USB, Type-C, HDMI, dll.'],
+            'camera' => ['label' => 'Webcam / Kamera', 'desc' => 'Resolusi kamera dan fitur privacy'],
+            'audio' => ['label' => 'Audio & Speaker', 'desc' => 'Sistem speaker dan teknologi audio'],
+            'connectivity' => ['label' => 'Konektivitas Nirkabel', 'desc' => 'Wi-Fi, Bluetooth, dan jaringan'],
+            'color' => ['label' => 'Warna Casing', 'desc' => 'Warna fisik unit laptop'],
+            'warranty' => ['label' => 'Informasi Garansi', 'desc' => 'Durasi dan cakupan garansi toko'],
+            'weight' => ['label' => 'Bobot / Berat (kg)', 'desc' => 'Berat fisik perangkat laptop'],
+            'battery_life' => ['label' => 'Kesehatan / Daya Baterai', 'desc' => 'Kapasitas dan estimasi daya tahan baterai'],
+            'kelebihan' => ['label' => 'Poin Kelebihan', 'desc' => 'Daftar keunggulan unit'],
+            'kekurangan' => ['label' => 'Poin Kekurangan / Catatan Fisik', 'desc' => 'Catatan kondisi fisik / minus unit'],
+        ];
+    @endphp
+    <form x-show="tab === 'comparison'" x-cloak method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
+        @csrf
+        <input type="hidden" name="_tab" value="comparison">
+
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
+                <div>
+                    <h3 class="text-sm font-bold text-[#363230] uppercase tracking-wider">
+                        Pengaturan Parameter Perbandingan Laptop (Compare Device)
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Pilih parameter spesifikasi mana saja yang ingin ditampilkan ke pembeli di halaman perbandingan produk (/compare).</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="toggleAllCompareSpecs(true)" class="px-3 py-1.5 bg-orange-50 text-[#DF5E1D] hover:bg-orange-100 rounded-xl text-xs font-bold transition">
+                        Pilih Semua (Default)
+                    </button>
+                    <button type="button" onclick="toggleAllCompareSpecs(false)" class="px-3 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl text-xs font-bold transition">
+                        Hapus Pilihan
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="compare-specs-grid">
+                @foreach($allCompareSpecs as $specKey => $specInfo)
+                    @php
+                        // Default is TRUE if settings not yet set
+                        $isChecked = $activeCompareFields === null ? true : in_array($specKey, $activeCompareFields);
+                    @endphp
+                    <label class="flex items-start gap-3 p-3.5 bg-gray-50/80 hover:bg-orange-50/50 rounded-2xl border border-gray-200/70 hover:border-[#DF5E1D]/40 cursor-pointer transition">
+                        <input type="checkbox" name="compare_fields[]" value="{{ $specKey }}" @checked($isChecked)
+                            class="compare-spec-checkbox w-4 h-4 rounded text-[#DF5E1D] accent-[#DF5E1D] mt-0.5">
+                        <div>
+                            <span class="text-xs font-bold text-[#363230] block">{{ $specInfo['label'] }}</span>
+                            <span class="text-[11px] text-gray-400">{{ $specInfo['desc'] }}</span>
+                        </div>
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" class="bg-[#DF5E1D] text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-[#c45218] transition shadow-sm">
+                Simpan Parameter Perbandingan
+            </button>
+        </div>
+    </form>
+
     <!-- Tab: Location & Maps -->
     <form x-show="tab === 'location'" x-cloak method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
         @csrf
@@ -342,13 +417,21 @@
 
 @push('scripts')
 <script>
+function toggleAllCompareSpecs(checkAll) {
+    document.querySelectorAll('.compare-spec-checkbox').forEach(cb => {
+        cb.checked = checkAll;
+    });
+}
+
 function sendTestWa() {
     const phone = document.getElementById('test-phone').value;
     const message = document.getElementById('test-message').value;
     const resultDiv = document.getElementById('test-wa-result');
 
     if (!phone) {
-        alert('Masukkan nomor WhatsApp tujuan terlebih dahulu.');
+        if (typeof window.showToast === 'function') {
+            window.showToast('Masukkan nomor WhatsApp tujuan terlebih dahulu.', 'warning');
+        }
         return;
     }
 
@@ -366,6 +449,9 @@ function sendTestWa() {
     .then(data => {
         if (data.status) {
             resultDiv.innerHTML = '<span class="text-emerald-600 font-bold">✅ ' + (data.message || 'Pesan percobaan berhasil diproses.') + '</span>';
+            if (typeof window.showToast === 'function') {
+                window.showToast('Pesan WhatsApp percobaan berhasil terkirim!');
+            }
         } else {
             resultDiv.innerHTML = '<span class="text-rose-600 font-bold">❌ Gagal: ' + (data.error || data.message) + '</span>';
         }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Laptop;
 use App\Models\Restock;
@@ -56,7 +57,8 @@ class RestockController extends Controller
     {
         $laptops = Laptop::orderBy('name')->get();
         $categories = Category::where('is_active', true)->get();
-        return view('admin.restocks.create', compact('laptops', 'categories'));
+        $brands = Brand::active()->sorted()->get();
+        return view('admin.restocks.create', compact('laptops', 'categories', 'brands'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -68,29 +70,38 @@ class RestockController extends Controller
             'purchase_date' => 'required|date',
             'notes' => 'nullable|string|max:1000',
             'entry_mode' => 'required|in:new_product,existing_product',
-            // If existing product
+            
+            // Multiple existing items
             'items' => 'nullable|array',
-            'items.*.laptop_id' => 'required_if:entry_mode,existing_product|exists:laptops,id',
-            'items.*.quantity' => 'required_if:entry_mode,existing_product|integer|min:1',
-            'items.*.purchase_price' => 'required_if:entry_mode,existing_product|numeric|min:0',
+            'items.*.laptop_id' => 'nullable|exists:laptops,id',
+            'items.*.quantity' => 'nullable|integer|min:1',
+            'items.*.purchase_price' => 'nullable|numeric|min:0',
             'items.*.notes' => 'nullable|string|max:255',
-            // If new product created directly from restock
-            'new_laptop.name' => 'required_if:entry_mode,new_product|string|max:255',
-            'new_laptop.brand' => 'required_if:entry_mode,new_product|string|max:255',
+
+            // New product inputs
+            'new_laptop.name' => 'nullable|string|max:255',
+            'new_laptop.brand' => 'nullable|string|max:255',
+            'new_laptop.brand_id' => 'nullable|exists:brands,id',
             'new_laptop.price' => 'nullable|numeric|min:0',
-            'new_laptop.processor' => 'required_if:entry_mode,new_product|string|max:255',
-            'new_laptop.ram' => 'required_if:entry_mode,new_product|string|max:255',
-            'new_laptop.storage' => 'required_if:entry_mode,new_product|string|max:255',
+            'new_laptop.processor' => 'nullable|string|max:255',
+            'new_laptop.ram' => 'nullable|string|max:255',
+            'new_laptop.storage' => 'nullable|string|max:255',
             'new_laptop.graphics' => 'nullable|string|max:255',
             'new_laptop.display' => 'nullable|string|max:255',
+            'new_laptop.ports' => 'nullable|string',
+            'new_laptop.camera' => 'nullable|string|max:255',
+            'new_laptop.audio' => 'nullable|string|max:255',
+            'new_laptop.connectivity' => 'nullable|string|max:255',
+            'new_laptop.color' => 'nullable|string|max:255',
+            'new_laptop.warranty' => 'nullable|string|max:255',
             'new_laptop.weight' => 'nullable|numeric|min:0',
             'new_laptop.battery_life' => 'nullable|string|max:255',
             'new_laptop.description' => 'nullable|string',
             'new_laptop.kelebihan' => 'nullable|string',
             'new_laptop.kekurangan' => 'nullable|string',
             'new_laptop.categories' => 'nullable|array|exists:categories,id',
-            'new_quantity' => 'required_if:entry_mode,new_product|integer|min:1',
-            'new_purchase_price' => 'required_if:entry_mode,new_product|numeric|min:0',
+            'new_quantity' => 'nullable|integer|min:1',
+            'new_purchase_price' => 'nullable|numeric|min:0',
         ]);
 
         $restockData = [
@@ -103,20 +114,41 @@ class RestockController extends Controller
         ];
 
         if ($validated['entry_mode'] === 'new_product') {
+            if (empty($validated['new_laptop']['name']) || empty($validated['new_laptop']['processor'])) {
+                return back()->withInput()->with('error', 'Nama laptop dan processor wajib diisi untuk produk baru.');
+            }
             $restockData['items'][] = [
                 'new_laptop' => $validated['new_laptop'],
-                'quantity' => (int) $validated['new_quantity'],
-                'purchase_price' => (float) $validated['new_purchase_price'],
+                'quantity' => (int) ($validated['new_quantity'] ?? 1),
+                'purchase_price' => (float) ($validated['new_purchase_price'] ?? 0),
                 'notes' => 'Unit baru dari batch restock ' . $validated['supplier_name'],
             ];
         } else {
-            $restockData['items'] = $validated['items'];
+            $validItems = [];
+            if (!empty($validated['items'])) {
+                foreach ($validated['items'] as $item) {
+                    if (!empty($item['laptop_id']) && !empty($item['quantity']) && (int)$item['quantity'] > 0) {
+                        $validItems[] = [
+                            'laptop_id' => $item['laptop_id'],
+                            'quantity' => (int) $item['quantity'],
+                            'purchase_price' => (float) ($item['purchase_price'] ?? 0),
+                            'notes' => $item['notes'] ?? null,
+                        ];
+                    }
+                }
+            }
+
+            if (empty($validItems)) {
+                return back()->withInput()->with('error', 'Minimal pilih 1 laptop yang di-restock.');
+            }
+
+            $restockData['items'] = $validItems;
         }
 
         $restock = $this->inventoryService->createRestock($restockData, auth()->user());
 
         return redirect()->route('admin.restocks.show', $restock)
-            ->with('success', "Batch restock {$restock->restock_number} berhasil dicatat. Seluruh unit barang masuk sebagai 'Pending QC' (status produk Nonaktif) sampai diinspeksi dan lolos QC.");
+            ->with('success', "Batch restock {$restock->restock_number} ({$restock->items->count()} model laptop) berhasil dicatat. Seluruh unit barang masuk sebagai 'Pending QC' (status produk Nonaktif) sampai diinspeksi dan lolos QC.");
     }
 
     public function show(Restock $restock): View

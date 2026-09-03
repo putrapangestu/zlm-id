@@ -603,9 +603,15 @@ function toggleDetailWishlist(id) {
     })
     .then(res => res.json())
     .then(data => {
-        alert(data.message || 'Wishlist diperbarui!');
+        if (typeof window.showToast === 'function') {
+            window.showToast(data.message || 'Wishlist berhasil diperbarui!');
+        }
     })
-    .catch(() => alert('Silakan login terlebih dahulu untuk menyimpan ke wishlist.'));
+    .catch(() => {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Silakan login terlebih dahulu untuk menyimpan ke wishlist.', 'info');
+        }
+    });
 }
 </script>
 @endpush

@@ -113,6 +113,11 @@ class SettingController extends Controller
                     Setting::setValue($key, $value);
                 }
                 break;
+
+            case 'comparison':
+                $fields = $request->input('compare_fields', []);
+                Setting::setValue('compare_fields', json_encode($fields));
+                break;
         }
 
         // Refresh settings config

@@ -47,9 +47,24 @@ class InventoryService
                     $laptop = Laptop::findOrFail($itemData['laptop_id']);
                 } elseif (!empty($itemData['new_laptop'])) {
                     $newLaptopData = $itemData['new_laptop'];
+                    $brandId = $newLaptopData['brand_id'] ?? null;
+                    $brandName = $newLaptopData['brand'] ?? 'Tanpa Brand';
+                    if ($brandId) {
+                        $brandObj = \App\Models\Brand::find($brandId);
+                        if ($brandObj) $brandName = $brandObj->name;
+                    } elseif (!empty($brandName)) {
+                        $brandObj = \App\Models\Brand::firstOrCreate(
+                            ['name' => trim($brandName)],
+                            ['slug' => \Illuminate\Support\Str::slug(trim($brandName)), 'is_active' => true]
+                        );
+                        $brandId = $brandObj->id;
+                        $brandName = $brandObj->name;
+                    }
+
                     $laptop = Laptop::create([
                         'name' => $newLaptopData['name'],
-                        'brand' => $newLaptopData['brand'],
+                        'brand' => $brandName,
+                        'brand_id' => $brandId,
                         'description' => $newLaptopData['description'] ?? 'Unit restock baru ZLM.ID',
                         'price' => $newLaptopData['price'] ?? ($price * 1.25), // Default markup 25% jika belum diset
                         'processor' => $newLaptopData['processor'],
@@ -57,6 +72,12 @@ class InventoryService
                         'storage' => $newLaptopData['storage'],
                         'graphics' => $newLaptopData['graphics'] ?? null,
                         'display' => $newLaptopData['display'] ?? null,
+                        'ports' => $newLaptopData['ports'] ?? null,
+                        'camera' => $newLaptopData['camera'] ?? null,
+                        'audio' => $newLaptopData['audio'] ?? null,
+                        'connectivity' => $newLaptopData['connectivity'] ?? null,
+                        'color' => $newLaptopData['color'] ?? null,
+                        'warranty' => $newLaptopData['warranty'] ?? 'Garansi Toko 1 Bulan',
                         'weight' => $newLaptopData['weight'] ?? 1.4,
                         'battery_life' => $newLaptopData['battery_life'] ?? null,
                         'image_url' => $newLaptopData['image_url'] ?? null,

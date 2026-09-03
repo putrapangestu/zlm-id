@@ -55,15 +55,17 @@ class LaptopController extends Controller
     public function create()
     {
         $categories = Category::where('is_active', true)->get();
+        $brands = \App\Models\Brand::active()->sorted()->get();
 
-        return view('admin.laptops.create', compact('categories'));
+        return view('admin.laptops.create', compact('categories', 'brands'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'brand' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'brand_id' => 'nullable|exists:brands,id',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'discount_type' => 'nullable|in:none,fixed,percentage',
@@ -97,6 +99,20 @@ class LaptopController extends Controller
         $data['is_active'] = $request->has('is_active') ? $request->boolean('is_active') : true;
         $data['discount_type'] = $data['discount_type'] ?? 'none';
         $data['discount_value'] = $data['discount_value'] ?? 0;
+
+        if (!empty($data['brand_id'])) {
+            $brandObj = \App\Models\Brand::find($data['brand_id']);
+            if ($brandObj) {
+                $data['brand'] = $brandObj->name;
+            }
+        } elseif (!empty($data['brand'])) {
+            $brandObj = \App\Models\Brand::firstOrCreate(
+                ['name' => trim($data['brand'])],
+                ['slug' => \Illuminate\Support\Str::slug(trim($data['brand'])), 'is_active' => true]
+            );
+            $data['brand_id'] = $brandObj->id;
+            $data['brand'] = $brandObj->name;
+        }
 
         // Handle multiple image uploads
         $images = $request->file('images', []);
@@ -132,7 +148,7 @@ class LaptopController extends Controller
 
     public function show(Laptop $laptop)
     {
-        $laptop->load('categories', 'productItems.inspector', 'images');
+        $laptop->load('categories', 'productItems.inspector', 'images', 'brandRelation');
 
         return view('admin.laptops.show', compact('laptop'));
     }
@@ -140,16 +156,18 @@ class LaptopController extends Controller
     public function edit(Laptop $laptop)
     {
         $categories = Category::where('is_active', true)->get();
-        $laptop->load(['categories', 'images']);
+        $brands = \App\Models\Brand::sorted()->get();
+        $laptop->load(['categories', 'images', 'productItems', 'brandRelation']);
 
-        return view('admin.laptops.edit', compact('laptop', 'categories'));
+        return view('admin.laptops.edit', compact('laptop', 'categories', 'brands'));
     }
 
     public function update(Request $request, Laptop $laptop)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'brand' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'brand_id' => 'nullable|exists:brands,id',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'discount_type' => 'nullable|in:none,fixed,percentage',
@@ -185,6 +203,20 @@ class LaptopController extends Controller
         $data['is_active'] = $request->boolean('is_active');
         $data['discount_type'] = $data['discount_type'] ?? 'none';
         $data['discount_value'] = $data['discount_value'] ?? 0;
+
+        if (!empty($data['brand_id'])) {
+            $brandObj = \App\Models\Brand::find($data['brand_id']);
+            if ($brandObj) {
+                $data['brand'] = $brandObj->name;
+            }
+        } elseif (!empty($data['brand'])) {
+            $brandObj = \App\Models\Brand::firstOrCreate(
+                ['name' => trim($data['brand'])],
+                ['slug' => \Illuminate\Support\Str::slug(trim($data['brand'])), 'is_active' => true]
+            );
+            $data['brand_id'] = $brandObj->id;
+            $data['brand'] = $brandObj->name;
+        }
 
         // Handle new image uploads
         $images = $request->file('images', []);
@@ -274,6 +306,7 @@ class LaptopController extends Controller
                 'id' => $laptop->id,
                 'name' => $laptop->name,
                 'brand' => $laptop->brand,
+                'brand_id' => $laptop->brand_id,
                 'price' => $laptop->price,
                 'processor' => $laptop->processor,
                 'ram' => $laptop->ram,
@@ -293,6 +326,7 @@ class LaptopController extends Controller
                 'kekurangan' => $laptop->kekurangan,
                 'image_url' => $laptop->image_url,
                 'category_ids' => $laptop->categories->pluck('id')->toArray(),
+                'categories' => $laptop->categories->map(fn($c) => ['id' => $c->id, 'name' => $c->name])->toArray(),
                 'skus' => $skus,
                 'sku_display' => count($skus) > 0 ? implode(', ', array_slice($skus, 0, 3)) : 'Belum ada SKU',
             ];

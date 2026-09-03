@@ -44,20 +44,31 @@
 
 <script>
 let autofillTemplates = [];
+window.customAutofillCallback = null;
 
-function openAutofillModal() {
+function openAutofillModal(callback = null) {
+    window.customAutofillCallback = callback;
     const modal = document.getElementById('autofill-modal');
+    if (!modal) return;
     modal.classList.remove('hidden');
-    document.getElementById('autofill-search-input').focus();
+    const input = document.getElementById('autofill-search-input');
+    if (input) {
+        input.value = '';
+        input.focus();
+    }
     searchAutofillTemplates('');
 }
 
 function closeAutofillModal() {
-    document.getElementById('autofill-modal').classList.add('hidden');
+    const modal = document.getElementById('autofill-modal');
+    if (modal) modal.classList.add('hidden');
+    window.customAutofillCallback = null;
 }
 
 async function searchAutofillTemplates(query = '') {
     const container = document.getElementById('autofill-results-container');
+    if (!container) return;
+    
     container.innerHTML = `
         <div class="text-center py-8 text-gray-400">
             <iconify-icon icon="solar:refresh-linear" class="text-2xl animate-spin mb-1 text-[#DF5E1D]"></iconify-icon>
@@ -84,14 +95,14 @@ async function searchAutofillTemplates(query = '') {
             <div class="p-3.5 bg-white rounded-2xl border border-gray-200/80 hover:border-[#DF5E1D] hover:shadow-md transition-all flex items-start justify-between gap-3 group">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-[#DF5E1D] px-2 py-0.5 rounded-md">${t.brand}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-[#DF5E1D] px-2 py-0.5 rounded-md">${t.brand || 'Laptop'}</span>
                         ${t.skus && t.skus.length > 0 ? `<span class="text-[10px] font-mono font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-md">SKU: ${t.skus[0]}</span>` : ''}
                     </div>
                     <h4 class="text-xs font-bold text-[#363230] group-hover:text-[#DF5E1D] transition-colors line-clamp-1">${t.name}</h4>
                     <p class="text-[11px] text-gray-500 mt-1">
-                        ${t.processor} &bull; ${t.ram} &bull; ${t.storage} ${t.graphics ? `&bull; ${t.graphics}` : ''}
+                        ${t.processor || '-'} &bull; ${t.ram || '-'} &bull; ${t.storage || '-'} ${t.graphics ? `&bull; ${t.graphics}` : ''}
                     </p>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Harga Referensi: <strong class="text-gray-700 font-mono">Rp ${parseInt(t.price).toLocaleString('id-ID')}</strong></p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">Harga Referensi: <strong class="text-gray-700 font-mono">Rp ${parseInt(t.price || 0).toLocaleString('id-ID')}</strong></p>
                 </div>
 
                 <button type="button" onclick="applyTemplate(${idx})" class="px-3.5 py-2 bg-orange-50 hover:bg-[#DF5E1D] text-[#DF5E1D] hover:text-white rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 shadow-xs">
@@ -105,67 +116,135 @@ async function searchAutofillTemplates(query = '') {
     }
 }
 
+function setFieldValue(selectors, val) {
+    if (val === null || val === undefined) return;
+    for (const selector of selectors) {
+        const el = document.querySelector(selector);
+        if (el) {
+            el.value = val;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+            break;
+        }
+    }
+}
+
 function applyTemplate(index) {
     const t = autofillTemplates[index];
     if (!t) return;
 
-    // 1. Fill Text Inputs
-    const fieldMap = {
-        'name': t.name,
-        'brand': t.brand,
-        'price': t.price,
-        'processor': t.processor,
-        'ram': t.ram,
-        'storage': t.storage,
-        'graphics': t.graphics,
-        'display': t.display,
-        'ports': t.ports,
-        'camera': t.camera,
-        'audio': t.audio,
-        'connectivity': t.connectivity,
-        'color': t.color,
-        'warranty': t.warranty,
-        'weight': t.weight,
-        'battery_life': t.battery_life,
-    };
+    // If custom callback registered (e.g. from dynamic restock row)
+    if (typeof window.customAutofillCallback === 'function') {
+        const cb = window.customAutofillCallback;
+        window.customAutofillCallback = null;
+        closeAutofillModal();
+        cb(t);
+        if (typeof window.showToast === 'function') {
+            window.showToast(`Spesifikasi "${t.name}" berhasil diterapkan!`);
+        }
+        return;
+    }
 
-    for (const [name, val] of Object.entries(fieldMap)) {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el && val !== null && val !== undefined) {
-            el.value = val;
+    // 1. Fill Text & Number Inputs across both create laptop and restock create forms
+    const fields = [
+        'name', 'brand', 'price', 'processor', 'ram', 'storage',
+        'graphics', 'display', 'ports', 'camera', 'audio',
+        'connectivity', 'color', 'warranty', 'weight', 'battery_life'
+    ];
+
+    fields.forEach(field => {
+        const val = t[field];
+        setFieldValue([
+            `[name="${field}"]`,
+            `[name="new_laptop[${field}]"]`,
+            `#${field}`,
+            `#new_laptop_${field}`
+        ], val);
+    });
+
+    // 2. Fill Brand Dropdown (if select exists)
+    const brandSelects = [
+        document.getElementById('brand_id'),
+        document.getElementById('new_laptop_brand_id'),
+        document.querySelector('select[name="brand_id"]'),
+        document.querySelector('select[name="new_laptop[brand_id]"]')
+    ].filter(Boolean);
+
+    brandSelects.forEach(sel => {
+        let matched = false;
+        if (t.brand_id) {
+            for (let opt of sel.options) {
+                if (opt.value === t.brand_id) {
+                    sel.value = opt.value;
+                    matched = true;
+                    break;
+                }
+            }
+        }
+        if (!matched && t.brand) {
+            const brandLower = t.brand.toLowerCase().trim();
+            for (let opt of sel.options) {
+                const optText = opt.textContent.toLowerCase().trim();
+                const optName = (opt.getAttribute('data-name') || '').toLowerCase().trim();
+                if (optText === brandLower || optName === brandLower) {
+                    sel.value = opt.value;
+                    matched = true;
+                    break;
+                }
+            }
+        }
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    // 3. Fill Trix Editors
+    const trixFields = ['description', 'kelebihan', 'kekurangan'];
+    trixFields.forEach(f => {
+        const val = t[f];
+        if (!val) return;
+
+        const hiddenInput = document.getElementById(f) || 
+                            document.getElementById(`new_laptop_${f}`) || 
+                            document.querySelector(`input[name="${f}"]`) || 
+                            document.querySelector(`input[name="new_laptop[${f}]"]`);
+        if (hiddenInput) {
+            hiddenInput.value = val;
+        }
+
+        const editor = document.querySelector(`trix-editor[input="${f}"]`) || 
+                       document.querySelector(`trix-editor[input="new_laptop_${f}"]`) || 
+                       document.querySelector(`trix-editor[input="new_laptop[${f}]"]`);
+        if (editor && editor.editor) {
+            editor.editor.loadHTML(val);
+        }
+    });
+
+    // 4. Fill Categories
+    if (t.category_ids && Array.isArray(t.category_ids)) {
+        // Multi checkboxes
+        document.querySelectorAll('input[name="categories[]"], input[name="new_laptop[categories][]"]').forEach(cb => {
+            cb.checked = t.category_ids.includes(cb.value);
+        });
+
+        // Single select
+        const catSelect = document.getElementById('new_laptop_category') || document.querySelector('select[name="new_laptop[categories][]"]');
+        if (catSelect && t.category_ids.length > 0) {
+            catSelect.value = t.category_ids[0];
+            catSelect.dispatchEvent(new Event('change', { bubbles: true }));
         }
     }
 
-    // 2. Fill Trix Editors
-    if (t.description) {
-        const descInput = document.getElementById('description');
-        if (descInput) descInput.value = t.description;
-        const descEditor = document.querySelector('trix-editor[input="description"]');
-        if (descEditor && descEditor.editor) descEditor.editor.loadHTML(t.description);
-    }
-
-    if (t.kelebihan) {
-        const kelInput = document.getElementById('kelebihan');
-        if (kelInput) kelInput.value = t.kelebihan;
-        const kelEditor = document.querySelector('trix-editor[input="kelebihan"]');
-        if (kelEditor && kelEditor.editor) kelEditor.editor.loadHTML(t.kelebihan);
-    }
-
-    if (t.kekurangan) {
-        const kekInput = document.getElementById('kekurangan');
-        if (kekInput) kekInput.value = t.kekurangan;
-        const kekEditor = document.querySelector('trix-editor[input="kekurangan"]');
-        if (kekEditor && kekEditor.editor) kekEditor.editor.loadHTML(t.kekurangan);
-    }
-
-    // 3. Check Categories
-    if (t.category_ids && Array.isArray(t.category_ids)) {
-        document.querySelectorAll('input[name="categories[]"]').forEach(cb => {
-            cb.checked = t.category_ids.includes(cb.value);
-        });
+    // 5. If on Restock in existing product mode, check if there's an existing laptop dropdown
+    const existingLaptopSelect = document.querySelector('#existing-items-rows select[name^="items["]') || 
+                                 document.querySelector('select[name="items[0][laptop_id]"]');
+    if (existingLaptopSelect && t.id) {
+        existingLaptopSelect.value = t.id;
+        existingLaptopSelect.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     closeAutofillModal();
-    alert(`Spesifikasi laptop "${t.name}" berhasil diterapkan ke formulir!`);
+
+    if (typeof window.showToast === 'function') {
+        window.showToast(`Spesifikasi laptop "${t.name}" berhasil diterapkan ke formulir!`);
+    }
 }
 </script>

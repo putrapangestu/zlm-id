@@ -113,9 +113,26 @@
                 </div>
 
                 <div class="divide-y divide-gray-100">
-                    @php $specs = [ 'processor' => ['label' => 'Processor', 'icon' => 'solar:cpu-linear'], 'ram' => ['label' => 'Memory (RAM)', 'icon' => 'solar:ram-linear'], 'storage' => ['label' => 'Storage', 'icon' => 'solar:database-linear'], 'graphics' => ['label' => 'Graphics', 'icon' => 'solar:graph-new-linear'], 'display' => ['label' => 'Display', 'icon' => 'solar:monitor-linear'], 'weight' => ['label' => 'Weight', 'icon' => 'solar:case-minimalistic-linear'], 'battery_life' => ['label' => 'Battery Life', 'icon' => 'solar:battery-charge-linear'], ]; @endphp
-
-                    @php $specCols = count($laptops) + 1; @endphp
+                    @php 
+                        $specs = $enabledSpecs ?? [ 
+                            'processor' => ['label' => 'Processor', 'icon' => 'solar:cpu-linear', 'type' => 'text'], 
+                            'ram' => ['label' => 'Memory (RAM)', 'icon' => 'solar:ram-linear', 'type' => 'text'], 
+                            'storage' => ['label' => 'Storage', 'icon' => 'solar:database-linear', 'type' => 'text'], 
+                            'graphics' => ['label' => 'Graphics', 'icon' => 'solar:graph-new-linear', 'type' => 'text'], 
+                            'display' => ['label' => 'Display', 'icon' => 'solar:monitor-linear', 'type' => 'text'], 
+                            'ports' => ['label' => 'I/O Ports Colokan', 'icon' => 'solar:usb-linear', 'type' => 'multiline'],
+                            'camera' => ['label' => 'Webcam / Kamera', 'icon' => 'solar:videocamera-linear', 'type' => 'text'],
+                            'audio' => ['label' => 'Audio & Speaker', 'icon' => 'solar:volume-loud-linear', 'type' => 'text'],
+                            'connectivity' => ['label' => 'Konektivitas Nirkabel', 'icon' => 'solar:wi-fi-router-linear', 'type' => 'text'],
+                            'color' => ['label' => 'Warna Casing', 'icon' => 'solar:pallete-2-linear', 'type' => 'text'],
+                            'warranty' => ['label' => 'Garansi Unit', 'icon' => 'solar:shield-check-linear', 'type' => 'text'],
+                            'weight' => ['label' => 'Weight', 'icon' => 'solar:case-minimalistic-linear', 'type' => 'weight'], 
+                            'battery_life' => ['label' => 'Battery Life', 'icon' => 'solar:battery-charge-linear', 'type' => 'text'], 
+                            'kelebihan' => ['label' => 'Poin Kelebihan', 'icon' => 'solar:like-linear', 'type' => 'html'],
+                            'kekurangan' => ['label' => 'Poin Kekurangan', 'icon' => 'solar:dislike-linear', 'type' => 'html'],
+                        ]; 
+                        $specCols = count($laptops) + 1; 
+                    @endphp
 
                     @foreach ($specs as $field => $spec)
                     <div class="grid grid-cols-{{ count($laptops) }} lg:grid-cols-{{ $specCols }} group hover:bg-orange-50/30 transition-colors duration-300">
@@ -129,18 +146,41 @@
                             </div>
                         </div>
                         @foreach ($laptops as $laptop)
-                        <div class="p-5 lg:p-6 {{ !$loop->parent->last ? 'border-r border-gray-100' : '' }} flex items-center justify-center lg:justify-start {{ $loop->index % 2 === 1 ? 'bg-gray-50/10' : '' }}">
-                            <div class="flex items-center gap-3 text-sm">
+                        <div class="p-5 lg:p-6 {{ !$loop->parent->last ? 'border-r border-gray-100' : '' }} flex items-start justify-start {{ $loop->index % 2 === 1 ? 'bg-gray-50/10' : '' }}">
+                            <div class="flex items-start gap-3 text-sm w-full">
                                 <div class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 group-hover:bg-white group-hover:border-orange-100 transition-colors">
                                     <iconify-icon icon="{{ $spec['icon'] }}" class="text-lg text-gray-400 group-hover:text-[#DF5E1D] transition-colors" style="stroke-width: 1.5;"></iconify-icon>
                                 </div>
-                                <div class="text-left">
-                                    <div class="text-[11px] font-medium text-gray-400 leading-tight">{{ $spec['label'] }}</div>
-                                    <div class="text-sm text-[#363230] font-medium leading-tight">
-                                        @if ($field === 'weight' && $laptop->weight)
-                                            {{ $laptop->weight }} kg
+                                <div class="text-left flex-1 min-w-0">
+                                    <div class="text-[11px] font-medium text-gray-400 leading-tight mb-1">{{ $spec['label'] }}</div>
+                                    <div class="text-sm text-[#363230] font-medium leading-relaxed">
+                                        @if ($field === 'price')
+                                            <span class="font-bold text-[#DF5E1D] font-mono">Rp {{ number_format($laptop->final_price, 0, ',', '.') }}</span>
+                                        @elseif ($field === 'weight')
+                                            {{ $laptop->weight ? $laptop->weight . ' kg' : '-' }}
+                                        @elseif ($field === 'ports')
+                                            @if(!empty($laptop->ports_list))
+                                                <ul class="space-y-1 text-xs text-gray-600">
+                                                    @foreach($laptop->ports_list as $port)
+                                                        <li class="flex items-center gap-1.5">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0"></span>
+                                                            <span>{{ $port }}</span>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        @elseif (in_array($field, ['kelebihan', 'kekurangan']))
+                                            @if(!empty($laptop->$field))
+                                                <div class="prose prose-xs max-w-none text-gray-600 leading-normal">
+                                                    {!! $laptop->$field !!}
+                                                </div>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
                                         @else
-                                            {{ $laptop->$field ?? '-' }}
+                                            {{ $laptop->$field ?: '-' }}
                                         @endif
                                     </div>
                                 </div>

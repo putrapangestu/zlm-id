@@ -19,6 +19,7 @@ class Laptop extends Model
         'name',
         'slug',
         'brand',
+        'brand_id',
         'description',
         'price',
         'discount_type',
@@ -86,6 +87,11 @@ class Laptop extends Model
                 $laptop->slug = Str::slug($laptop->name);
             }
         });
+    }
+
+    public function brandRelation(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 
     public function categories(): BelongsToMany

@@ -188,6 +188,10 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
     Route::resource('laptops', AdminLaptopController::class)->except(['show']);
     Route::get('/laptops/{laptop}', [AdminLaptopController::class, 'show'])->name('laptops.show');
 
+    // Brands (Master Brand)
+    Route::patch('/brands/{brand}/toggle-active', [App\Http\Controllers\Admin\BrandController::class, 'toggleActive'])->name('brands.toggle-active');
+    Route::resource('brands', App\Http\Controllers\Admin\BrandController::class);
+
     // Categories
     Route::resource('categories', CategoryController::class)->except(['show']);
 

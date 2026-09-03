@@ -22,14 +22,37 @@
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
     <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
 
-    <style>
-        * {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-    </style>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.showToast = function(title, icon = 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                icon: icon,
+                title: title,
+                customClass: {
+                    popup: 'rounded-2xl shadow-xl border border-gray-100'
+                }
+            });
+        };
+        window.showAlert = function(title, text = '', icon = 'success') {
+            return Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                confirmButtonColor: '#DF5E1D',
+                confirmButtonText: 'Tutup',
+                customClass: {
+                    popup: 'rounded-3xl shadow-2xl p-6',
+                    confirmButton: 'px-6 py-2.5 rounded-xl font-bold text-xs shadow-md'
+                }
+            });
+        };
+    </script>
 </head>
 <body class="bg-[#FBFBFB] text-[#363230] antialiased">
 
@@ -91,6 +114,11 @@
                 <span>Katalog Laptop & Diskon</span>
             </a>
             @endcan
+
+            <a href="{{ route('admin.brands.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.brands.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
+                <iconify-icon icon="solar:tag-bold" class="text-lg"></iconify-icon>
+                <span>Master Brand</span>
+            </a>
 
             @can('categories.manage')
             <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.categories.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
