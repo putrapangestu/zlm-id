@@ -1,209 +1,193 @@
 @extends('layouts.landing')
 
-@section('title', 'Detail Artikel - ZLM.ID')
+@php
+    $seoTitle = $article->seo_meta_title;
+    $seoDescription = $article->seo_meta_description;
+    $seoKeywords = $article->meta_keywords ?: "artikel {$article->name}, review laptop, panduan laptop, {$article->category}, zlm id";
+    $seoImage = $article->thumbnail_url_full;
+    $seoUrl = route('landing.article-detail', $article->slug);
+    $seoType = 'article';
+    $seoAuthor = $article->author;
+@endphp
+
+@section('title', $seoTitle)
+
+@push('schema')
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'BlogPosting',
+    'mainEntityOfPage' => [
+        '@type' => 'WebPage',
+        '@id' => route('landing.article-detail', $article->slug),
+    ],
+    'headline' => $article->name,
+    'description' => $article->seo_meta_description,
+    'image' => $article->thumbnail_url_full,
+    'author' => [
+        '@type' => 'Person',
+        'name' => $article->author,
+    ],
+    'publisher' => [
+        '@type' => 'Organization',
+        'name' => 'ZLM.ID',
+        'logo' => [
+            '@type' => 'ImageObject',
+            'url' => asset('assets/logo.png'),
+        ],
+    ],
+    'datePublished' => $article->date ? $article->date->toIso8601String() : $article->created_at->toIso8601String(),
+    'dateModified' => $article->updated_at ? $article->updated_at->toIso8601String() : now()->toIso8601String(),
+], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
 
 @section('content')
-<div class="bg-gray-50 min-h-screen py-6 lg:py-8 relative">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        <!-- Breadcrumbs -->
-        <nav class="mb-10">
-            <ol class="flex items-center justify-start gap-2 text-sm text-gray-500 font-medium">
+<div class="bg-gray-50 min-h-screen py-6 lg:py-10">
+    <div class="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumb -->
+        <nav class="mb-6 lg:mb-8">
+            <ol class="flex items-center flex-wrap gap-2 text-xs text-gray-500 font-medium">
                 <li>
-                    <a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 flex items-center gap-1.5 rounded-md">
-                        <iconify-icon icon="solar:home-2-linear" class="text-base" style="stroke-width: 1.5;"></iconify-icon>
-                        Beranda
+                    <a href="{{ route('landing.home') }}" class="hover:text-[#DF5E1D] transition-colors flex items-center gap-1">
+                        <iconify-icon icon="solar:home-2-linear" class="text-sm"></iconify-icon> Beranda
                     </a>
                 </li>
-                <li class="flex items-center text-gray-300">
-                    <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
-                </li>
+                <li><iconify-icon icon="solar:alt-arrow-right-linear" class="text-gray-400"></iconify-icon></li>
                 <li>
-                    <a href="{{ route('landing.articles') }}" class="hover:text-[#DF5E1D] transition-colors duration-200 rounded-md">Pusat Pengetahuan</a>
+                    <a href="{{ route('landing.articles') }}" class="hover:text-[#DF5E1D] transition-colors">Artikel & Panduan</a>
                 </li>
-                <li class="flex items-center text-gray-300">
-                    <iconify-icon icon="solar:alt-arrow-right-linear" style="stroke-width: 1.5;"></iconify-icon>
+                <li><iconify-icon icon="solar:alt-arrow-right-linear" class="text-gray-400"></iconify-icon></li>
+                <li>
+                    <a href="{{ route('landing.articles', ['category' => $article->category]) }}" class="hover:text-[#DF5E1D] transition-colors">
+                        {{ $article->category }}
+                    </a>
                 </li>
-                <li class="text-[#363230] truncate">Detail Artikel</li>
             </ol>
         </nav>
 
-        <!-- Main 2-Column Grid Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16 items-start mt-6">
-            
-            <!-- Left Column: Article Content (Col 8) -->
-            <div class="lg:col-span-8">
-                <!-- Article Header -->
-                <header class="mb-8">
-                    <!-- Category & Date -->
-                    <div class="flex items-center gap-3 mb-5">
-                        <span class="bg-[#DF5E1D]/10 text-[#DF5E1D] border border-[#DF5E1D]/20 px-3 py-1 rounded-lg text-xs font-bold tracking-widest uppercase shadow-sm">Panduan</span>
-                        <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                        <span class="text-sm font-medium text-gray-500">15 Apr 2026</span>
-                    </div>
+        <!-- Article Container -->
+        <article class="bg-white rounded-3xl border border-gray-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden p-6 sm:p-10 lg:p-12 mb-12">
+            <!-- Article Header -->
+            <header class="mb-8 pb-8 border-b border-gray-100">
+                <div class="flex items-center gap-2.5 mb-4 flex-wrap">
+                    <span class="bg-[#DF5E1D] text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg shadow-2xs">
+                        {{ $article->category }}
+                    </span>
+                    <span class="text-xs text-gray-400">
+                        {{ $article->date ? $article->date->format('d F Y') : $article->created_at->format('d F Y') }}
+                    </span>
+                    <span class="text-xs text-gray-300">&bull;</span>
+                    <span class="text-xs text-gray-400">{{ $article->reading_time }} menit baca</span>
+                    <span class="text-xs text-gray-300">&bull;</span>
+                    <span class="text-xs text-gray-400">{{ $article->views_count }} x dibaca</span>
+                </div>
 
-                    <!-- Title -->
-                    <h1 class="text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-[#363230] mb-6 leading-[1.2]">
-                        Memahami Perbedaan ARM vs x86 untuk Workload Modern
-                    </h1>
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#363230] leading-tight tracking-tight mb-4">
+                    {{ $article->name }}
+                </h1>
 
-                    <!-- Meta & Author -->
-                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-2">
-                        <div class="flex items-center gap-2.5">
-                            <img src="https://ui-avatars.com/api/?name=Admin+ZLM&background=F3F4F6&color=363230" alt="Admin ZLM" class="w-8 h-8 rounded-full border border-gray-200">
-                            <span>Ditulis oleh <span class="font-bold text-[#363230]">Admin ZLM</span></span>
+                @if($article->excerpt)
+                    <p class="text-sm sm:text-base text-gray-500 leading-relaxed font-normal">
+                        {{ $article->excerpt }}
+                    </p>
+                @endif
+
+                <!-- Author & Share -->
+                <div class="mt-6 pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-orange-100 text-[#DF5E1D] font-bold flex items-center justify-center text-sm">
+                            {{ strtoupper(substr($article->author, 0, 1)) }}
                         </div>
-                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                        <div class="flex items-center gap-1.5 font-medium">
-                            <iconify-icon icon="solar:clock-circle-linear" class="text-lg"></iconify-icon>
-                            8 min read
+                        <div>
+                            <div class="text-xs font-bold text-[#363230]">{{ $article->author }}</div>
+                            <div class="text-[11px] text-gray-400">Tim Redaksi & Kurasi ZLM.ID</div>
                         </div>
                     </div>
-                </header>
 
-                <!-- Hero Image (Wide) -->
-                <figure class="rounded-[2rem] overflow-hidden bg-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-200/60 relative group w-full mb-10 md:mb-12">
-                    <img src="https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&q=80&w=1200" alt="Article Cover" class="w-full h-[35vh] md:h-[50vh] object-cover group-hover:scale-[1.02] transition-transform duration-1000 ease-out">
-                </figure>
-
-                <!-- Drop Cap Styling -->
-                <style>
-                    .prose-editorial > p:first-of-type::first-letter {
-                        float: left;
-                        font-size: 5rem;
-                        line-height: 0.8;
-                        padding-right: 0.75rem;
-                        padding-top: 0.5rem;
-                        font-weight: 800;
-                        color: #DF5E1D;
-                        font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-                    }
-                </style>
-
-                <!-- Text Content -->
-                <article class="prose prose-lg prose-gray max-w-none text-gray-700 prose-editorial prose-headings:text-[#363230] prose-headings:font-bold prose-h3:text-2xl prose-a:text-[#DF5E1D] hover:prose-a:text-[#c45218] prose-img:rounded-[2rem] prose-img:border prose-img:border-gray-200/60 prose-img:shadow-md leading-relaxed mb-12">
-                    <p class="text-xl md:text-2xl text-gray-500 font-medium mb-10 leading-relaxed">
-                        Arsitektur prosesor sedang mengalami perubahan besar. Dengan semakin banyaknya laptop premium beralih dari x86 ke ARM, bagaimana dampaknya bagi workflow Anda sehari-hari?
-                    </p>
-                    
-                    <p>
-                        Selama dekade terakhir, prosesor x86 (seperti Intel dan AMD) mendominasi pasar PC. Namun, terobosan dari berbagai vendor silicon akhir-akhir ini telah memperkenalkan arsitektur ARM (seperti seri Apple M dan Snapdragon X Elite) ke kelas workstation mobile. Kombinasi performa komputasi tinggi dan efisiensi baterai yang ekstrem membuatnya menjadi sorotan utama.
-                    </p>
-
-                    <h3 class="mt-10 mb-5">Apa Itu Arsitektur x86?</h3>
-                    <p>
-                        x86 adalah arsitektur instruksi kompleks (CISC) yang dirancang untuk menangani tugas rumit dalam sedikit instruksi. Hampir seluruh aplikasi Windows dan game PC dibangun di atas x86. Kekuatannya terletak pada kompabilitas mundur (backward compatibility) dan raw power. Sayangnya, desain ini sering kali membutuhkan daya lebih besar dan menghasilkan temperatur tinggi (thermal throttling).
-                    </p>
-
-                    <div class="bg-gray-50/80 border-l-4 border-[#DF5E1D] p-5 md:p-6 rounded-r-2xl my-8 shadow-sm">
-                        <p class="m-0 text-base md:text-lg text-gray-700 font-medium">
-                            <strong class="text-[#363230] block mb-2">Catatan Penting:</strong>
-                            Jika Anda menggunakan software legacy berumur puluhan tahun atau game kompetitif tertentu, arsitektur x86 masih menjadi standar yang paling aman untuk digunakan.
-                        </p>
-                    </div>
-
-                    <h3 class="mt-10 mb-5">Keunggulan Arsitektur ARM</h3>
-                    <p>
-                        ARM menggunakan desain Reduced Instruction Set Computing (RISC). Desain ini mengeksekusi instruksi yang lebih sederhana namun jauh lebih cepat. Awalnya didesain untuk smartphone karena butuh daya baterai super hemat, kini instruksinya cukup solid untuk me-render video 4K atau memproses model AI lokal.
-                    </p>
-                    
-                    <ul class="list-disc pl-6 space-y-3 my-6 marker:text-[#DF5E1D]">
-                        <li><strong class="text-[#363230]">Daya Tahan Baterai Maksimal:</strong> Laptop berbasis ARM umumnya menawarkan daya tahan baterai 15-20 jam.</li>
-                        <li><strong class="text-[#363230]">Thermal Rendah:</strong> Anda hampir tidak akan pernah mendengar kipas berputar kencang, bahkan pada desain tanpa kipas sama sekali.</li>
-                        <li><strong class="text-[#363230]">Integrasi NPU:</strong> Sangat responsif dalam pemrosesan kecerdasan buatan dan neural engine tasks.</li>
-                    </ul>
-
-                    <h3 class="mt-10 mb-5">Kesimpulan: Mana yang Cocok?</h3>
-                    <p>
-                        Bagi para programmer web, video editor, dan profesional bisnis yang mobilitasnya tinggi, ARM adalah masa depan. Laptopnya akan selalu dingin dan siap dibawa seharian penuh. Namun, jika Anda adalah seorang arsitek 3D, pemain game PC hardcore, atau menggunakan software akuntansi spesifik, pilihan laptop x86 akan menyelamatkan Anda dari mimpi buruk kompabilitas.
-                    </p>
-                </article>
-                
-                <!-- Tags & Share (Bottom) -->
-                <div class="pt-8 border-t border-gray-200/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                    <div class="flex flex-wrap gap-2.5">
-                        <span class="bg-gray-100/80 text-gray-600 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors cursor-pointer">#Processor</span>
-                        <span class="bg-gray-100/80 text-gray-600 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors cursor-pointer">#Review</span>
-                        <span class="bg-gray-100/80 text-gray-600 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors cursor-pointer">#Teknologi</span>
-                    </div>
-
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Bagikan:</span>
-                        <button class="w-10 h-10 rounded-full bg-white border-2 border-gray-100 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#DF5E1D] hover:border-[#DF5E1D]/30 hover:bg-[#DF5E1D]/5 transition-all">
-                            <iconify-icon icon="solar:rounded-link-linear" class="text-xl"></iconify-icon>
-                        </button>
-                        <button class="w-10 h-10 rounded-full bg-white border-2 border-gray-100 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#1DA1F2] hover:border-[#1DA1F2]/30 hover:bg-[#1DA1F2]/5 transition-all">
-                            <iconify-icon icon="formkit:twitter" class="text-sm"></iconify-icon>
+                    <!-- Share Buttons -->
+                    <div class="flex items-center gap-2" x-data="{ copied: false }">
+                        <span class="text-xs font-semibold text-gray-400 mr-1">Bagikan:</span>
+                        <!-- WhatsApp -->
+                        <a href="https://api.whatsapp.com/send?text={{ urlencode($article->name . ' - ' . route('landing.article-detail', $article->slug)) }}" target="_blank" 
+                           class="w-8 h-8 rounded-xl bg-gray-50 hover:bg-emerald-50 text-gray-600 hover:text-emerald-600 border border-gray-200 flex items-center justify-center transition-colors" title="Bagikan ke WhatsApp">
+                            <iconify-icon icon="solar:chat-round-dots-linear" class="text-base"></iconify-icon>
+                        </a>
+                        <!-- Twitter / X -->
+                        <a href="https://twitter.com/intent/tweet?text={{ urlencode($article->name) }}&url={{ urlencode(route('landing.article-detail', $article->slug)) }}" target="_blank" 
+                           class="w-8 h-8 rounded-xl bg-gray-50 hover:bg-sky-50 text-gray-600 hover:text-sky-600 border border-gray-200 flex items-center justify-center transition-colors" title="Bagikan ke Twitter">
+                            <iconify-icon icon="solar:share-circle-linear" class="text-base"></iconify-icon>
+                        </a>
+                        <!-- Copy Link -->
+                        <button x-on:click="navigator.clipboard.writeText(window.location.href); copied = true; setTimeout(() => copied = false, 2000)" 
+                                class="h-8 px-2.5 rounded-xl bg-gray-50 hover:bg-orange-50 text-gray-600 hover:text-[#DF5E1D] border border-gray-200 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                            <iconify-icon icon="solar:copy-linear" class="text-sm"></iconify-icon>
+                            <span x-text="copied ? 'Tersalin!' : 'Salin URL'"></span>
                         </button>
                     </div>
                 </div>
+            </header>
+
+            <!-- Featured Image -->
+            @if($article->thumbnail)
+                <div class="mb-8 rounded-2xl overflow-hidden aspect-video max-h-[460px] w-full bg-gray-100 shadow-sm">
+                    <img src="{{ $article->thumbnail_url_full }}" alt="{{ $article->name }}" class="w-full h-full object-cover">
+                </div>
+            @endif
+
+            <!-- Article Body (Trix content styling) -->
+            <div class="prose prose-stone max-w-none text-[#363230] leading-relaxed text-sm sm:text-base space-y-4">
+                {!! $article->description !!}
             </div>
 
-            <!-- Right Column: Sidebar Rekomendasi (Col 4, Sticky) -->
-            <div class="lg:col-span-4 lg:sticky lg:top-24 z-30 mt-16 lg:mt-0 pt-12 lg:pt-0 border-t lg:border-t-0 border-gray-200/60">
-                <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200/60">
-                    <h3 class="text-xl font-bold tracking-tight text-[#363230]">Baca Juga</h3>
-                    <a href="{{ route('landing.articles') }}" class="text-xs font-bold text-[#DF5E1D] hover:text-[#c45218] flex items-center gap-1 group transition">
-                        Lihat semua
-                        <iconify-icon icon="solar:arrow-right-linear" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
-                    </a>
+            <!-- Call to Action Banner -->
+            <div class="mt-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-orange-50 to-orange-100/60 border border-orange-200/80 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div>
+                    <h4 class="text-base font-bold text-[#363230] mb-1">Sedang Cari Laptop yang Tepat?</h4>
+                    <p class="text-xs text-gray-600 max-w-md">Kunjungi katalog laptop kami dengan garansi resmi & lolos uji QC ketat sebelum dikirim ke rumah Anda.</p>
                 </div>
-                
-                <div class="flex flex-col gap-8">
-                    <!-- Article Card (Sidebar style) -->
-                    <a href="#" class="block bg-transparent group cursor-pointer">
-                        <div class="relative h-48 rounded-2xl bg-gray-100 overflow-hidden mb-4">
-                            <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=600" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#3b82f6] px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest shadow-sm">Tips</div>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-[#363230] group-hover:text-[#DF5E1D] transition-colors line-clamp-2 mb-2 leading-snug">
-                                Optimasi Laptop Workstation Mobile Anda
-                            </h4>
-                            <div class="text-xs text-gray-500 font-medium flex items-center gap-1.5">
-                                <iconify-icon icon="solar:clock-circle-linear" class="text-gray-400 text-sm"></iconify-icon>
-                                6 min read
-                            </div>
-                        </div>
-                    </a>
+                <a href="{{ route('landing.search') }}" class="shrink-0 bg-[#DF5E1D] hover:bg-[#c45218] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-2">
+                    <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-base"></iconify-icon>
+                    Jelajahi Laptop
+                </a>
+            </div>
+        </article>
 
-                    <!-- Article Card (Sidebar style) -->
-                    <a href="#" class="block bg-transparent group cursor-pointer">
-                        <div class="relative h-48 rounded-2xl bg-gray-100 overflow-hidden mb-4">
-                            <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&q=80&w=600" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#8b5cf6] px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest shadow-sm">Review</div>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-[#363230] group-hover:text-[#DF5E1D] transition-colors line-clamp-2 mb-2 leading-snug">
-                                OLED vs Mini-LED: Dilema Profesional Konten
-                            </h4>
-                            <div class="text-xs text-gray-500 font-medium flex items-center gap-1.5">
-                                <iconify-icon icon="solar:clock-circle-linear" class="text-gray-400 text-sm"></iconify-icon>
-                                10 min read
+        <!-- Related Articles -->
+        @if(isset($relatedArticles) && $relatedArticles->count() > 0)
+            <div class="mt-12">
+                <h3 class="text-xl font-bold text-[#363230] mb-6 flex items-center gap-2">
+                    <iconify-icon icon="solar:document-text-linear" class="text-[#DF5E1D]"></iconify-icon>
+                    Artikel Terkait Lainnya
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    @foreach($relatedArticles as $related)
+                        <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group">
+                            <a href="{{ route('landing.article-detail', $related->slug) }}" class="block aspect-video bg-gray-100 overflow-hidden">
+                                <img src="{{ $related->thumbnail_url_full }}" alt="{{ $related->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            </a>
+                            <div class="p-4 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-[10px] font-bold text-[#DF5E1D] uppercase tracking-wider block mb-1">
+                                        {{ $related->category }}
+                                    </span>
+                                    <h4 class="text-xs font-bold text-[#363230] group-hover:text-[#DF5E1D] transition-colors line-clamp-2 leading-snug">
+                                        <a href="{{ route('landing.article-detail', $related->slug) }}">
+                                            {{ $related->name }}
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+                                    <span>{{ $related->reading_time }} min read</span>
+                                    <span class="font-bold text-[#DF5E1D]">Baca &rarr;</span>
+                                </div>
                             </div>
                         </div>
-                    </a>
-                    
-                    <!-- Article Card (Sidebar style) - 3rd added for better fill -->
-                    <a href="#" class="block bg-transparent group cursor-pointer">
-                        <div class="relative h-48 rounded-2xl bg-gray-100 overflow-hidden mb-4">
-                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=600" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-rose-600 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest shadow-sm">Gaming</div>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-[#363230] group-hover:text-[#DF5E1D] transition-colors line-clamp-2 mb-2 leading-snug">
-                                Memilih Laptop Gaming Terbaik 2026 Sesuai Budget
-                            </h4>
-                            <div class="text-xs text-gray-500 font-medium flex items-center gap-1.5">
-                                <iconify-icon icon="solar:clock-circle-linear" class="text-gray-400 text-sm"></iconify-icon>
-                                7 min read
-                            </div>
-                        </div>
-                    </a>
+                    @endforeach
                 </div>
             </div>
-
-        </div>
+        @endif
     </div>
 </div>
 @endsection

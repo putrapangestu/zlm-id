@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ArticleController as PublicArticleController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\ContactController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProofUploadController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SmartSearchController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\WishlistController;
@@ -49,15 +51,12 @@ Route::delete('/compare/remove/{laptop}', [CompareController::class, 'remove'])-
 Route::delete('/compare/clear', [CompareController::class, 'clear'])->name('compare.clear');
 Route::get('/compare/ids', [CompareController::class, 'ids'])->name('compare.ids');
 Route::get('/compare/products', [CompareController::class, 'products'])->name('compare.products');
-Route::get('/laptop/{laptop}', [LaptopController::class, 'show'])->name('landing.detail');
+Route::get('/laptop/{slug}', [LaptopController::class, 'show'])->name('landing.detail');
 
-Route::get('/articles', function () {
-    return view('landing.articles');
-})->name('landing.articles');
+Route::get('/articles', [PublicArticleController::class, 'index'])->name('landing.articles');
+Route::get('/articles/{slug}', [PublicArticleController::class, 'show'])->name('landing.article-detail');
 
-Route::get('/articles/{id}', function ($id) {
-    return view('landing.article-detail');
-})->name('landing.article-detail');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 Route::get('/testimonials', function () {
     $testimonials = App\Models\Testimonial::where('is_active', true)->latest()->paginate(12);

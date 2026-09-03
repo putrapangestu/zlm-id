@@ -24,7 +24,7 @@
                         <p class="text-xs text-gray-400 font-medium uppercase mb-1">{{ $item->laptop->brand }}</p>
                         <h3 class="font-medium text-[#363230] mb-2">{{ $item->laptop->name }}</h3>
                         <p class="text-lg font-semibold text-[#363230]">Rp {{ number_format($item->laptop->price, 0, ',', '.') }}</p>
-                        <a href="{{ route('landing.detail', $item->laptop_id) }}" class="mt-3 block w-full text-center bg-[#DF5E1D] text-white py-2 rounded-lg text-sm font-medium hover:bg-[#c45218] transition-colors">
+                        <a href="{{ route('landing.detail', $item->laptop) }}" class="mt-3 block w-full text-center bg-[#DF5E1D] text-white py-2 rounded-lg text-sm font-medium hover:bg-[#c45218] transition-colors">
                             View Details
                         </a>
                     </div>

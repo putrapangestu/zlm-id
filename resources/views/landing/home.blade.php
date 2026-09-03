@@ -326,11 +326,11 @@
                         <!-- Action Buttons -->
                         <div class="flex flex-col gap-2 mt-auto">
                             <!-- Beli (Primary Action) -->
-                            <button onclick="window.location.href='{{ route('landing.detail', $laptop->id) }}'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
+                            <button onclick="window.location.href='{{ route('landing.detail', $laptop) }}'" class="w-full bg-[#DF5E1D] text-white py-2 rounded-md text-[13px] font-bold hover:bg-[#c45218] transition-colors shadow-sm">
                                 Beli
                             </button>
                             <!-- Pelajari (Secondary Action) -->
-                            <a href="{{ route('landing.detail', $laptop->id) }}" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
+                            <a href="{{ route('landing.detail', $laptop) }}" class="w-full text-center border-2 border-[#DF5E1D] text-[#DF5E1D] py-1.5 rounded-md text-[13px] font-bold hover:bg-[#DF5E1D]/5 transition-colors">
                                 Pelajari
                             </a>
                         </div>
@@ -367,7 +367,7 @@
                     <span class="text-[#DF5E1D] text-[10px] font-bold tracking-widest uppercase mb-3 block">BARU</span>
                     <h3 class="text-3xl font-bold text-gray-900 mb-2">{{ $bentoLaptops[0]->name }}</h3>
                     <p class="text-gray-500 mb-6 text-sm">Mulai dari Rp {{ number_format($bentoLaptops[0]->price, 0, ',', '.') }}</p>
-                    <a href="{{ route('landing.detail', $bentoLaptops[0]->id) }}" class="inline-block bg-[#DF5E1D] text-white px-7 py-3 rounded-full text-sm font-semibold hover:bg-[#c45218] transition-colors shadow-sm">Tambah ke keranjang</a>
+                    <a href="{{ route('landing.detail', $bentoLaptops[0]) }}" class="inline-block bg-[#DF5E1D] text-white px-7 py-3 rounded-full text-sm font-semibold hover:bg-[#c45218] transition-colors shadow-sm">Tambah ke keranjang</a>
                 </div>
                 <div class="flex-1 flex items-end justify-center relative">
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -386,7 +386,7 @@
                         <span class="text-[#DF5E1D] text-[10px] font-bold tracking-widest uppercase mb-2 block">BARU</span>
                         <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 line-clamp-1">{{ $bentoLaptops[1]->name }}</h3>
                         <p class="text-gray-500 text-xs md:text-sm mb-4">Mulai dari Rp {{ number_format($bentoLaptops[1]->price, 0, ',', '.') }}</p>
-                        <a href="{{ route('landing.detail', $bentoLaptops[1]->id) }}" class="inline-block bg-[#DF5E1D] text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-[#c45218] transition-colors shadow-sm">Tambah ke keranjang</a>
+                        <a href="{{ route('landing.detail', $bentoLaptops[1]) }}" class="inline-block bg-[#DF5E1D] text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-[#c45218] transition-colors shadow-sm">Tambah ke keranjang</a>
                     </div>
                     <div class="absolute right-0 bottom-0 top-0 w-1/2 bg-gradient-to-l from-gray-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
@@ -400,7 +400,7 @@
                         <span class="text-[#DF5E1D] text-[10px] font-bold tracking-widest uppercase mb-2 block">BARU</span>
                         <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 line-clamp-1">{{ $bentoLaptops[2]->name }}</h3>
                         <p class="text-gray-500 text-xs md:text-sm mb-4">Mulai dari Rp {{ number_format($bentoLaptops[2]->price, 0, ',', '.') }}</p>
-                        <a href="{{ route('landing.detail', $bentoLaptops[2]->id) }}" class="inline-block bg-[#DF5E1D] text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-[#c45218] transition-colors shadow-sm">Tambah ke keranjang</a>
+                        <a href="{{ route('landing.detail', $bentoLaptops[2]) }}" class="inline-block bg-[#DF5E1D] text-white px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-[#c45218] transition-colors shadow-sm">Tambah ke keranjang</a>
                     </div>
                     <div class="absolute right-0 bottom-0 top-0 w-1/2 bg-gradient-to-l from-gray-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>

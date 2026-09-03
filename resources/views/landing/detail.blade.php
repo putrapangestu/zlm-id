@@ -1,6 +1,41 @@
 @extends('layouts.landing')
 
-@section('title', $laptop->name)
+@php
+    $seoTitle = $laptop->seo_meta_title;
+    $seoDescription = $laptop->seo_meta_description;
+    $seoKeywords = $laptop->meta_keywords ?: "laptop {$laptop->name}, beli {$laptop->name}, laptop {$laptop->brand}, spesifikasi {$laptop->name}, zlm id";
+    $seoImage = $laptop->image_url_full;
+    $seoUrl = route('landing.detail', $laptop->slug);
+    $seoType = 'product';
+@endphp
+
+@section('title', $seoTitle)
+
+@push('schema')
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $laptop->name,
+    'image' => $laptop->image_url_full,
+    'description' => Str::limit(strip_tags($laptop->description ?? $laptop->seo_meta_description), 200),
+    'sku' => 'LAPTOP-' . $laptop->id,
+    'brand' => [
+        '@type' => 'Brand',
+        'name' => $laptop->brandRelation?->name ?? $laptop->brand ?? 'ZLM',
+    ],
+    'offers' => [
+        '@type' => 'Offer',
+        'url' => route('landing.detail', $laptop->slug),
+        'priceCurrency' => 'IDR',
+        'price' => (float) $laptop->final_price,
+        'priceValidUntil' => now()->addMonths(3)->format('Y-m-d'),
+        'itemCondition' => 'https://schema.org/RefurbishedCondition',
+        'availability' => $laptop->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    ],
+], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
 
 @section('content')
 

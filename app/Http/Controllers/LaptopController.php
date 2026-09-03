@@ -76,9 +76,17 @@ class LaptopController extends Controller
         return view('landing.search', compact('laptops', 'brands', 'maxPrice', 'categories'));
     }
 
-    public function show($id)
+    public function show(string $slug)
     {
-        $laptop = Laptop::with(['categories', 'reviews.user', 'images'])->findOrFail($id);
+        $laptop = Laptop::with(['categories', 'reviews.user', 'images', 'variants', 'brandRelation'])
+            ->where('slug', $slug)
+            ->orWhere('id', $slug)
+            ->firstOrFail();
+
+        // 301 Permanent Redirect if accessed via UUID/ID but has a valid slug (SEO canonical)
+        if (!empty($laptop->slug) && $slug === (string) $laptop->id) {
+            return redirect()->route('landing.detail', $laptop->slug, 301);
+        }
 
         $categoryIds = $laptop->categories->pluck('id');
         $similar = Laptop::active()
@@ -86,7 +94,7 @@ class LaptopController extends Controller
                 $q->whereIn('categories.id', $categoryIds);
             })
             ->where('laptops.id', '!=', $laptop->id)
-            ->with('categories')
+            ->with(['categories', 'brandRelation'])
             ->take(4)
             ->get();
 

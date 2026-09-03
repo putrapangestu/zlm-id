@@ -48,6 +48,9 @@ class Laptop extends Model
         'qc_passed_stock',
         'is_featured',
         'is_active',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
     ];
 
     protected $casts = [
@@ -71,22 +74,57 @@ class Laptop extends Model
         'has_discount',
         'is_sold',
         'stock_status',
-        'stock_status_label'
+        'stock_status_label',
+        'seo_meta_title',
+        'seo_meta_description'
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     protected static function booted(): void
     {
         static::creating(function (Laptop $laptop) {
             if (empty($laptop->slug)) {
-                $laptop->slug = Str::slug($laptop->name);
+                $slug = Str::slug($laptop->name);
+                $originalSlug = $slug;
+                $count = 1;
+                while (static::where('slug', $slug)->exists()) {
+                    $slug = "{$originalSlug}-" . $count++;
+                }
+                $laptop->slug = $slug;
             }
         });
 
         static::updating(function (Laptop $laptop) {
             if ($laptop->isDirty('name') && !$laptop->isDirty('slug')) {
-                $laptop->slug = Str::slug($laptop->name);
+                $slug = Str::slug($laptop->name);
+                $originalSlug = $slug;
+                $count = 1;
+                while (static::where('slug', $slug)->where('id', '!=', $laptop->id)->exists()) {
+                    $slug = "{$originalSlug}-" . $count++;
+                }
+                $laptop->slug = $slug;
             }
         });
+    }
+
+    public function getSeoMetaTitleAttribute(): string
+    {
+        return $this->meta_title ?: "{$this->name} — Spesifikasi & Harga Terbaik | ZLM.ID";
+    }
+
+    public function getSeoMetaDescriptionAttribute(): string
+    {
+        if ($this->meta_description) {
+            return $this->meta_description;
+        }
+
+        $specs = array_filter([$this->processor, $this->ram, $this->storage, $this->graphics]);
+        $specsText = !empty($specs) ? ' (' . implode(', ', $specs) . ')' : '';
+        return "Beli laptop {$this->name}{$specsText}. Kondisi terjamin lolos QC ketat dan bergaransi hanya di ZLM.ID.";
     }
 
     public function brandRelation(): \Illuminate\Database\Eloquent\Relations\BelongsTo

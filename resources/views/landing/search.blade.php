@@ -242,7 +242,7 @@
                                 <!-- Actions -->
                                 <div class="flex gap-2 mt-auto pt-4 border-t border-gray-100">
                                     <!-- View Details Button -->
-                                    <a href="{{ route('landing.detail', $laptop->id) }}" class="flex-1 py-2 rounded-sm bg-[#DF5E1D] text-white flex items-center justify-center hover:bg-[#c45218] transition-colors font-bold text-[11px] tracking-wider uppercase">
+                                    <a href="{{ route('landing.detail', $laptop) }}" class="flex-1 py-2 rounded-sm bg-[#DF5E1D] text-white flex items-center justify-center hover:bg-[#c45218] transition-colors font-bold text-[11px] tracking-wider uppercase">
                                         Detail
                                     </a>
                                     
