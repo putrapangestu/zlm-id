@@ -6,10 +6,10 @@
 <!-- Main Navigation -->
 <nav id="navbar" class="bg-white border-b border-gray-200 sticky top-0 z-50 w-full transition-all duration-300 shadow-sm">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <!-- Upper Navbar (Logo, Search, Icons) -->
         <div class="flex items-center justify-between h-20 gap-4">
-            
+
             <!-- Logo -->
             <div class="flex items-center gap-3 shrink-0">
                 <a href="{{ route('landing.home') }}" class="flex items-center gap-2 hover:opacity-80 transition">
@@ -32,9 +32,9 @@
             <div class="flex items-center gap-4 shrink-0">
                 <a href="{{ route('landing.contact') }}" class="hidden lg:flex items-center gap-2 text-xs font-semibold text-gray-600 hover:text-[#DF5E1D] cursor-pointer mr-2 transition">
                     <iconify-icon icon="solar:shop-linear" class="text-lg text-[#DF5E1D]"></iconify-icon>
-                    <span class="uppercase tracking-wide">ZLM.ID STORE MALANG</span>
+                    <span class="uppercase tracking-wide">ZLM.ID</span>
                 </a>
-                
+
                 @auth
                     <!-- User Dropdown Menu -->
                     <div class="relative group">
@@ -49,7 +49,7 @@
                             </div>
                             <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-xl transition">Profil & Kartu Member</a>
                             <a href="{{ route('orders.history') }}" class="block px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 rounded-xl transition">Pesanan Saya</a>
-                            
+
                             @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('karyawan'))
                                 <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-xs font-semibold text-[#DF5E1D] hover:bg-orange-50 rounded-xl transition">Dashboard Panel</a>
                             @endif
@@ -70,7 +70,7 @@
                         <iconify-icon icon="solar:user-linear" class="text-2xl"></iconify-icon>
                     </a>
                 @endauth
-                
+
                 <!-- Cart -->
                 <a href="{{ route('cart.index') }}" class="p-2 text-gray-600 hover:text-black transition relative">
                     <iconify-icon icon="solar:cart-large-2-linear" class="text-2xl"></iconify-icon>
@@ -112,7 +112,7 @@
                     <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
                 </button>
             </div>
-            
+
             <div class="p-4">
                 <div class="space-y-1 font-medium text-sm text-gray-700">
                     <a href="{{ route('landing.home') }}" class="block py-2.5 border-b border-gray-50 hover:text-[#DF5E1D]">Beranda</a>
