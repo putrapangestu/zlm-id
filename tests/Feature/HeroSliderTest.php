@@ -140,7 +140,7 @@ class HeroSliderTest extends TestCase
 
         $response = $this->get('/');
         $response->assertStatus(200);
-        $response->assertSee('slider-item');
+        $response->assertSee('swiper-slide');
         $response->assertSee('Welcome Sale');
     }
 
@@ -148,7 +148,7 @@ class HeroSliderTest extends TestCase
     {
         $response = $this->get('/');
         $response->assertStatus(200);
-        $response->assertSee('Toko Laptop Bekas Berkualitas');
+        $response->assertSee('Produktivitas Jadi Lebih Mudah');
     }
 
     // ========================

@@ -13,7 +13,7 @@ class XenditService
 
     public function __construct()
     {
-        $this->secretKey = config('xendit.secret_key');
+        $this->secretKey = (string) config('xendit.secret_key', '');
     }
 
     protected function authHeader(): array
@@ -24,6 +24,10 @@ class XenditService
 
     public function createInvoice(Order $order): array
     {
+        if (empty($this->secretKey)) {
+            throw new \Exception('Xendit Secret Key belum dikonfigurasi.');
+        }
+
         $response = Http::withHeaders($this->authHeader())->post($this->baseUrl . '/v2/invoices', [
             'external_id' => (string) $order->id,
             'amount' => (float) $order->total,
@@ -36,7 +40,7 @@ class XenditService
                 'invoice_paid' => ['email', 'whatsapp'],
             ],
             'success_redirect_url' => route('orders.confirmation', $order),
-            'failure_redirect_url' => route('orders.checkout'),
+            'failure_redirect_url' => route('landing.checkout'),
         ]);
 
         if ($response->failed()) {
@@ -59,6 +63,10 @@ class XenditService
 
     public function getInvoiceStatus(string $invoiceId): array
     {
+        if (empty($this->secretKey)) {
+            throw new \Exception('Xendit Secret Key belum dikonfigurasi.');
+        }
+
         $response = Http::withHeaders($this->authHeader())->get($this->baseUrl . '/v2/invoices/' . $invoiceId);
 
         if ($response->failed()) {

@@ -27,7 +27,24 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('landing.home', absolute: false));
+    }
+
+    public function test_unverified_users_redirected_to_otp_verify(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertRedirect(route('otp.verify'));
+        $this->assertDatabaseHas('user_otps', [
+            'user_id' => $user->id,
+            'type' => 'register',
+        ]);
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

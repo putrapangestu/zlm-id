@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Setting;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,11 +26,15 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        // Implicitly grant 'admin' role all permissions
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('admin') ? true : null;
+        });
+
         try {
             $settings = Setting::pluck('value', 'key');
             config(['settings' => $settings->toArray()]);
         } catch (\Exception $e) {
-            // Table mungkin belum ada saat fresh migration
             config(['settings' => []]);
         }
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
@@ -12,17 +13,21 @@ use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
+    public function __construct(
+        protected InventoryService $inventoryService
+    ) {}
+
     public function checkout()
     {
         $cart = Cart::where('user_id', auth()->id())
-            ->with('items.laptop', 'items.variant')
+            ->with('items.laptop', 'items.addon')
             ->first();
 
         if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart.index')->with('error', 'Keranjang belanja Anda masih kosong.');
         }
 
-        $totalWeight = $cart->items->sum(fn ($item) => $item->laptop->weight * $item->quantity);
+        $totalWeight = $cart->items->sum(fn ($item) => ($item->laptop->weight ?: 1.4) * $item->quantity);
 
         return view('orders.checkout', compact('cart', 'totalWeight'));
     }
@@ -30,21 +35,18 @@ class OrderController extends Controller
     public function placeOrder(Request $request)
     {
         $cart = Cart::where('user_id', auth()->id())
-            ->with('items.laptop', 'items.variant')
+            ->with('items.laptop', 'items.addon')
             ->first();
 
         if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart.index')->with('error', 'Keranjang belanja Anda masih kosong.');
         }
 
-        // Validasi stock availability
+        // Validasi ketersediaan stok
         foreach ($cart->items as $item) {
             $laptop = $item->laptop;
             if ($laptop->stock < $item->quantity) {
-                return redirect()->back()->with('error', "Insufficient stock for {$laptop->name}.");
-            }
-            if ($item->variant && $item->variant->stock < $item->quantity) {
-                return redirect()->back()->with('error', "Insufficient stock for variant {$item->variant->name}.");
+                return redirect()->back()->with('error', "Stok tidak mencukupi untuk unit {$laptop->name}.");
             }
         }
 
@@ -71,6 +73,7 @@ class OrderController extends Controller
 
         $order = Order::create([
             'user_id' => auth()->id(),
+            'source' => 'online',
             'subtotal' => $subtotal,
             'tax' => $tax,
             'shipping_cost' => $shippingCost,
@@ -95,26 +98,29 @@ class OrderController extends Controller
         foreach ($cart->items as $item) {
             $order->items()->create([
                 'laptop_id' => $item->laptop_id,
-                'laptop_variant_id' => $item->laptop_variant_id,
+                'laptop_variant_id' => null,
+                'addon_id' => $item->addon_id,
+                'addon_name' => $item->addon?->name,
+                'addon_price' => $item->addon_price ?? 0,
                 'product_name' => $item->laptop->name,
-                'variant_name' => $item->variant?->name,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->unit_price,
                 'subtotal' => $item->subtotal,
             ]);
 
-            // Kurangi stock
-            $item->laptop->decrement('stock', $item->quantity);
-            if ($item->variant) {
-                $item->variant->decrement('stock', $item->quantity);
-            }
+            // Deduct stock using InventoryService
+            $this->inventoryService->reduceStockForSale($item->laptop, null, $item->quantity, $order, auth()->user());
         }
 
         $cart->items()->delete();
         $cart->delete();
 
         // Kirim email konfirmasi
-        Mail::to($order->user->email)->queue(new OrderConfirmationMail($order));
+        try {
+            Mail::to($order->user->email)->queue(new OrderConfirmationMail($order));
+        } catch (\Exception $e) {
+            Log::warning('Failed sending order email: ' . $e->getMessage());
+        }
 
         // Buat Xendit Invoice
         try {
@@ -125,7 +131,6 @@ class OrderController extends Controller
                 'xendit_invoice_url' => $invoice['invoice_url'],
                 'xendit_expiry' => $invoice['expiry_date'],
             ]);
-            // Redirect ke Xendit
             return redirect()->away($invoice['invoice_url']);
         } catch (\Exception $e) {
             Log::error('Xendit invoice creation failed', [
@@ -146,7 +151,6 @@ class OrderController extends Controller
         $status = $request->query('status');
 
         if ($status === 'success' || $status === 'paid') {
-            // Verify via Xendit API
             try {
                 $xenditService = app(\App\Services\XenditService::class);
                 $invoiceStatus = $xenditService->getInvoiceStatus($order->xendit_invoice_id);
@@ -177,7 +181,7 @@ class OrderController extends Controller
             abort(403);
         }
 
-        $order->load('items.laptop', 'items.variant');
+        $order->load('items.laptop', 'items.addon');
 
         return view('orders.confirmation', compact('order'));
     }
@@ -185,9 +189,10 @@ class OrderController extends Controller
     public function history()
     {
         $orders = Order::byUser(auth()->id())
-            ->with('items.laptop')
+            ->with('items.laptop', 'items.addon')
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('orders.history', compact('orders'));
     }

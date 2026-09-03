@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Laptop;
-use App\Models\LaptopVariant;
 use App\Models\Cart;
 use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,7 +15,6 @@ class CartTest extends TestCase
 
     private User $user;
     private Laptop $laptop;
-    private LaptopVariant $variant;
 
     protected function setUp(): void
     {
@@ -27,12 +25,7 @@ class CartTest extends TestCase
         $this->user = User::factory()->create();
         $this->user->assignRole('buyer');
 
-        $this->laptop = Laptop::factory()->create(['price' => 1500.00]);
-        $this->variant = LaptopVariant::factory()->create([
-            'laptop_id' => $this->laptop->id,
-            'price_modifier' => 100.00,
-            'stock' => 5,
-        ]);
+        $this->laptop = Laptop::factory()->create(['price' => 1500.00, 'stock' => 5]);
     }
 
     public function test_guest_can_view_cart(): void
@@ -46,14 +39,12 @@ class CartTest extends TestCase
     {
         $response = $this->post('/cart/add', [
             'laptop_id' => $this->laptop->id,
-            'variant_id' => $this->variant->id,
             'quantity' => 1,
         ]);
 
         $response->assertRedirect('/cart');
         $this->assertDatabaseHas('cart_items', [
             'laptop_id' => $this->laptop->id,
-            'laptop_variant_id' => $this->variant->id,
             'quantity' => 1,
         ]);
     }
@@ -62,33 +53,27 @@ class CartTest extends TestCase
     {
         $response = $this->actingAs($this->user)->post('/cart/add', [
             'laptop_id' => $this->laptop->id,
-            'variant_id' => $this->variant->id,
             'quantity' => 2,
         ]);
 
         $response->assertRedirect('/cart');
         $this->assertDatabaseHas('cart_items', [
             'laptop_id' => $this->laptop->id,
-            'laptop_variant_id' => $this->variant->id,
             'quantity' => 2,
         ]);
     }
 
-    public function test_cannot_add_out_of_stock_variant(): void
+    public function test_cannot_add_out_of_stock_laptop(): void
     {
-        $variant = LaptopVariant::factory()->create([
-            'laptop_id' => $this->laptop->id,
-            'stock' => 0,
-        ]);
+        $outOfStockLaptop = Laptop::factory()->create(['stock' => 0]);
 
         $response = $this->post('/cart/add', [
-            'laptop_id' => $this->laptop->id,
-            'variant_id' => $variant->id,
+            'laptop_id' => $outOfStockLaptop->id,
             'quantity' => 1,
         ]);
 
         $response->assertRedirect();
-        $response->assertSessionHasErrors('variant_id');
+        $response->assertSessionHasErrors('laptop_id');
     }
 
     public function test_cart_item_quantity_can_be_updated(): void
@@ -96,9 +81,8 @@ class CartTest extends TestCase
         $cart = Cart::create(['user_id' => $this->user->id]);
         $item = $cart->items()->create([
             'laptop_id' => $this->laptop->id,
-            'laptop_variant_id' => $this->variant->id,
             'quantity' => 1,
-            'unit_price' => 1600.00,
+            'unit_price' => 1500.00,
         ]);
 
         $response = $this->actingAs($this->user)->patch("/cart/{$item->id}", [
@@ -117,9 +101,8 @@ class CartTest extends TestCase
         $cart = Cart::create(['user_id' => $this->user->id]);
         $item = $cart->items()->create([
             'laptop_id' => $this->laptop->id,
-            'laptop_variant_id' => $this->variant->id,
             'quantity' => 1,
-            'unit_price' => 1600.00,
+            'unit_price' => 1500.00,
         ]);
 
         $response = $this->actingAs($this->user)->delete("/cart/{$item->id}");

@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Laptop;
-use App\Models\LaptopVariant;
 use App\Models\Cart;
 use App\Services\XenditService;
 use Spatie\Permission\Models\Role;
@@ -17,7 +16,6 @@ class OrderTest extends TestCase
 
     private User $user;
     private Laptop $laptop;
-    private LaptopVariant $variant;
 
     protected function setUp(): void
     {
@@ -28,12 +26,7 @@ class OrderTest extends TestCase
         $this->user = User::factory()->create();
         $this->user->assignRole('buyer');
 
-        $this->laptop = Laptop::factory()->create(['price' => 1500.00]);
-        $this->variant = LaptopVariant::factory()->create([
-            'laptop_id' => $this->laptop->id,
-            'price_modifier' => 100.00,
-            'stock' => 5,
-        ]);
+        $this->laptop = Laptop::factory()->create(['price' => 1600.00, 'stock' => 10]);
 
         // Mock XenditService to avoid external API calls
         $this->mock(XenditService::class, function ($mock) {
@@ -66,7 +59,6 @@ class OrderTest extends TestCase
         $cart = Cart::create(['user_id' => $this->user->id]);
         $cart->items()->create([
             'laptop_id' => $this->laptop->id,
-            'laptop_variant_id' => $this->variant->id,
             'quantity' => 2,
             'unit_price' => 1600.00,
         ]);
@@ -97,7 +89,6 @@ class OrderTest extends TestCase
 
         $this->assertDatabaseHas('order_items', [
             'product_name' => $this->laptop->name,
-            'variant_name' => $this->variant->name,
             'quantity' => 2,
         ]);
 
@@ -111,7 +102,6 @@ class OrderTest extends TestCase
         $cart = Cart::create(['user_id' => $this->user->id]);
         $cart->items()->create([
             'laptop_id' => $this->laptop->id,
-            'laptop_variant_id' => $this->variant->id,
             'quantity' => 1,
             'unit_price' => 1600.00,
         ]);
@@ -146,7 +136,6 @@ class OrderTest extends TestCase
         $cart = Cart::create(['user_id' => $otherUser->id]);
         $cart->items()->create([
             'laptop_id' => $this->laptop->id,
-            'laptop_variant_id' => $this->variant->id,
             'quantity' => 1,
             'unit_price' => 1600.00,
         ]);

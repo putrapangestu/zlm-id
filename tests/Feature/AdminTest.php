@@ -73,19 +73,27 @@ class AdminTest extends TestCase
         $this->assertDatabaseHas('laptops', ['name' => 'Test Laptop']);
     }
 
-    public function test_admin_can_create_variant(): void
+    public function test_admin_can_toggle_laptop_status(): void
     {
-        $laptop = Laptop::factory()->create();
+        $laptop = Laptop::factory()->create(['is_active' => true]);
 
-        $response = $this->actingAs($this->admin)->post("/admin/laptops/{$laptop->id}/variants", [
-            'name' => '1TB SSD',
-            'sku' => 'TL-1TB',
-            'price_modifier' => 200.00,
-            'stock' => 10,
-        ]);
+        $response = $this->actingAs($this->admin)->patch("/admin/laptops/{$laptop->id}/toggle-status");
 
         $response->assertRedirect();
-        $this->assertDatabaseHas('laptop_variants', ['sku' => 'TL-1TB']);
+        $this->assertDatabaseHas('laptops', [
+            'id' => $laptop->id,
+            'is_active' => false,
+        ]);
+    }
+
+    public function test_admin_can_search_laptop_templates(): void
+    {
+        $laptop = Laptop::factory()->create(['name' => 'ThinkPad Template Model']);
+
+        $response = $this->actingAs($this->admin)->get('/admin/laptops/api/templates?q=ThinkPad');
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('status', 'success');
     }
 
     public function test_admin_can_create_category(): void

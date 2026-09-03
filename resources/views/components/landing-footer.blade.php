@@ -9,7 +9,7 @@
                     @if(config('settings.store_logo'))
                         <img src="{{ asset('storage/' . config('settings.store_logo')) }}" alt="{{ config('settings.store_name', 'ZLM.ID') }}" class="h-8">
                     @else
-                        <h4 class="text-white font-bold text-xl tracking-tight">ZLM.ID</h4>
+                        <h4 class="text-white font-bold text-xl tracking-tight">ZLM<span class="text-[#DF5E1D]">.ID</span></h4>
                     @endif
                 </a>
                 <p class="text-sm text-gray-400 leading-relaxed">{{ config('settings.store_description', 'Premium laptop store — engineered excellence for professionals, creators, and gamers.') }}</p>
@@ -17,12 +17,12 @@
 
             {{-- Column 2: Links --}}
             <div>
-                <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Links</h4>
+                <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Navigasi</h4>
                 <ul class="space-y-3">
                     <li>
                         <a href="{{ route('landing.search') }}" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
                             <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
-                            Katalog
+                            Katalog Laptop
                         </a>
                     </li>
                     <li>
@@ -34,19 +34,19 @@
                     <li>
                         <a href="{{ route('landing.compare') }}" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
                             <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
-                            Bandingkan
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('landing.testimonials') }}" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
-                            <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
-                            Testimoni
+                            Bandingkan Laptop
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('landing.articles') }}" class="text-sm text-gray-400 hover:text-[#DF5E1D] transition-colors flex items-center gap-2">
                             <iconify-icon icon="solar:arrow-right-minimalistic-linear" class="text-xs"></iconify-icon>
-                            Artikel
+                            Artikel & Edukasi
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('landing.contact') }}" class="text-sm text-[#DF5E1D] font-semibold hover:text-[#c45218] transition-colors flex items-center gap-2">
+                            <iconify-icon icon="solar:map-point-linear" class="text-xs"></iconify-icon>
+                            Kontak & Lokasi Toko
                         </a>
                     </li>
                 </ul>
@@ -54,7 +54,7 @@
 
             {{-- Column 3: Contact --}}
             <div>
-                <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact</h4>
+                <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Hubungi Kami</h4>
                 <ul class="space-y-3">
                     @if(config('settings.store_email'))
                         <li class="flex items-center gap-3 text-sm text-gray-400">
@@ -72,7 +72,7 @@
                         <li>
                             <a href="https://wa.me/{{ ltrim(preg_replace('/[^0-9]/', '', config('settings.store_whatsapp')), '0') }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 text-sm text-gray-400 hover:text-[#25D366] transition-colors">
                                 <iconify-icon icon="solar:phone-calling-linear" class="text-[#DF5E1D]"></iconify-icon>
-                                WhatsApp
+                                WhatsApp Store
                             </a>
                         </li>
                     @endif
@@ -103,11 +103,6 @@
                             <iconify-icon icon="solar:youtube-linear" class="text-lg"></iconify-icon>
                         </a>
                     @endif
-                    @if(config('settings.store_whatsapp'))
-                        <a href="https://wa.me/{{ ltrim(preg_replace('/[^0-9]/', '', config('settings.store_whatsapp')), '0') }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#25D366] hover:text-white hover:border-[#25D366] hover:scale-110 transition-all duration-300" aria-label="WhatsApp">
-                            <iconify-icon icon="solar:phone-calling-linear" class="text-lg"></iconify-icon>
-                        </a>
-                    @endif
                 </div>
             </div>
         </div>
@@ -115,27 +110,15 @@
         {{-- Address Bar --}}
         @if(config('settings.store_address') || config('settings.store_opening_hours'))
             <div class="bg-white/5 rounded-xl p-4 mb-8">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-gray-400">
-                    @if(config('settings.store_address'))
-                        <span class="flex items-center gap-2">
-                            <iconify-icon icon="solar:map-point-linear" class="text-[#DF5E1D] shrink-0"></iconify-icon>
-                            {{ config('settings.store_address') }}
-                        </span>
-                    @endif
-                    @if(config('settings.store_opening_hours'))
-                        <span class="flex items-center gap-2">
-                            <iconify-icon icon="solar:clock-circle-linear" class="text-[#DF5E1D] shrink-0"></iconify-icon>
-                            {{ config('settings.store_opening_hours') }}
-                        </span>
-                    @endif
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm text-gray-400">
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="solar:map-point-linear" class="text-[#DF5E1D] shrink-0 text-lg"></iconify-icon>
+                        <span>{{ config('settings.store_address') }}</span>
+                    </div>
+                    <a href="{{ route('landing.contact') }}" class="text-xs font-semibold text-[#DF5E1D] hover:underline shrink-0">
+                        Buka Peta & Petunjuk Arah &rarr;
+                    </a>
                 </div>
-            </div>
-        @endif
-
-        {{-- Google Maps --}}
-        @if(config('settings.store_google_maps'))
-            <div class="mb-8 rounded-xl overflow-hidden border border-white/10">
-                {!! config('settings.store_google_maps') !!}
             </div>
         @endif
 

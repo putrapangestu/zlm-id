@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Addon;
 use App\Models\Cart;
 use App\Models\Laptop;
-use App\Models\LaptopVariant;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -12,7 +12,7 @@ class CartController extends Controller
     public function index()
     {
         $cart = $this->getCart();
-        $cart->load('items.laptop', 'items.variant');
+        $cart->load('items.laptop', 'items.addon');
 
         return view('cart.index', compact('cart'));
     }
@@ -21,29 +21,25 @@ class CartController extends Controller
     {
         $data = $request->validate([
             'laptop_id' => 'required|exists:laptops,id',
-            'variant_id' => 'nullable|exists:laptop_variants,id',
+            'addon_id' => 'nullable|exists:addons,id',
             'quantity' => 'required|integer|min:1|max:10',
         ]);
 
         $laptop = Laptop::findOrFail($data['laptop_id']);
-        $variant = null;
-        $price = $laptop->price;
 
-        if (!empty($data['variant_id'])) {
-            $variant = LaptopVariant::findOrFail($data['variant_id']);
-
-            if ($variant->stock < 1) {
-                return redirect()->back()->withErrors(['variant_id' => 'This variant is out of stock.'])->withInput();
-            }
-
-            $price += $variant->price_modifier;
+        if ($laptop->stock < 1) {
+            return redirect()->back()->withErrors(['laptop_id' => 'Stok produk ini sedang habis.'])->withInput();
         }
 
+        $addon = !empty($data['addon_id']) ? Addon::find($data['addon_id']) : null;
+        $addonPrice = $addon ? (float)$addon->price : 0;
+
+        $price = $laptop->final_price;
         $cart = $this->getCart();
 
         $existing = $cart->items()
             ->where('laptop_id', $laptop->id)
-            ->where('laptop_variant_id', $data['variant_id'])
+            ->where('addon_id', $addon?->id)
             ->first();
 
         if ($existing) {
@@ -51,13 +47,15 @@ class CartController extends Controller
         } else {
             $cart->items()->create([
                 'laptop_id' => $laptop->id,
-                'laptop_variant_id' => $data['variant_id'],
+                'laptop_variant_id' => null,
+                'addon_id' => $addon?->id,
+                'addon_price' => $addonPrice,
                 'quantity' => $data['quantity'],
                 'unit_price' => $price,
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Item added to cart.');
+        return redirect()->route('cart.index')->with('success', 'Laptop & paket bundle berhasil ditambahkan ke keranjang.');
     }
 
     public function update(Request $request, $id)
@@ -69,7 +67,7 @@ class CartController extends Controller
         $item = \App\Models\CartItem::findOrFail($id);
         $item->update($data);
 
-        return redirect()->route('cart.index')->with('success', 'Cart updated.');
+        return redirect()->route('cart.index')->with('success', 'Keranjang belanja berhasil diperbarui.');
     }
 
     public function remove($id)
@@ -77,7 +75,7 @@ class CartController extends Controller
         $item = \App\Models\CartItem::findOrFail($id);
         $item->delete();
 
-        return redirect()->route('cart.index')->with('success', 'Item removed from cart.');
+        return redirect()->route('cart.index')->with('success', 'Item berhasil dihapus dari keranjang.');
     }
 
     private function getCart(): Cart

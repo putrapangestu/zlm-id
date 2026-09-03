@@ -16,6 +16,7 @@
         body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
         iconify-icon { stroke-width: 1.5; }
     </style>
+    @stack('styles')
 </head>
 <body class="font-sans text-gray-900 antialiased">
     <div class="min-h-screen flex">
@@ -29,7 +30,7 @@
                 </a>
                 <h2 class="text-2xl font-semibold text-white mb-4">Premium Laptop Marketplace</h2>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                    Curated workstations for developers, creators, and enterprises. Every unit verified, tested, and ready to ship.
+                    Curated workstations for developers, creators, and enterprises. Every unit verified, tested, and ready to ship with Quality Control warranty.
                 </p>
                 <div class="mt-10 flex justify-center gap-10">
                     <div class="text-center">
@@ -61,5 +62,7 @@
             </div>
         </div>
     </div>
+
+    @stack('scripts')
 </body>
 </html>

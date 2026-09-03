@@ -13,9 +13,9 @@ class RajaOngkirService
 
     public function __construct()
     {
-        $this->apiKey = config('rajaongkir.api_key');
-        $this->baseUrl = config('rajaongkir.base_url');
-        $this->originCityId = (int) config('rajaongkir.origin_city_id');
+        $this->apiKey = (string) config('rajaongkir.api_key', '');
+        $this->baseUrl = (string) config('rajaongkir.base_url', 'https://api.rajaongkir.com/starter');
+        $this->originCityId = (int) config('rajaongkir.origin_city_id', 256);
     }
 
     protected function headers(): array
@@ -25,6 +25,10 @@ class RajaOngkirService
 
     public function getProvinces(): array
     {
+        if (empty($this->apiKey)) {
+            return [];
+        }
+
         $response = Http::withHeaders($this->headers())->get($this->baseUrl . '/province');
 
         if ($response->failed()) {
@@ -37,6 +41,10 @@ class RajaOngkirService
 
     public function getCities(?int $provinceId = null): array
     {
+        if (empty($this->apiKey)) {
+            return [];
+        }
+
         $params = [];
         if ($provinceId) {
             $params['province'] = $provinceId;
@@ -54,6 +62,10 @@ class RajaOngkirService
 
     public function getCost(int $destination, int $weight, string $courier): array
     {
+        if (empty($this->apiKey)) {
+            return [];
+        }
+
         $response = Http::withHeaders($this->headers())->asForm()->post($this->baseUrl . '/cost', [
             'origin' => $this->originCityId,
             'destination' => $destination,

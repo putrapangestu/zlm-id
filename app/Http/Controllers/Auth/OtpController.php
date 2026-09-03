@@ -9,6 +9,7 @@ use App\Notifications\OtpNotification;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 
@@ -42,7 +43,11 @@ class OtpController extends Controller
             'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
-        $user->notify(new OtpNotification($otp));
+        try {
+            $user->notify(new OtpNotification($otp));
+        } catch (\Exception $e) {
+            // Ignore transport error
+        }
 
         session(['otp_email' => $request->email, 'otp_type' => $request->type]);
 
@@ -86,18 +91,31 @@ class OtpController extends Controller
 
         $otp->update(['used_at' => Carbon::now()]);
 
+        // Verifikasi email jika belum terverifikasi
+        if (!$user->email_verified_at) {
+            $user->forceFill(['email_verified_at' => now()])->save();
+        }
+
         session()->forget(['otp_email', 'otp_type']);
 
-        return match ($request->type) {
-            'register' => redirect()->route('login')
-                ->with('status', 'Akun berhasil diverifikasi. Silakan login.'),
-            'forgot' => redirect()->route('password.reset', [
+        if ($request->type === 'forgot') {
+            return redirect()->route('password.reset', [
                 'token' => Password::createToken($user),
                 'email' => $user->email,
-            ]),
-            'login' => redirect()->route('login')
-                ->with('status', 'Verifikasi berhasil. Silakan login.'),
-        };
+            ]);
+        }
+
+        // Login user secara otomatis
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        if ($user->hasRole('admin') || $user->hasRole('karyawan')) {
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Akun berhasil diverifikasi. Selamat datang, ' . $user->name . '!');
+        }
+
+        return redirect()->route('landing.home')
+            ->with('success', 'Akun berhasil diverifikasi. Selamat datang, ' . $user->name . '!');
     }
 
     public function resendOtp(Request $request): RedirectResponse
@@ -134,8 +152,12 @@ class OtpController extends Controller
             'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
-        $user->notify(new OtpNotification($otp));
+        try {
+            $user->notify(new OtpNotification($otp));
+        } catch (\Exception $e) {
+            // Ignore transport error
+        }
 
-        return back()->with('status', 'Kode OTP telah dikirim ulang.');
+        return back()->with('status', 'Kode OTP baru telah dikirim ulang.');
     }
 }

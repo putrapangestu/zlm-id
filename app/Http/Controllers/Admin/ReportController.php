@@ -6,12 +6,42 @@ use App\Http\Controllers\Controller;
 use App\Models\Laptop;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ProductItem;
+use App\Models\Restock;
+use App\Models\RestockItem;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ReportController extends Controller
 {
-    public function purchases(Request $request)
+    public function purchases(Request $request): View
     {
+        $type = $request->get('type', 'supplier'); // 'supplier' (Restock) or 'customer' (Sales)
+
+        if ($type === 'supplier') {
+            $query = Restock::with(['creator', 'items.laptop']);
+
+            if ($request->filled('start_date')) {
+                $query->whereDate('purchase_date', '>=', $request->start_date);
+            }
+            if ($request->filled('end_date')) {
+                $query->whereDate('purchase_date', '<=', $request->end_date);
+            }
+
+            $summaryQuery = clone $query;
+            $summary = [
+                'total_batches' => (clone $summaryQuery)->count(),
+                'total_purchases' => (clone $summaryQuery)->sum('total_amount'),
+                'total_units' => RestockItem::whereIn('restock_id', (clone $summaryQuery)->pluck('id'))->sum('quantity'),
+            ];
+
+            $records = $query->latest('purchase_date')->paginate(20)->withQueryString();
+
+            return view('admin.reports.purchases', compact('records', 'summary', 'type'));
+        }
+
+        // Customer Sales Orders
         $query = Order::with('user', 'items');
 
         if ($request->filled('start_date')) {
@@ -20,14 +50,10 @@ class ReportController extends Controller
         if ($request->filled('end_date')) {
             $query->whereDate('created_at', '<=', $request->end_date);
         }
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('payment_status')) {
-            $query->where('payment_status', $request->payment_status);
+        if ($request->filled('source')) {
+            $query->where('source', $request->source);
         }
 
-        // Hitung summary dulu sebelum paginate
         $summaryQuery = clone $query;
         $summary = [
             'total_orders' => (clone $summaryQuery)->count(),
@@ -35,16 +61,13 @@ class ReportController extends Controller
             'avg_order' => (clone $summaryQuery)->where('payment_status', 'paid')->avg('total') ?? 0,
         ];
 
-        $orders = $query->latest()->paginate(20)->withQueryString();
+        $records = $query->latest()->paginate(20)->withQueryString();
 
-        return view('admin.reports.purchases', compact('orders', 'summary'));
+        return view('admin.reports.purchases', compact('records', 'summary', 'type'));
     }
 
-    public function profitLoss(Request $request)
+    public function profitLoss(Request $request): View
     {
-        $period = $request->input('period', 'monthly');
-
-        // Default: bulan ini
         $startDate = $request->filled('start_date') ? $request->start_date : now()->startOfMonth()->format('Y-m-d');
         $endDate = $request->filled('end_date') ? $request->end_date : now()->format('Y-m-d');
 
@@ -52,54 +75,63 @@ class ReportController extends Controller
             ->whereDate('created_at', '>=', $startDate)
             ->whereDate('created_at', '<=', $endDate);
 
-        $revenue = (float) $paidOrders->sum('total');
-        $shippingCost = (float) $paidOrders->sum('shipping_cost');
-        $taxTotal = (float) $paidOrders->sum('tax');
+        $totalRevenue = (float) (clone $paidOrders)->sum('total');
+        $onlineRevenue = (float) (clone $paidOrders)->where('source', 'web')->sum('total');
+        $posRevenue = (float) (clone $paidOrders)->where('source', 'pos')->sum('total');
 
-        // HPP (estimasi dari unit_price * quantity di order_items)
+        $shippingCost = (float) (clone $paidOrders)->sum('shipping_cost');
+        $taxTotal = (float) (clone $paidOrders)->sum('tax');
+        $memberDiscounts = (float) (clone $paidOrders)->sum('member_discount_amount');
+
+        // Total HPP from restocks in this period or sold items
         $orderIds = (clone $paidOrders)->pluck('id');
-        $hpp = (float) OrderItem::whereIn('order_id', $orderIds)
-            ->selectRaw('SUM(unit_price * quantity) as total')
-            ->value('total') ?? 0;
+        $itemHpp = (float) RestockItem::whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
+            ->sum('subtotal');
 
-        $grossProfit = $revenue - $hpp;
-        $netProfit = $grossProfit - $shippingCost;
+        if ($itemHpp == 0) {
+            // Fallback estimation (65% of revenue if restock data is new)
+            $itemHpp = $totalRevenue * 0.7;
+        }
 
+        $grossProfit = $totalRevenue - $itemHpp;
+        $netProfit = $grossProfit - $shippingCost - $memberDiscounts;
         $ordersCount = (clone $paidOrders)->count();
 
         return view('admin.reports.profit-loss', compact(
-            'revenue', 'shippingCost', 'taxTotal', 'hpp',
+            'totalRevenue', 'onlineRevenue', 'posRevenue',
+            'shippingCost', 'taxTotal', 'memberDiscounts', 'itemHpp',
             'grossProfit', 'netProfit', 'ordersCount',
-            'startDate', 'endDate', 'period'
+            'startDate', 'endDate'
         ));
     }
 
-    public function productStats(Request $request)
+    public function productStats(Request $request): View
     {
-        // Ringkasan Stok
-        $totalProducts = Laptop::count();
-        $availableStock = Laptop::where('stock', '>', 0)->count();
-        $outOfStock = Laptop::where('stock', '<=', 0)->count();
-        $lowStock = Laptop::where('stock', '>', 0)->where('stock', '<=', 5)->count();
+        // Stock and QC Summary
+        $stockSummary = [
+            'total_models' => Laptop::count(),
+            'qc_passed_stock' => Laptop::sum('stock'),
+            'uninspected_stock' => ProductItem::where('qc_status', 'pending')->count(),
+            'failed_qc_stock' => ProductItem::where('qc_status', 'failed')->count(),
+            'low_stock' => Laptop::where('stock', '>', 0)->where('stock', '<=', 3)->count(),
+            'out_of_stock' => Laptop::where('stock', '<=', 0)->count(),
+        ];
 
         // Top Selling
-        $topSelling = OrderItem::selectRaw('laptop_id, SUM(quantity) as total_qty, SUM(quantity * unit_price) as total_revenue')
+        $topSelling = OrderItem::selectRaw('laptop_id, SUM(quantity) as total_qty, SUM(subtotal) as total_revenue')
             ->with('laptop')
             ->groupBy('laptop_id')
             ->orderByDesc('total_qty')
             ->take(10)
             ->get();
 
-        // Top Rated
-        $topRated = Laptop::withAvg('reviews', 'rating')
-            ->withCount('reviews')
-            ->having('reviews_avg_rating', '>', 0)
-            ->orderByDesc('reviews_avg_rating')
-            ->take(10)
+        // Recent Stock Movements
+        $recentMovements = StockMovement::with(['laptop', 'user'])
+            ->latest()
+            ->take(15)
             ->get();
 
-        $stockSummary = compact('totalProducts', 'availableStock', 'outOfStock', 'lowStock');
-
-        return view('admin.reports.product-stats', compact('stockSummary', 'topSelling', 'topRated'));
+        return view('admin.reports.product-stats', compact('stockSummary', 'topSelling', 'recentMovements'));
     }
 }

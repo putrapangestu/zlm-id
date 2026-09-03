@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Addon;
 use App\Models\Category;
 use App\Models\HeroSlider;
 use App\Models\Laptop;
@@ -12,7 +13,10 @@ class LaptopController extends Controller
 {
     public function index()
     {
-        $featured = Laptop::featured()->with('categories', 'variants')->take(6)->get();
+        $featured = Laptop::active()->featured()->with('categories')->take(8)->get();
+        if ($featured->isEmpty()) {
+            $featured = Laptop::active()->with('categories')->take(8)->get();
+        }
         $categories = Category::where('is_active', true)->get();
         $testimonials = Testimonial::where('is_active', true)->latest()->take(3)->get();
         $sliders = HeroSlider::active()->sorted()->get();
@@ -22,7 +26,7 @@ class LaptopController extends Controller
 
     public function search(Request $request)
     {
-        $query = Laptop::with('categories', 'variants');
+        $query = Laptop::active()->with('categories');
 
         if ($request->has('category') && $request->category !== 'all') {
             $query->whereHas('categories', function ($q) use ($request) {
@@ -30,23 +34,24 @@ class LaptopController extends Controller
             });
         }
 
-        if ($request->has('min_price') && $request->min_price) {
+        if ($request->filled('min_price')) {
             $query->where('price', '>=', $request->min_price);
         }
-        if ($request->has('max_price') && $request->max_price) {
+        if ($request->filled('max_price')) {
             $query->where('price', '<=', $request->max_price);
         }
 
-        if ($request->has('brand') && $request->brand) {
+        if ($request->filled('brand')) {
             $query->where('brand', $request->brand);
         }
 
-        if ($request->has('search') && $request->search) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%")
-                    ->orWhere('processor', 'like', "%$search%")
-                    ->orWhere('ram', 'like', "%$search%");
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('processor', 'like', "%{$search}%")
+                    ->orWhere('ram', 'like', "%{$search}%")
+                    ->orWhere('brand', 'like', "%{$search}%");
             });
         }
 
@@ -58,17 +63,14 @@ class LaptopController extends Controller
             case 'price_desc':
                 $query->orderBy('price', 'desc');
                 break;
-            case 'popular':
-                $query->orderBy('name'); // bisa diganti dengan review_count nanti
-                break;
             default:
                 $query->latest();
                 break;
         }
 
-        $laptops = $query->paginate(12);
-        $brands = Laptop::distinct()->pluck('brand');
-        $maxPrice = Laptop::max('price');
+        $laptops = $query->paginate(12)->withQueryString();
+        $brands = Laptop::active()->distinct()->pluck('brand');
+        $maxPrice = Laptop::active()->max('price') ?? 50000000;
         $categories = Category::where('is_active', true)->get();
 
         return view('landing.search', compact('laptops', 'brands', 'maxPrice', 'categories'));
@@ -76,20 +78,22 @@ class LaptopController extends Controller
 
     public function show($id)
     {
-        $laptop = Laptop::with('categories', 'variants', 'reviews.user', 'images')->findOrFail($id);
+        $laptop = Laptop::with(['categories', 'reviews.user', 'images'])->findOrFail($id);
 
         $categoryIds = $laptop->categories->pluck('id');
-        $similar = Laptop::whereHas('categories', function ($q) use ($categoryIds) {
-            $q->whereIn('categories.id', $categoryIds);
-        })
+        $similar = Laptop::active()
+            ->whereHas('categories', function ($q) use ($categoryIds) {
+                $q->whereIn('categories.id', $categoryIds);
+            })
             ->where('laptops.id', '!=', $laptop->id)
             ->with('categories')
             ->take(4)
             ->get();
 
         $reviews = $laptop->reviews()->with('user')->latest()->paginate(10);
+        $addons = Addon::active()->sorted()->get();
 
-        return view('landing.detail', compact('laptop', 'similar', 'reviews'));
+        return view('landing.detail', compact('laptop', 'similar', 'reviews', 'addons'));
     }
 
     public function checkout()

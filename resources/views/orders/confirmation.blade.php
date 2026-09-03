@@ -25,7 +25,27 @@
                 <span class="text-sm text-gray-500">Payment</span>
                 <span class="text-sm font-medium text-amber-600">{{ ucfirst($order->payment_status) }}</span>
             </div>
-            <div class="flex justify-between pt-2 border-t border-gray-200">
+            <div class="border-t border-gray-200 pt-3 mt-3">
+                <p class="text-xs text-gray-500 font-bold uppercase tracking-wide mb-2">Daftar Produk & Paket:</p>
+                <div class="space-y-2">
+                    @foreach ($order->items as $item)
+                        <div class="flex items-center justify-between text-xs">
+                            <div>
+                                <span class="font-bold text-gray-800">{{ $item->product_name }}</span>
+                                <span class="text-gray-400"> x {{ $item->quantity }}</span>
+                                @if ($item->addon_name)
+                                    <span class="block text-[11px] font-semibold text-[#166534]">
+                                        Bundle: {{ $item->addon_name }} (+Rp {{ number_format($item->addon_price, 0, ',', '.') }})
+                                    </span>
+                                @endif
+                            </div>
+                            <span class="font-mono font-bold text-gray-700">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="flex justify-between pt-3 border-t border-gray-200 mt-3">
                 <span class="text-sm font-semibold text-[#363230]">Total</span>
                 <span class="text-lg font-semibold text-[#363230]">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
             </div>

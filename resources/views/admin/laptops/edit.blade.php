@@ -45,14 +45,48 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Price (Rp)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Harga Normal (Rp)</label>
                     <input type="number" step="0.01" name="price" value="{{ old('price', $laptop->price) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('price') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Stok Jual Lolos QC (Unit)</label>
                     <input type="number" name="stock" value="{{ old('stock', $laptop->stock) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('stock') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            {{-- Diskon per Barang --}}
+            <div class="p-4 bg-orange-50/50 rounded-2xl border border-orange-200/60 space-y-4">
+                <div class="flex items-center gap-2">
+                    <iconify-icon icon="solar:sale-bold" class="text-[#DF5E1D] text-lg"></iconify-icon>
+                    <span class="text-xs font-bold text-[#363230] uppercase tracking-wider">Pengaturan Diskon Khusus Barang Ini</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Jenis Diskon</label>
+                        <select name="discount_type" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-[#DF5E1D]">
+                            <option value="none" @selected(old('discount_type', $laptop->discount_type) === 'none')>Tanpa Diskon (Normal)</option>
+                            <option value="percentage" @selected(old('discount_type', $laptop->discount_type) === 'percentage')>Persentase (%)</option>
+                            <option value="fixed" @selected(old('discount_type', $laptop->discount_type) === 'fixed')>Potongan Tetap (Rp)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Nilai Diskon</label>
+                        <input type="number" name="discount_value" value="{{ old('discount_value', $laptop->discount_value) }}" min="0" step="0.1" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:border-[#DF5E1D]" placeholder="Misal: 10 atau 500000">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Mulai Berlaku (Opsional)</label>
+                        <input type="date" name="discount_start_date" value="{{ old('discount_start_date', $laptop->discount_start_date?->format('Y-m-d')) }}" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 uppercase mb-1">Berakhir Pada (Opsional)</label>
+                        <input type="date" name="discount_end_date" value="{{ old('discount_end_date', $laptop->discount_end_date?->format('Y-m-d')) }}" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
                 </div>
             </div>
 
@@ -99,6 +133,58 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Battery Life</label>
                 <input type="text" name="battery_life" value="{{ old('battery_life', $laptop->battery_life) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                 @error('battery_life') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- I/O Ports & Additional Hardware Specs (Gambar 2 & 3) --}}
+            <div class="pt-4 border-t border-gray-100 space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-bold text-gray-700 uppercase">
+                            I/O Ports / Port Colokan (Gambar 2 & 3)
+                        </label>
+                        <span class="text-[10px] text-gray-400">1 baris per jenis port colokan</span>
+                    </div>
+                    <textarea name="ports" rows="4" placeholder="Contoh:
+1x USB 2.0 Type-A (data speed up to 480Mbps)
+1x USB 3.2 Gen 1 Type-A (data speed up to 5Gbps)
+1x USB-C 3.2 Gen 1 (support data transfer, Power Delivery and DisplayPort 1.2)
+1x HDMI 1.4
+1x 3.5mm Combo Audio Jack / headphone jack
+1x Card reader
+1x Power connector"
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono focus:outline-none focus:border-[#DF5E1D]">{{ old('ports', $laptop->ports) }}</textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Webcam / Kamera</label>
+                        <input type="text" name="camera" value="{{ old('camera', $laptop->camera) }}" placeholder="Contoh: 720p HD with Privacy Shutter"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Audio & Speaker</label>
+                        <input type="text" name="audio" value="{{ old('audio', $laptop->audio) }}" placeholder="Contoh: Stereo speakers, 1.5W x2, Dolby Audio"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Konektivitas Nirkabel</label>
+                        <input type="text" name="connectivity" value="{{ old('connectivity', $laptop->connectivity) }}" placeholder="Contoh: Wi-Fi 6 (11ax 2x2) + BT5.2"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Warna Casing</label>
+                        <input type="text" name="color" value="{{ old('color', $laptop->color) }}" placeholder="Contoh: Arctic Grey / Thunder Black"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Info Garansi</label>
+                        <input type="text" name="warranty" value="{{ old('warranty', $laptop->warranty ?? 'Garansi Toko 1 Bulan') }}" placeholder="Contoh: Garansi Toko 1 Bulan"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+                </div>
             </div>
 
             <div>
