@@ -145,7 +145,7 @@
         </div>
     </div>
 
-    {{-- Technical Specifications Card (Gambar 2 & 3) --}}
+    {{-- Technical Specifications Card --}}
     <div class="bg-white rounded-3xl border border-gray-200/70 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="text-sm font-bold text-[#363230] flex items-center gap-2">

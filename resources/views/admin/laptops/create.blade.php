@@ -37,7 +37,7 @@
             @csrf
 
             <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-5">
-                
+
                 {{-- Status & Visibility --}}
                 <div class="flex items-center justify-between p-3.5 bg-gray-50 rounded-2xl border border-gray-200/80">
                     <div>
@@ -169,12 +169,12 @@
                         </div>
                     </div>
 
-                    {{-- I/O Ports & Additional Hardware Specs (Gambar 2 & 3) --}}
+                    {{-- I/O Ports & Additional Hardware Specs --}}
                     <div class="pt-3 border-t border-gray-100 space-y-4">
                         <div>
                             <div class="flex items-center justify-between mb-1">
                                 <label class="block text-xs font-bold text-gray-700 uppercase">
-                                    I/O Ports / Port Colokan (Gambar 2 & 3)
+                                    I/O Ports / Port Colokan
                                 </label>
                                 <span class="text-[10px] text-gray-400">1 baris per jenis port colokan</span>
                             </div>

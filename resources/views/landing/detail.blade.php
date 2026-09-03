@@ -11,7 +11,7 @@
         $cleanPhone = '62' . substr($cleanPhone, 1);
     }
     $productUrl = request()->fullUrl();
-    
+
     // Default bundle
     $defaultBundle = $addons->firstWhere('price', 0) ?? $addons->first();
 @endphp
@@ -73,7 +73,7 @@
 
     <div class="mb-12 lg:mb-16">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start relative">
-            
+
             <!-- 1. Left: Product Image Gallery (Sticky) -->
             <div class="lg:col-span-4 lg:sticky lg:top-24 z-20">
                 <div class="bg-white rounded-3xl border border-gray-200/70 shadow-sm overflow-hidden p-4 sm:p-6 mb-6 lg:mb-0">
@@ -143,7 +143,7 @@
                         {{ $laptop->brand }}
                     </span>
                     <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-[#363230] leading-snug">{{ $laptop->name }}</h1>
-                    
+
                     {{-- Quick Specs Badges --}}
                     <div class="flex flex-wrap items-center gap-2.5 text-xs text-gray-600 mt-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
                         @if($laptop->processor)
@@ -186,7 +186,7 @@
                                             data-addon-name="{{ $addon->name }}"
                                             data-addon-price="{{ (float)$addon->price }}"
                                             class="bundle-pill relative flex items-center gap-2.5 py-2 px-4 rounded-full border text-xs font-bold transition-all duration-200 shadow-2xs {{ $isSelected ? 'bg-white border-[#22c55e] text-[#166534] ring-1 ring-[#22c55e]' : 'bg-gray-100/80 hover:bg-gray-200/70 border-transparent text-gray-700' }}">
-                                        
+
                                         {{-- Optional Bundle Image Thumbnail --}}
                                         <div class="w-6 h-6 rounded-full bg-white border border-gray-200/80 overflow-hidden flex items-center justify-center shrink-0">
                                             @if($addon->image_url_full)
@@ -357,7 +357,7 @@
         </div>
     </div>
 
-    <!-- Technical Specifications Table Section (Gambar 2 & 3) -->
+    <!-- Technical Specifications Table Section -->
     <div class="mb-16 lg:mb-24 max-w-5xl mx-auto">
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-orange-50 text-[#DF5E1D] mb-3">
@@ -394,7 +394,7 @@
                 <p class="text-xs font-bold text-[#363230]">{{ $laptop->battery_life ?: 'Tergantung Pemakaian' }}</p>
             </div>
 
-            {{-- Additional Extended Specs (Gambar 2 & 3) --}}
+            {{-- Additional Extended Specs --}}
             @if($laptop->camera)
                 <div class="bg-white p-4 rounded-2xl border border-gray-200/70 shadow-2xs">
                     <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Webcam / Kamera</p>
@@ -437,7 +437,7 @@
                 </div>
             @endif
 
-            {{-- Dedicated Full I/O Ports Card (Gambar 2 & 3) --}}
+            {{-- Dedicated Full I/O Ports Card --}}
             @if(count($laptop->ports_list) > 0 || !empty($laptop->ports))
                 <div class="md:col-span-3 bg-white p-5 rounded-2xl border border-gray-200/70 shadow-2xs">
                     <div class="flex items-center gap-2 mb-3">
@@ -567,7 +567,7 @@ function selectBundle(addonId, addonName, addonPrice, btnEl) {
 
 function updateWhatsAppUrl() {
     const total = baseLaptopPrice + currentSelectedBundle.price;
-    const bundleText = currentSelectedBundle.price > 0 
+    const bundleText = currentSelectedBundle.price > 0
         ? `${currentSelectedBundle.name} (+Rp ${currentSelectedBundle.price.toLocaleString('id-ID')})`
         : currentSelectedBundle.name;
 
