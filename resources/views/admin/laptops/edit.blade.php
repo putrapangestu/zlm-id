@@ -23,6 +23,18 @@
         @method('PUT')
 
         <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-5">
+            {{-- Status & Visibility --}}
+            <div class="flex items-center justify-between p-3.5 bg-gray-50 rounded-2xl border border-gray-200/80">
+                <div>
+                    <span class="text-xs font-bold text-[#363230] block">Status Publikasi Produk</span>
+                    <span class="text-[11px] text-gray-500">Jika aktif, produk dapat dicari dan dibeli di toko online & kasir POS.</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $laptop->is_active)) class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#DF5E1D]"></div>
+                </label>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -270,6 +282,10 @@
                 <div class="flex justify-between py-2 border-b border-gray-100">
                     <dt class="text-gray-400">Dibuat</dt>
                     <dd class="font-medium text-[#363230]">{{ $laptop->created_at->format('d M Y') }}</dd>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                    <dt class="text-gray-400">Status Toko</dt>
+                    <dd class="font-medium {{ $laptop->is_active ? 'text-emerald-600' : 'text-gray-400' }}">{{ $laptop->is_active ? 'Aktif (Live)' : 'Nonaktif' }}</dd>
                 </div>
                 <div class="flex justify-between py-2">
                     <dt class="text-gray-400">Featured</dt>
