@@ -25,44 +25,126 @@
     </div>
 
     {{-- Restock Info Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {{-- Card 1: Batch Info --}}
-        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-3">
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-5 space-y-2.5">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">No. Restock</span>
                 @if($restock->status === 'completed')
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">QC Selesai</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">QC Selesai</span>
                 @elseif($restock->status === 'partially_checked')
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Sebagian QC</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">Sebagian QC</span>
                 @else
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Pending QC</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">Pending QC</span>
                 @endif
             </div>
-            <p class="text-xl font-bold font-mono text-[#363230]">{{ $restock->restock_number }}</p>
+            <p class="text-lg font-bold font-mono text-[#363230]">{{ $restock->restock_number }}</p>
             <div class="pt-2 border-t border-gray-100 text-xs text-gray-500 space-y-1">
-                <div>Tanggal Penerimaan: <strong>{{ $restock->purchase_date->format('d F Y') }}</strong></div>
-                <div>Diterima Oleh: <strong>{{ $restock->creator->name }}</strong></div>
+                <div>Tanggal: <strong>{{ $restock->purchase_date->format('d M Y') }}</strong></div>
+                <div>Petugas: <strong>{{ $restock->creator->name }}</strong></div>
             </div>
         </div>
 
         {{-- Card 2: Supplier Info --}}
-        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-3">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Data Supplier</span>
-            <p class="text-lg font-bold text-[#363230]">{{ $restock->supplier_name }}</p>
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-5 space-y-2.5">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Data Supplier</span>
+                @if($restock->supplier_id)
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200">Master Data</span>
+                @endif
+            </div>
+            <p class="text-base font-bold text-[#363230]">{{ $restock->supplier_name }}</p>
             <div class="pt-2 border-t border-gray-100 text-xs text-gray-500 space-y-1">
-                <div>No. Telepon / WA: <strong>{{ $restock->supplier_phone ?? '-' }}</strong></div>
-                <div>No. Surat Jalan / Faktur: <strong>{{ $restock->invoice_number ?? '-' }}</strong></div>
+                <div>No. WA/Telp: <strong>{{ $restock->supplier_phone ?? '-' }}</strong></div>
+                <div>No. Invoice: <strong>{{ $restock->invoice_number ?? '-' }}</strong></div>
             </div>
         </div>
 
-        {{-- Card 3: Financial Summary --}}
-        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-6 space-y-3">
+        {{-- Card 3: Shipping Status --}}
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-5 space-y-2.5">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status Pengiriman</span>
+                @if($restock->shipping_status === 'received')
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Diterima</span>
+                @elseif($restock->shipping_status === 'in_transit')
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200 animate-pulse">Dalam Perjalanan</span>
+                @else
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Pending Kirim</span>
+                @endif
+            </div>
+            <div>
+                <p class="text-xs text-gray-600 font-medium">Kurir: <strong>{{ $restock->shipping_courier ?: 'Belum diatur' }}</strong></p>
+                <p class="text-xs text-gray-600 font-medium mt-0.5">Resi: <strong class="font-mono">{{ $restock->tracking_number ?: '-' }}</strong></p>
+            </div>
+            <div class="pt-2 border-t border-gray-100">
+                <button type="button" onclick="document.getElementById('shipping-modal').classList.remove('hidden')"
+                    class="w-full py-1.5 px-2 bg-gray-100 hover:bg-gray-200 text-[#363230] rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1">
+                    <iconify-icon icon="solar:pen-linear"></iconify-icon>
+                    <span>Update Pengiriman</span>
+                </button>
+            </div>
+        </div>
+
+        {{-- Card 4: Financial Summary --}}
+        <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-5 space-y-2.5">
             <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Total Nilai Pembelian (HPP)</span>
-            <p class="text-2xl font-extrabold text-emerald-600 font-mono">Rp {{ number_format($restock->total_amount, 0, ',', '.') }}</p>
+            <p class="text-xl font-extrabold text-emerald-600 font-mono">Rp {{ number_format($restock->total_amount, 0, ',', '.') }}</p>
             <div class="pt-2 border-t border-gray-100 text-xs text-gray-500 space-y-1">
                 <div>Total Unit: <strong>{{ $restock->items->sum('quantity') }} Unit</strong></div>
-                <div>QC Lolos: <strong class="text-emerald-600">{{ $restock->productItems->where('qc_status', 'passed')->count() }} Unit</strong> &bull; Pending: <strong class="text-amber-600">{{ $restock->productItems->where('qc_status', 'pending')->count() }} Unit</strong></div>
+                <div>QC Lolos: <strong class="text-emerald-600">{{ $restock->productItems->where('qc_status', 'passed')->count() }}</strong> &bull; Pending: <strong class="text-amber-600">{{ $restock->productItems->where('qc_status', 'pending')->count() }}</strong></div>
             </div>
+        </div>
+    </div>
+
+    {{-- MODAL: Update Status Pengiriman --}}
+    <div id="shipping-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <h3 class="text-sm font-bold text-[#363230] flex items-center gap-2">
+                    <iconify-icon icon="solar:delivery-bold" class="text-[#DF5E1D] text-lg"></iconify-icon>
+                    <span>Update Status Pengiriman Restock</span>
+                </h3>
+                <button type="button" onclick="document.getElementById('shipping-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-700">
+                    <iconify-icon icon="solar:close-circle-linear" class="text-xl"></iconify-icon>
+                </button>
+            </div>
+
+            <form method="POST" action="{{ route('admin.restocks.shipping-status', $restock) }}" class="space-y-4">
+                @csrf
+                @method('PATCH')
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Status Pengiriman <span class="text-red-500">*</span></label>
+                    <select name="shipping_status" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                        <option value="pending" @selected($restock->shipping_status === 'pending')>Pending (Menunggu Pengiriman Supplier)</option>
+                        <option value="in_transit" @selected($restock->shipping_status === 'in_transit')>Dalam Perjalanan (Sedang Dikirim)</option>
+                        <option value="received" @selected($restock->shipping_status === 'received')>Sudah Diterima di Gudang / Toko</option>
+                        <option value="completed" @selected($restock->shipping_status === 'completed')>Selesai</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kurir / Ekspedisi</label>
+                    <input type="text" name="shipping_courier" value="{{ $restock->shipping_courier }}" placeholder="JNE / J&T / Indah Kargo / dll"
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nomor Resi Pengiriman</label>
+                    <input type="text" name="tracking_number" value="{{ $restock->tracking_number }}" placeholder="Nomor resi..."
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="document.getElementById('shipping-modal').classList.add('hidden')"
+                        class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-[#DF5E1D] hover:bg-[#c45218] text-white rounded-xl text-xs font-bold shadow-sm">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

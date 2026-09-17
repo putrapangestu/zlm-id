@@ -37,30 +37,73 @@
                 <span>1. Data Supplier & Tanggal Restock</span>
             </h3>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {{-- Master Supplier Selector --}}
+                <div class="lg:col-span-2">
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">
+                        Pilih dari Master Supplier <span class="text-red-500">*</span>
+                        <a href="{{ route('admin.suppliers.create') }}" target="_blank" class="text-[#DF5E1D] font-normal hover:underline ml-1">+ Tambah Baru</a>
+                    </label>
+                    <select id="supplier_id" name="supplier_id" onchange="onSupplierChange(this)"
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                        <option value="">-- Pilih Supplier Terdaftar atau Ketik Manual di Bawah --</option>
+                        @foreach($suppliers as $supp)
+                            <option value="{{ $supp->id }}" data-name="{{ $supp->name }}" data-phone="{{ $supp->phone }}" @selected(old('supplier_id') == $supp->id)>
+                                {{ $supp->name }} {{ $supp->phone ? "({$supp->phone})" : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal Restock <span class="text-red-500">*</span></label>
+                    <input type="date" name="purchase_date" value="{{ old('purchase_date', date('Y-m-d')) }}" required
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:border-[#DF5E1D]">
+                    @error('purchase_date') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Supplier / Distributor <span class="text-red-500">*</span></label>
-                    <input type="text" name="supplier_name" value="{{ old('supplier_name') }}" required placeholder="Contoh: PT. Distributor Laptop Jaya"
+                    <input type="text" id="supplier_name" name="supplier_name" value="{{ old('supplier_name') }}" required placeholder="Contoh: PT. Distributor Laptop Jaya"
                         class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                     @error('supplier_name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal Pembelian / Restock <span class="text-red-500">*</span></label>
-                    <input type="date" name="purchase_date" value="{{ old('purchase_date', date('Y-m-d')) }}" required
-                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:border-[#DF5E1D]">
-                    @error('purchase_date') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">No. Telp / WA Supplier</label>
+                    <input type="text" id="supplier_phone" name="supplier_phone" value="{{ old('supplier_phone') }}" placeholder="0812-xxxx-xxxx"
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">No. Invoice / Faktur Supplier</label>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">No. Invoice / Faktur</label>
                     <input type="text" name="invoice_number" value="{{ old('invoice_number') }}" placeholder="Contoh: INV-SUPP-8891"
                         class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">No. Telp / WhatsApp Supplier</label>
-                    <input type="text" name="supplier_phone" value="{{ old('supplier_phone') }}" placeholder="0812-xxxx-xxxx"
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Status Pengiriman</label>
+                    <select name="shipping_status"
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                        <option value="received" @selected(old('shipping_status', 'received') === 'received')>Sudah Diterima di Toko</option>
+                        <option value="in_transit" @selected(old('shipping_status') === 'in_transit')>Sedang Dikirim (Dalam Perjalanan)</option>
+                        <option value="pending" @selected(old('shipping_status') === 'pending')>Menunggu Pengiriman Supplier</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Ekspedisi / Kurir Pengiriman</label>
+                    <input type="text" name="shipping_courier" value="{{ old('shipping_courier') }}" placeholder="JNE Cargo / J&T / Indah Logistik / Armada Sendiri"
+                        class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">No. Resi Pengiriman</label>
+                    <input type="text" name="tracking_number" value="{{ old('tracking_number') }}" placeholder="Nomor resi atau surat jalan..."
                         class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                 </div>
             </div>
@@ -426,10 +469,21 @@ function recalculateBatchSummary() {
 }
 
 function calculateNewTotal() {
-    const qty = parseInt(document.getElementById('new_quantity').value || 0);
-    const price = parseFloat(document.getElementById('new_purchase_price').value || 0);
+    const qty = parseInt(document.getElementById('new_quantity')?.value || 0);
+    const price = parseFloat(document.getElementById('new_purchase_price')?.value || 0);
     const total = qty * price;
-    document.getElementById('new_total_display').innerText = 'Rp ' + total.toLocaleString('id-ID');
+    const disp = document.getElementById('new_total_display');
+    if (disp) disp.innerText = 'Rp ' + total.toLocaleString('id-ID');
+}
+
+function onSupplierChange(selectEl) {
+    const selectedOpt = selectEl.options[selectEl.selectedIndex];
+    if (selectedOpt && selectedOpt.value) {
+        const name = selectedOpt.getAttribute('data-name');
+        const phone = selectedOpt.getAttribute('data-phone');
+        if (name) document.getElementById('supplier_name').value = name;
+        if (phone) document.getElementById('supplier_phone').value = phone;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {

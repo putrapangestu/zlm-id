@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductItem extends Model
 {
@@ -17,6 +18,9 @@ class ProductItem extends Model
         'laptop_variant_id',
         'sku',
         'serial_number',
+        'base_cost',
+        'additional_cost',
+        'final_cost',
         'qc_status',
         'is_sold',
         'qc_checklist',
@@ -27,9 +31,17 @@ class ProductItem extends Model
 
     protected $casts = [
         'is_sold' => 'boolean',
+        'base_cost' => 'decimal:2',
+        'additional_cost' => 'decimal:2',
+        'final_cost' => 'decimal:2',
         'qc_checklist' => 'array',
         'qc_at' => 'datetime',
     ];
+
+    public function parts(): HasMany
+    {
+        return $this->hasMany(QcItemPart::class);
+    }
 
     public function restock(): BelongsTo
     {

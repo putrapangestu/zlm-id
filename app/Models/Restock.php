@@ -15,6 +15,7 @@ class Restock extends Model
 
     protected $fillable = [
         'restock_number',
+        'supplier_id',
         'supplier_name',
         'supplier_phone',
         'invoice_number',
@@ -22,12 +23,19 @@ class Restock extends Model
         'total_amount',
         'notes',
         'status',
+        'shipping_status',
+        'shipping_courier',
+        'tracking_number',
+        'shipped_at',
+        'received_at',
         'created_by',
     ];
 
     protected $casts = [
         'purchase_date' => 'date',
         'total_amount' => 'decimal:2',
+        'shipped_at' => 'datetime',
+        'received_at' => 'datetime',
     ];
 
     protected static function booted(): void
@@ -37,6 +45,11 @@ class Restock extends Model
                 $restock->restock_number = 'RST-' . date('Ymd') . '-' . strtoupper(Str::random(5));
             }
         });
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     public function creator(): BelongsTo

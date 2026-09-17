@@ -53,6 +53,38 @@
         </div>
     </div>
 
+    {{-- QC Visual Chart Section (Point 10) --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white rounded-2xl border border-gray-200/60 shadow-sm p-5 items-center">
+        <div class="md:col-span-1 h-44 flex items-center justify-center">
+            <canvas id="qcDonutChart"></canvas>
+        </div>
+        <div class="md:col-span-2 space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Performa Mutu & Kelulusan QC</h4>
+                    <p class="text-xs text-gray-500">Persentase unit lolos inspeksi fisik & hardware dari seluruh barang restock.</p>
+                </div>
+                <span class="text-lg font-black text-emerald-600 font-mono">{{ $stats['pass_rate'] }}% Lolos</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-3.5 overflow-hidden flex">
+                @php
+                    $totalEvaluated = max(1, $stats['total_passed'] + $stats['total_failed'] + $stats['total_pending']);
+                    $passedPct = round(($stats['total_passed'] / $totalEvaluated) * 100);
+                    $pendingPct = round(($stats['total_pending'] / $totalEvaluated) * 100);
+                    $failedPct = 100 - $passedPct - $pendingPct;
+                @endphp
+                <div style="width: {{ $passedPct }}%" class="bg-emerald-500 h-full" title="Lolos: {{ $stats['total_passed'] }} unit"></div>
+                <div style="width: {{ $pendingPct }}%" class="bg-amber-400 h-full" title="Pending: {{ $stats['total_pending'] }} unit"></div>
+                <div style="width: {{ $failedPct }}%" class="bg-rose-500 h-full" title="Gagal: {{ $stats['total_failed'] }} unit"></div>
+            </div>
+            <div class="flex items-center gap-4 text-[11px] text-gray-600 flex-wrap">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Lolos QC: <strong>{{ $stats['total_passed'] }}</strong></span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Pending QC: <strong>{{ $stats['total_pending'] }}</strong></span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> Gagal QC (Karantina): <strong>{{ $stats['total_failed'] }}</strong></span>
+            </div>
+        </div>
+    </div>
+
     {{-- Tabs & Filters --}}
     <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-4">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -186,14 +218,24 @@
 
                         {{-- Actions --}}
                         <td class="py-4 px-6 text-right">
-                            @can('qc.inspect')
-                                <a href="{{ route('admin.qc.inspect', $item) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#DF5E1D] text-white hover:bg-[#c45218] rounded-xl text-xs font-medium shadow-sm transition-colors">
-                                    <iconify-icon icon="solar:checklist-minimalistic-linear"></iconify-icon>
-                                    <span>{{ $item->qc_status === 'pending' ? 'Periksa QC' : 'Re-Inspeksi' }}</span>
-                                </a>
-                            @else
-                                <span class="text-xs text-gray-400 italic">Hanya Lihat</span>
-                            @endcan
+                            <div class="flex items-center justify-end gap-2">
+                                @if($item->qc_status === 'passed')
+                                    @can('qc.print')
+                                        <a href="{{ route('admin.qc.print', $item) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-semibold shadow-2xs transition-colors" title="Cetak Lembar QC (PDF)">
+                                            <iconify-icon icon="solar:printer-bold" class="text-sm text-gray-500"></iconify-icon>
+                                            <span>Cetak</span>
+                                        </a>
+                                    @endcan
+                                @endif
+                                @can('qc.inspect')
+                                    <a href="{{ route('admin.qc.inspect', $item) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#DF5E1D] text-white hover:bg-[#c45218] rounded-xl text-xs font-medium shadow-sm transition-colors">
+                                        <iconify-icon icon="solar:checklist-minimalistic-linear"></iconify-icon>
+                                        <span>{{ $item->qc_status === 'pending' ? 'Periksa QC' : 'Re-Inspeksi' }}</span>
+                                    </a>
+                                @else
+                                    <span class="text-xs text-gray-400 italic">Hanya Lihat</span>
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -219,3 +261,34 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('qcDonutChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Lolos QC', 'Pending QC', 'Gagal QC'],
+                datasets: [{
+                    data: [{{ (int)$stats['total_passed'] }}, {{ (int)$stats['total_pending'] }}, {{ (int)$stats['total_failed'] }}],
+                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                cutout: '68%'
+            }
+        });
+    }
+});
+</script>
+@endpush

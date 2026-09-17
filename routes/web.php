@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\RestockController;
 use App\Http\Controllers\Admin\ReturnController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
@@ -141,6 +142,7 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
     Route::prefix('qc')->name('qc.')->group(function () {
         Route::get('/', [QcController::class, 'index'])->name('index')->middleware('can:qc.view');
         Route::get('/{item}/inspect', [QcController::class, 'inspect'])->name('inspect')->middleware('can:qc.inspect');
+        Route::get('/{item}/print', [QcController::class, 'printReport'])->name('print')->middleware('can:qc.print');
         Route::post('/{item}/approve', [QcController::class, 'approve'])->name('approve')->middleware('can:qc.inspect');
         Route::post('/{item}/reject', [QcController::class, 'reject'])->name('reject')->middleware('can:qc.inspect');
     });
@@ -151,8 +153,12 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
         Route::get('/create', [RestockController::class, 'create'])->name('create')->middleware('can:restock.create');
         Route::post('/', [RestockController::class, 'store'])->name('store')->middleware('can:restock.create');
         Route::get('/{restock}', [RestockController::class, 'show'])->name('show')->middleware('can:restock.view');
+        Route::patch('/{restock}/shipping-status', [RestockController::class, 'updateShippingStatus'])->name('shipping-status')->middleware('can:restock.create');
         Route::get('/{restock}/print-dotmatrix', [RestockController::class, 'printDotMatrix'])->name('print')->middleware('can:restock.print');
     });
+
+    // Master Data Supplier
+    Route::resource('suppliers', SupplierController::class);
 
     // Retur Barang (Customer & Supplier)
     Route::prefix('returns')->name('returns.')->group(function () {
@@ -166,6 +172,9 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
     // Member & Loyalitas
     Route::prefix('members')->name('members.')->group(function () {
         Route::get('/', [MemberController::class, 'index'])->name('index')->middleware('can:members.view');
+        Route::get('/create', [MemberController::class, 'create'])->name('create')->middleware('can:members.manage');
+        Route::post('/', [MemberController::class, 'store'])->name('store')->middleware('can:members.manage');
+        Route::patch('/{user}/follow-up', [MemberController::class, 'toggleFollowUp'])->name('follow-up')->middleware('can:members.manage');
         Route::get('/{user}', [MemberController::class, 'show'])->name('show')->middleware('can:members.view');
         Route::post('/{user}/points', [MemberController::class, 'adjustPoints'])->name('points')->middleware('can:members.manage');
     });
@@ -180,6 +189,10 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
         Route::put('/{user}', [UserController::class, 'update'])->name('update')->middleware('can:users.manage');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy')->middleware('can:users.manage');
     });
+
+    // Master Barang & Parts
+    Route::get('/products/api/search', [ProductController::class, 'apiSearch'])->name('products.api.search');
+    Route::resource('products', ProductController::class);
 
     // Products / Laptops
     Route::get('/laptops/api/templates', [AdminLaptopController::class, 'apiSearchTemplates'])->name('laptops.api.templates');
@@ -208,6 +221,7 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
         Route::get('/create', [TransactionController::class, 'create'])->name('create')->middleware('can:transactions.view');
         Route::post('/', [TransactionController::class, 'store'])->name('store')->middleware('can:transactions.view');
         Route::get('/{order}', [TransactionController::class, 'show'])->name('show')->middleware('can:transactions.view');
+        Route::get('/{order}/print-dotmatrix', [TransactionController::class, 'printDotMatrix'])->name('print-dotmatrix')->middleware('can:transactions.print');
         Route::post('/{order}/confirm-payment', [TransactionController::class, 'confirmPayment'])->name('confirm-payment')->middleware('can:transactions.confirm');
     });
 

@@ -18,6 +18,10 @@ class MemberController extends Controller
             $query->where('member_tier', $tier);
         }
 
+        if ($request->filled('follow_up')) {
+            $query->where('needs_follow_up', $request->get('follow_up') === '1');
+        }
+
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -34,9 +38,69 @@ class MemberController extends Controller
             'total_points' => User::role('customer')->sum('member_points'),
             'platinum_count' => User::role('customer')->where('member_tier', 'platinum')->count(),
             'gold_count' => User::role('customer')->where('member_tier', 'gold')->count(),
+            'needs_follow_up_count' => User::role('customer')->where('needs_follow_up', true)->count(),
         ];
 
         return view('admin.members.index', compact('members', 'stats'));
+    }
+
+    public function create(): View
+    {
+        return view('admin.members.create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'phone_number' => 'nullable|string|max:20',
+            'member_tier' => 'required|in:bronze,silver,gold,platinum',
+            'member_points' => 'nullable|integer|min:0',
+            'needs_follow_up' => 'nullable|boolean',
+            'follow_up_notes' => 'nullable|string|max:500',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $memberNumber = 'MBR-' . date('ym') . '-' . strtoupper(\Illuminate\Support\Str::random(4));
+        while (User::where('member_number', $memberNumber)->exists()) {
+            $memberNumber = 'MBR-' . date('ym') . '-' . strtoupper(\Illuminate\Support\Str::random(4));
+        }
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'] ?? null,
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password'] ?? 'zlm12345'),
+            'member_number' => $memberNumber,
+            'member_tier' => $validated['member_tier'],
+            'member_points' => $validated['member_points'] ?? 0,
+            'needs_follow_up' => $request->boolean('needs_follow_up'),
+            'follow_up_notes' => $validated['follow_up_notes'] ?? null,
+            'follow_up_date' => $request->boolean('needs_follow_up') ? now() : null,
+        ]);
+
+        $user->assignRole('customer');
+
+        return redirect()->route('admin.members.index')
+            ->with('success', "Member {$user->name} berhasil ditambahkan dengan nomor {$user->member_number}.");
+    }
+
+    public function toggleFollowUp(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'needs_follow_up' => 'required|boolean',
+            'follow_up_notes' => 'nullable|string|max:500',
+        ]);
+
+        $user->update([
+            'needs_follow_up' => $request->boolean('needs_follow_up'),
+            'follow_up_notes' => $validated['follow_up_notes'] ?? $user->follow_up_notes,
+            'follow_up_date' => $request->boolean('needs_follow_up') ? now() : null,
+        ]);
+
+        $statusText = $request->boolean('needs_follow_up') ? 'ditandai butuh follow-up' : 'ditandai sudah di-follow up';
+        return redirect()->back()->with('success', "Member {$user->name} berhasil {$statusText}.");
     }
 
     public function show(User $user): View

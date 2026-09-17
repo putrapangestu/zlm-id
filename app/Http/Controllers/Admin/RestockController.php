@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Laptop;
 use App\Models\Restock;
+use App\Models\Supplier;
 use App\Services\InventoryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,19 +21,24 @@ class RestockController extends Controller
 
     public function index(Request $request): View
     {
-        $query = Restock::with(['creator', 'items.laptop'])
+        $query = Restock::with(['creator', 'supplier', 'items.laptop'])
             ->withCount('productItems');
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('restock_number', 'like', "%{$search}%")
                   ->orWhere('supplier_name', 'like', "%{$search}%")
-                  ->orWhere('invoice_number', 'like', "%{$search}%");
+                  ->orWhere('invoice_number', 'like', "%{$search}%")
+                  ->orWhere('tracking_number', 'like', "%{$search}%");
             });
         }
 
         if ($status = $request->get('status')) {
             $query->where('status', $status);
+        }
+
+        if ($shippingStatus = $request->get('shipping_status')) {
+            $query->where('shipping_status', $shippingStatus);
         }
 
         if ($startDate = $request->get('start_date')) {
@@ -58,14 +64,20 @@ class RestockController extends Controller
         $laptops = Laptop::orderBy('name')->get();
         $categories = Category::where('is_active', true)->get();
         $brands = Brand::active()->sorted()->get();
-        return view('admin.restocks.create', compact('laptops', 'categories', 'brands'));
+        $suppliers = Supplier::active()->orderBy('name')->get();
+
+        return view('admin.restocks.create', compact('laptops', 'categories', 'brands', 'suppliers'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'supplier_name' => 'required|string|max:255',
+            'supplier_id' => 'nullable|exists:suppliers,id',
+            'supplier_name' => 'nullable|string|max:255',
             'supplier_phone' => 'nullable|string|max:50',
+            'shipping_status' => 'nullable|in:pending,in_transit,received,completed',
+            'shipping_courier' => 'nullable|string|max:100',
+            'tracking_number' => 'nullable|string|max:100',
             'invoice_number' => 'nullable|string|max:100',
             'purchase_date' => 'required|date',
             'notes' => 'nullable|string|max:1000',
@@ -104,9 +116,29 @@ class RestockController extends Controller
             'new_purchase_price' => 'nullable|numeric|min:0',
         ]);
 
+        $supplierId = $validated['supplier_id'] ?? null;
+        $supplierName = $validated['supplier_name'] ?? null;
+        $supplierPhone = $validated['supplier_phone'] ?? null;
+
+        if ($supplierId) {
+            $supplierObj = Supplier::find($supplierId);
+            if ($supplierObj) {
+                $supplierName = $supplierName ?: $supplierObj->name;
+                $supplierPhone = $supplierPhone ?: $supplierObj->phone;
+            }
+        }
+
+        if (empty($supplierName)) {
+            return back()->withInput()->with('error', 'Silakan pilih atau masukkan nama supplier.');
+        }
+
         $restockData = [
-            'supplier_name' => $validated['supplier_name'],
-            'supplier_phone' => $validated['supplier_phone'] ?? null,
+            'supplier_id' => $supplierId,
+            'supplier_name' => $supplierName,
+            'supplier_phone' => $supplierPhone,
+            'shipping_status' => $validated['shipping_status'] ?? 'received',
+            'shipping_courier' => $validated['shipping_courier'] ?? null,
+            'tracking_number' => $validated['tracking_number'] ?? null,
             'invoice_number' => $validated['invoice_number'] ?? null,
             'purchase_date' => $validated['purchase_date'],
             'notes' => $validated['notes'] ?? null,
@@ -121,7 +153,7 @@ class RestockController extends Controller
                 'new_laptop' => $validated['new_laptop'],
                 'quantity' => (int) ($validated['new_quantity'] ?? 1),
                 'purchase_price' => (float) ($validated['new_purchase_price'] ?? 0),
-                'notes' => 'Unit baru dari batch restock ' . $validated['supplier_name'],
+                'notes' => 'Unit baru dari batch restock ' . $supplierName,
             ];
         } else {
             $validItems = [];
@@ -153,13 +185,43 @@ class RestockController extends Controller
 
     public function show(Restock $restock): View
     {
-        $restock->load(['creator', 'items.laptop', 'productItems.laptop', 'productItems.inspector']);
+        $restock->load(['creator', 'supplier', 'items.laptop', 'productItems.laptop', 'productItems.inspector']);
         return view('admin.restocks.show', compact('restock'));
+    }
+
+    public function updateShippingStatus(Request $request, Restock $restock): RedirectResponse
+    {
+        $validated = $request->validate([
+            'shipping_status' => 'required|in:pending,in_transit,received,completed',
+            'shipping_courier' => 'nullable|string|max:100',
+            'tracking_number' => 'nullable|string|max:100',
+        ]);
+
+        $updates = [
+            'shipping_status' => $validated['shipping_status'],
+        ];
+
+        if ($request->filled('shipping_courier')) {
+            $updates['shipping_courier'] = $validated['shipping_courier'];
+        }
+        if ($request->filled('tracking_number')) {
+            $updates['tracking_number'] = $validated['tracking_number'];
+        }
+
+        if ($validated['shipping_status'] === 'in_transit' && !$restock->shipped_at) {
+            $updates['shipped_at'] = now();
+        } elseif (in_array($validated['shipping_status'], ['received', 'completed']) && !$restock->received_at) {
+            $updates['received_at'] = now();
+        }
+
+        $restock->update($updates);
+
+        return redirect()->back()->with('success', 'Status pengiriman restock berhasil diperbarui.');
     }
 
     public function printDotMatrix(Restock $restock): View
     {
-        $restock->load(['creator', 'items.laptop', 'productItems']);
+        $restock->load(['creator', 'supplier', 'items.laptop', 'productItems']);
         return view('admin.restocks.print-dotmatrix', compact('restock'));
     }
 }

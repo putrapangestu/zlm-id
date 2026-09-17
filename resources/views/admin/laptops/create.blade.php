@@ -50,8 +50,8 @@
                     </label>
                 </div>
 
-                {{-- Name & Brand --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {{-- Name, Brand & SKU --}}
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Model Laptop <span class="text-red-500">*</span></label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}" required placeholder="Contoh: ThinkPad T14s Gen 3 AMD"
@@ -68,6 +68,16 @@
                         </select>
                         <input type="hidden" name="brand" id="brand" value="{{ old('brand') }}">
                         @error('brand_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-gray-700 uppercase">Kode SKU (Katalog)</label>
+                            <button type="button" onclick="generateSku()" class="text-[10px] text-[#DF5E1D] font-bold hover:underline">Auto Generate</button>
+                        </div>
+                        <input type="text" name="sku" id="sku" value="{{ old('sku') }}" placeholder="Auto / Manual SKU"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
+                        <p class="text-[10px] text-gray-400 mt-1">Bisa diketik manual atau otomatis sistem.</p>
+                        @error('sku') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
@@ -312,6 +322,18 @@
 
 @push('scripts')
 <script>
+function generateSku() {
+    const brandSelect = document.getElementById('brand_id');
+    let brandName = 'LAP';
+    if (brandSelect && brandSelect.selectedIndex > 0) {
+        brandName = brandSelect.options[brandSelect.selectedIndex].getAttribute('data-name') || brandSelect.options[brandSelect.selectedIndex].text;
+        brandName = brandName.replace(/[^A-Za-z0-9]/g, '').substring(0, 3).toUpperCase();
+    }
+    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, '');
+    document.getElementById('sku').value = `LP-${brandName || 'GEN'}-${dateStr}-${rand}`;
+}
+
 document.getElementById('brand_id')?.addEventListener('change', function() {
     const sel = this.options[this.selectedIndex];
     const brandInput = document.getElementById('brand');

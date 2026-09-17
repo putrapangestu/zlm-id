@@ -10,7 +10,14 @@
             </a>
             <h1 class="text-2xl font-bold text-[#363230]">#{{ $order->order_number }}</h1>
         </div>
-        <div class="flex gap-2">
+        <div class="flex items-center gap-2">
+            @can('transactions.print')
+                <a href="{{ route('admin.transactions.print-dotmatrix', $order) }}" target="_blank"
+                   class="px-4 py-2 bg-slate-800 text-white rounded-xl hover:bg-slate-900 text-sm font-semibold flex items-center gap-2 shadow-xs transition-colors">
+                    <iconify-icon icon="solar:printer-bold" class="text-base"></iconify-icon>
+                    <span>Cetak Faktur (Dot Matrix)</span>
+                </a>
+            @endcan
             @if($order->payment_method === 'manual_transfer' && $order->payment_status === 'pending_verification')
             <form action="{{ route('admin.transactions.confirm-payment', $order) }}" method="POST">
                 @csrf

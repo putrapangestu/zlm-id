@@ -12,9 +12,14 @@
 
             <!-- Logo -->
             <div class="flex items-center gap-3 shrink-0">
-                <a href="{{ route('landing.home') }}" class="flex items-center gap-2 hover:opacity-80 transition">
-                    <img src="{{ asset('assets/logo.png') }}" alt="ZLM.ID" class="h-8 w-8 object-contain">
-                    <span class="text-xl font-bold tracking-tighter text-[#363230]">ZLM<span class="text-[#DF5E1D]">.ID</span></span>
+                <a href="{{ route('landing.home') }}" class="flex items-center gap-2.5 hover:opacity-85 transition">
+                    @php
+                        $storeLogo = config('settings.store_logo') ? asset('storage/' . config('settings.store_logo')) : (file_exists(public_path('assets/logo.png')) ? asset('assets/logo.png') : null);
+                    @endphp
+                    @if($storeLogo)
+                        <img src="{{ $storeLogo }}" alt="{{ config('settings.store_name', 'ZLM.ID') }}" class="h-8 sm:h-9 w-auto object-contain">
+                    @endif
+                    <span class="text-xl font-black tracking-tight text-[#363230]">ZLM<span class="text-[#DF5E1D]">.ID</span></span>
                 </a>
             </div>
 

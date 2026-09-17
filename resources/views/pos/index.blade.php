@@ -53,64 +53,93 @@
                 size: 58mm auto;
                 margin: 0;
             }
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            max-height: 100dvh;
+            overflow: hidden;
         }
     </style>
 </head>
-<body class="bg-[#F4F5F7] text-[#363230] h-screen overflow-hidden flex flex-col select-none">
+<body class="bg-[#F4F5F7] text-[#363230] h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col select-none">
 
     {{-- Top POS Navigation Bar --}}
-    <header class="bg-white border-b border-gray-200/80 px-4 py-2.5 flex items-center justify-between gap-4 shrink-0 shadow-xs z-20">
+    <header class="bg-white border-b border-gray-200/80 px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-3 shrink-0 shadow-xs z-20">
         {{-- Logo & Store Info --}}
-        <div class="flex items-center gap-3 shrink-0">
-            <div class="w-9 h-9 rounded-xl bg-[#DF5E1D] text-white flex items-center justify-center font-extrabold text-sm shadow-sm">
+        <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#DF5E1D] text-white flex items-center justify-center font-extrabold text-xs sm:text-sm shadow-sm">
                 ZLM
             </div>
             <div>
-                <h1 class="text-sm font-bold text-gray-900 leading-tight">POS KASIR ZLM.ID</h1>
-                <p class="text-[10px] text-gray-400">Kasir: <strong class="text-gray-700">{{ auth()->user()->name ?? 'Petugas' }}</strong></p>
+                <h1 class="text-xs sm:text-sm font-bold text-gray-900 leading-tight">POS KASIR ZLM.ID</h1>
+                <p class="text-[9px] sm:text-[10px] text-gray-400">Kasir: <strong class="text-gray-700">{{ auth()->user()->name ?? 'Petugas' }}</strong></p>
             </div>
         </div>
 
         {{-- Barcode Quick Scanner Box --}}
-        <div class="flex-1 max-w-md mx-4">
+        <div class="hidden sm:block flex-1 max-w-md mx-2 lg:mx-4">
             <div class="relative">
-                <iconify-icon icon="solar:barcode-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></iconify-icon>
+                <iconify-icon icon="solar:barcode-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base sm:text-lg"></iconify-icon>
                 <input type="text" id="barcode-scanner-input" autofocus placeholder="Scan Barcode / SKU Unit QC..."
-                    class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 pl-10 pr-4 text-xs font-mono font-semibold text-[#363230] focus:outline-none focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/10 transition-all">
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl py-1.5 sm:py-2 pl-9 sm:pl-10 pr-3 sm:pr-4 text-xs font-mono font-semibold text-[#363230] focus:outline-none focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/10 transition-all">
             </div>
         </div>
 
         {{-- Right Statuses & Actions --}}
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
             {{-- Network Badge --}}
-            <div id="network-status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+            <div id="network-status-badge" class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] sm:text-xs font-semibold">
                 <span id="network-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="network-status-text">Online</span>
+                <span id="network-status-text" class="hidden sm:inline">Online</span>
             </div>
 
             {{-- Pending Sync Badge --}}
-            <button onclick="PosApp.syncQueue()" id="pos-sync-queue-badge" class="hidden px-2.5 py-1 rounded-full bg-orange-500 text-white text-[11px] font-bold animate-bounce" title="Klik untuk paksa sinkronisasi ke server">
-                0 Pending Sync
+            <button onclick="PosApp.syncQueue()" id="pos-sync-queue-badge" class="hidden px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-orange-500 text-white text-[10px] sm:text-[11px] font-bold animate-bounce" title="Klik untuk paksa sinkronisasi ke server">
+                0 Sync
             </button>
 
-            <a href="{{ route('admin.dashboard') }}" class="p-2 text-gray-400 hover:text-[#363230] hover:bg-gray-100 rounded-xl transition-colors" title="Kembali ke Panel Admin">
-                <iconify-icon icon="solar:widget-2-linear" class="text-xl"></iconify-icon>
+            <a href="{{ route('admin.dashboard') }}" class="p-1.5 sm:p-2 text-gray-400 hover:text-[#363230] hover:bg-gray-100 rounded-xl transition-colors" title="Kembali ke Panel Admin">
+                <iconify-icon icon="solar:widget-2-linear" class="text-lg sm:text-xl"></iconify-icon>
             </a>
         </div>
     </header>
 
-    {{-- Main POS Workspace (2 Columns) --}}
-    <main class="flex-1 flex overflow-hidden">
+    {{-- Barcode Scanner on Mobile Screen (<sm) --}}
+    <div class="sm:hidden bg-white px-3 py-1.5 border-b border-gray-200/70 shrink-0">
+        <div class="relative">
+            <iconify-icon icon="solar:barcode-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base"></iconify-icon>
+            <input type="text" id="barcode-scanner-input-mobile" placeholder="Scan Barcode / SKU Unit QC..."
+                class="w-full bg-gray-50 border border-gray-200 rounded-xl py-1.5 pl-9 pr-3 text-xs font-mono font-semibold text-[#363230] focus:outline-none focus:border-[#DF5E1D]">
+        </div>
+    </div>
 
-        {{-- Left Area: Product Catalog & Category Tabs (65%) --}}
-        <section class="flex-1 flex flex-col p-4 overflow-hidden border-r border-gray-200/80">
+    {{-- Mobile Tab Switcher (Visible on < lg) --}}
+    <div class="flex lg:hidden bg-white border-b border-gray-200 px-3 py-1.5 shrink-0 gap-2 z-20">
+        <button type="button" id="tab-btn-catalog" onclick="PosApp.switchMobileTab('catalog')"
+            class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-[#DF5E1D] text-white shadow-xs">
+            <iconify-icon icon="solar:laptop-minimalistic-bold" class="text-base"></iconify-icon>
+            <span>Katalog Produk</span>
+        </button>
+        <button type="button" id="tab-btn-cart" onclick="PosApp.switchMobileTab('cart')"
+            class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 relative">
+            <iconify-icon icon="solar:cart-large-2-bold" class="text-base"></iconify-icon>
+            <span>Keranjang Transaksi</span>
+            <span id="mobile-cart-badge" class="px-1.5 py-0.5 bg-[#DF5E1D] text-white rounded-full text-[10px] font-extrabold hidden">0</span>
+        </button>
+    </div>
+
+    {{-- Main POS Workspace --}}
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 relative">
+
+        {{-- Left Area: Product Catalog & Category Tabs --}}
+        <section id="pos-catalog-section" class="flex-1 flex flex-col p-3 sm:p-4 overflow-hidden lg:border-r border-gray-200/80 min-h-0">
             {{-- Category Pills & Search --}}
-            <div class="flex items-center justify-between gap-3 mb-3 shrink-0">
-                <div id="category-pills" class="flex items-center gap-2 overflow-x-auto pb-1 max-w-2xl scrollbar-none">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 mb-3 shrink-0">
+                <div id="category-pills" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 max-w-full lg:max-w-2xl scrollbar-none">
                     {{-- Rendered via JS --}}
                 </div>
 
-                <div class="relative w-56 shrink-0">
+                <div class="relative w-full sm:w-56 shrink-0">
                     <iconify-icon icon="solar:magnifer-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></iconify-icon>
                     <input type="text" oninput="PosApp.handleSearch(this.value)" placeholder="Cari tipe laptop..."
                         class="w-full bg-white border border-gray-200 rounded-xl py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:border-[#DF5E1D]">
@@ -118,22 +147,45 @@
             </div>
 
             {{-- Products Grid --}}
-            <div id="products-grid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 pr-1">
+            <div id="products-grid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3 pr-1 min-h-0 pb-20 lg:pb-0">
                 {{-- Rendered via JS --}}
+            </div>
+
+            {{-- Floating Bottom Cart Bar on Mobile when Cart has items --}}
+            <div id="pos-mobile-cart-bar" class="lg:hidden fixed bottom-3 left-3 right-3 z-30 bg-[#363230] text-white p-3 rounded-2xl shadow-xl flex items-center justify-between gap-3 transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-[#DF5E1D] flex items-center justify-center text-white shrink-0 relative">
+                        <iconify-icon icon="solar:cart-large-2-bold" class="text-xl"></iconify-icon>
+                        <span id="bar-cart-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] font-extrabold flex items-center justify-center border-2 border-[#363230]">0</span>
+                    </div>
+                    <div class="min-w-0">
+                        <span class="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Total Belanja</span>
+                        <span id="bar-cart-total" class="text-sm font-extrabold font-mono text-white truncate block">Rp 0</span>
+                    </div>
+                </div>
+                <button type="button" onclick="PosApp.switchMobileTab('cart')" class="px-4 py-2.5 bg-[#DF5E1D] hover:bg-[#c45218] text-white text-xs font-extrabold rounded-xl shrink-0 flex items-center gap-1.5 shadow-md">
+                    <span>Lihat & Bayar</span>
+                    <iconify-icon icon="solar:alt-arrow-right-linear" class="text-base"></iconify-icon>
+                </button>
             </div>
         </section>
 
-        {{-- Right Area: Cart & Checkout (35%) --}}
-        <aside class="w-[380px] xl:w-[420px] bg-white flex flex-col shrink-0 shadow-lg z-10">
+        {{-- Right Area: Cart & Checkout --}}
+        <aside id="pos-cart-aside" class="hidden lg:flex w-full lg:w-[380px] xl:w-[420px] bg-white flex-col shrink-0 shadow-lg z-10 min-h-0 h-full">
 
             {{-- Cart Header & Member Selector --}}
-            <div class="p-4 border-b border-gray-100 space-y-3 shrink-0">
+            <div class="p-3 sm:p-4 border-b border-gray-100 space-y-2.5 sm:space-y-3 shrink-0">
                 <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-sm text-[#363230] flex items-center gap-2">
-                        <iconify-icon icon="solar:cart-large-2-linear" class="text-[#DF5E1D] text-lg"></iconify-icon>
-                        Keranjang Transaksi
-                    </h3>
-                    <button onclick="PosApp.clearCart()" class="text-xs text-gray-400 hover:text-red-600 transition">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="PosApp.switchMobileTab('catalog')" class="lg:hidden p-1.5 text-gray-500 hover:text-black hover:bg-gray-100 rounded-lg transition" title="Kembali ke katalog">
+                            <iconify-icon icon="solar:alt-arrow-left-linear" class="text-lg"></iconify-icon>
+                        </button>
+                        <h3 class="font-bold text-sm text-[#363230] flex items-center gap-2">
+                            <iconify-icon icon="solar:cart-large-2-linear" class="text-[#DF5E1D] text-lg"></iconify-icon>
+                            Keranjang Transaksi
+                        </h3>
+                    </div>
+                    <button onclick="PosApp.clearCart()" class="text-xs text-gray-400 hover:text-red-600 transition font-medium">
                         Kosongkan
                     </button>
                 </div>
@@ -148,11 +200,11 @@
             </div>
 
             {{-- Cart Items List --}}
-            <div class="flex-1 overflow-y-auto p-4 space-y-2 relative" id="cart-scroll-area">
+            <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 relative min-h-0" id="cart-scroll-area">
                 <div id="cart-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 p-6 text-center">
-                    <iconify-icon icon="solar:cart-cross-linear" class="text-5xl text-gray-200 mb-2"></iconify-icon>
+                    <iconify-icon icon="solar:cart-cross-linear" class="text-4xl sm:text-5xl text-gray-200 mb-2"></iconify-icon>
                     <p class="text-xs font-medium">Keranjang masih kosong.</p>
-                    <p class="text-[11px] text-gray-300 mt-1">Scan barcode SKU unit atau klik produk di katalog sebelah kiri.</p>
+                    <p class="text-[11px] text-gray-300 mt-1">Scan barcode SKU unit atau pilih produk dari katalog.</p>
                 </div>
 
                 <div id="cart-items-container" class="space-y-2">
@@ -161,8 +213,8 @@
             </div>
 
             {{-- Cart Summary & Checkout Footer --}}
-            <div class="p-4 bg-gray-50 border-t border-gray-200/70 space-y-3 shrink-0">
-                <div class="space-y-1.5 text-xs">
+            <div class="p-3 sm:p-4 bg-gray-50 border-t border-gray-200/70 space-y-2.5 sm:space-y-3 shrink-0">
+                <div class="space-y-1 text-xs">
                     <div class="flex justify-between text-gray-500">
                         <span>Subtotal</span>
                         <span id="cart-subtotal" class="font-mono font-bold text-gray-700">Rp 0</span>
@@ -175,9 +227,9 @@
                         <span>PPN (11%)</span>
                         <span id="cart-tax" class="font-mono font-bold text-gray-700">Rp 0</span>
                     </div>
-                    <div class="flex justify-between text-sm font-extrabold text-[#363230] pt-2 border-t border-gray-200">
+                    <div class="flex justify-between text-sm font-extrabold text-[#363230] pt-1.5 sm:pt-2 border-t border-gray-200">
                         <span>TOTAL AKHIR</span>
-                        <span id="cart-total" class="font-mono text-base text-[#DF5E1D]">Rp 0</span>
+                        <span id="cart-total" class="font-mono text-base sm:text-lg text-[#DF5E1D]">Rp 0</span>
                     </div>
                 </div>
 
@@ -216,8 +268,8 @@
     </div>
 
     {{-- MODAL: Payment Handling (Cash / QRIS / Transfer) --}}
-    <div id="pos-payment-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden p-6 space-y-5">
+    <div id="pos-payment-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-y-auto max-h-[92dvh] p-5 sm:p-6 space-y-4 sm:space-y-5">
             <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                 <div>
                     <h3 class="font-bold text-base text-[#363230]">Pembayaran Kasir</h3>

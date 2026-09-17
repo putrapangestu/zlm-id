@@ -1,108 +1,169 @@
-@extends('layouts.dashboard')
+@extends('layouts.admin')
 
-@section('title', 'Manajemen Produk — ZLM.ID Admin')
-@section('page-title', 'Manajemen Produk')
+@section('title', 'Master Data Barang & Sparepart — ZLM.ID Admin')
+@section('heading', 'Master Data Barang & Sparepart')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header with Actions -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h2 class="text-xl font-semibold text-[#363230]">Laptop Products</h2>
-            <p class="text-sm text-gray-500 mt-1">Manage your laptop inventory and product listings</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <div class="relative">
-                <iconify-icon icon="solar:magnifer-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" style="stroke-width: 1.5;"></iconify-icon>
-                <input type="text" placeholder="Search products..." class="w-64 bg-white border border-gray-200 text-sm text-[#363230] placeholder-gray-400 rounded-xl py-2 pl-9 pr-4 focus:outline-none focus:border-[#DF5E1D]/30 focus:ring-4 focus:ring-[#DF5E1D]/10 transition-all">
+
+    {{-- Stats Cards --}}
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Item Barang</span>
+                <div class="w-8 h-8 rounded-xl bg-orange-50 flex items-center justify-center text-[#DF5E1D]">
+                    <iconify-icon icon="solar:box-bold" class="text-lg"></iconify-icon>
+                </div>
             </div>
-            <a href="{{ route('admin.products.create') }}" class="bg-[#DF5E1D] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2">
-                <iconify-icon icon="solar:plus-linear" style="stroke-width: 1.5;"></iconify-icon>
-                Add Product
-            </a>
+            <p class="text-2xl font-bold text-[#363230] mt-2">{{ $stats['total_items'] }}</p>
+            <p class="text-xs text-gray-500 mt-1">Part, sparepart & aksesoris</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Total Stok Fisik</span>
+                <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <iconify-icon icon="solar:box-minimalistic-bold" class="text-lg"></iconify-icon>
+                </div>
+            </div>
+            <p class="text-2xl font-bold text-emerald-600 mt-2">{{ number_format($stats['total_stock'], 0, ',', '.') }} <span class="text-xs font-normal text-gray-400">Unit</span></p>
+            <p class="text-xs text-gray-500 mt-1">Tersedia di gudang/toko</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">Total Valuasi HPP</span>
+                <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                    <iconify-icon icon="solar:wallet-bold" class="text-lg"></iconify-icon>
+                </div>
+            </div>
+            <p class="text-2xl font-bold text-[#363230] mt-2">Rp {{ number_format($stats['total_asset'], 0, ',', '.') }}</p>
+            <p class="text-xs text-gray-500 mt-1">Estimasi modal stok tersimpan</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Stok Menipis (≤3)</span>
+                <div class="w-8 h-8 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
+                    <iconify-icon icon="solar:danger-triangle-bold" class="text-lg"></iconify-icon>
+                </div>
+            </div>
+            <p class="text-2xl font-bold text-rose-600 mt-2">{{ $stats['low_stock'] }} <span class="text-xs font-normal text-gray-400">Item</span></p>
+            <p class="text-xs text-gray-500 mt-1">Perlu restock segera</p>
         </div>
     </div>
 
-    <!-- Products Table -->
-    <div class="bg-white rounded-2xl border border-gray-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+    {{-- Filter & Action Header --}}
+    <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm p-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <form method="GET" class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <div class="relative flex-1 sm:w-64">
+                    <iconify-icon icon="solar:magnifer-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></iconify-icon>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, SKU, merk..."
+                        class="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl py-2 pl-9 pr-3 focus:outline-none focus:border-[#DF5E1D]/30 focus:ring-4 focus:ring-[#DF5E1D]/10">
+                </div>
+                <select name="category_id" onchange="this.form.submit()" class="bg-gray-50 border border-gray-200 text-xs rounded-xl py-2 px-3 focus:outline-none">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" @selected(request('category_id') == $cat->id)>{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+                <select name="status" onchange="this.form.submit()" class="bg-gray-50 border border-gray-200 text-xs rounded-xl py-2 px-3 focus:outline-none">
+                    <option value="">Semua Status</option>
+                    <option value="active" @selected(request('status') === 'active')>Aktif</option>
+                    <option value="inactive" @selected(request('status') === 'inactive')>Non-aktif</option>
+                </select>
+                <button type="submit" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-medium transition-colors">
+                    Filter
+                </button>
+            </form>
+
+            @can('products.manage')
+            <a href="{{ route('admin.products.create') }}" class="w-full sm:w-auto px-4 py-2.5 bg-[#DF5E1D] hover:bg-[#c45218] text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5">
+                <iconify-icon icon="solar:add-circle-bold" class="text-base"></iconify-icon>
+                <span>Tambah Barang Baru</span>
+            </a>
+            @endcan
+        </div>
+    </div>
+
+    {{-- Products Table --}}
+    <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Product</th>
-                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Brand</th>
-                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Type</th>
-                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Price</th>
-                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Stock</th>
-                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Status</th>
-                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">#</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Barang / Nama</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">SKU</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Kategori</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest text-right">Harga Modal (HPP)</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest text-right">Harga Jual</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest text-center">Stok</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50 text-sm">
                     @forelse($products as $product)
-                    <tr class="hover:bg-gray-50/50 transition-colors group">
+                    <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="py-4 px-6 text-gray-400 text-xs">{{ $products->firstItem() + $loop->index }}</td>
                         <td class="py-4 px-6">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center p-1 overflow-hidden">
-                                    <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="w-full h-full object-contain mix-blend-multiply">
-                                </div>
-                                <div>
-                                    <div class="font-medium text-[#363230]">{{ $product['name'] }}</div>
-                                    <div class="text-xs text-gray-500">Added {{ $product['created_at']->diffForHumans() }}</div>
-                                </div>
-                            </div>
+                            <span class="font-bold text-[#363230] block">{{ $product->name }}</span>
+                            @if($product->description)
+                                <span class="text-[11px] text-gray-400 line-clamp-1">{{ $product->description }}</span>
+                            @endif
                         </td>
-                        <td class="py-4 px-6 text-gray-500">{{ $product['brand'] }}</td>
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-600">
-                                {{ $product['type'] }}
+                        <td class="py-4 px-6 font-mono text-xs font-semibold text-[#363230]">
+                            <span class="bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
+                                {{ $product->sku }}
                             </span>
                         </td>
-                        <td class="py-4 px-6 font-medium text-[#363230]">Rp {{ number_format($product['price'], 0, ',', '.') }}</td>
-                        <td class="py-4 px-6 text-gray-500">{{ $product['stock'] }} units</td>
-                        <td class="py-4 px-6">
-                            @if($product['stock'] > 10)
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-100/50">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    In Stock
+                        <td class="py-4 px-6 text-xs text-gray-600">
+                            {{ $product->category->name ?? '-' }}
+                        </td>
+                        <td class="py-4 px-6 text-right text-xs font-semibold text-gray-700">
+                            Rp {{ number_format($product->cost_price, 0, ',', '.') }}
+                        </td>
+                        <td class="py-4 px-6 text-right text-xs font-bold text-[#DF5E1D]">
+                            Rp {{ number_format($product->price, 0, ',', '.') }}
+                        </td>
+                        <td class="py-4 px-6 text-center">
+                            @if($product->stock <= 0)
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-600 border border-rose-200">
+                                    Habis (0)
                                 </span>
-                            @elseif($product['stock'] > 0)
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-600 border border-orange-100/50">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                                    Low Stock
+                            @elseif($product->stock <= 3)
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600 border border-amber-200">
+                                    {{ $product->stock }} (Menipis)
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600 border border-red-100/50">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                    Out of Stock
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    {{ $product->stock }} Unit
                                 </span>
                             @endif
                         </td>
                         <td class="py-4 px-6 text-right">
-                            <div class="flex items-center justify-end gap-2 opacity-100 transition-opacity">
-                                <a href="{{ route('admin.products.show', $product['id']) }}" class="p-2 text-gray-500 hover:text-[#DF5E1D] hover:bg-orange-50 rounded-lg transition-colors" title="View">
-                                    <iconify-icon icon="solar:eye-linear" style="stroke-width: 1.5;"></iconify-icon>
+                            <div class="flex items-center justify-end gap-1.5">
+                                @can('products.manage')
+                                <a href="{{ route('admin.products.edit', $product) }}" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Edit Barang">
+                                    <iconify-icon icon="solar:pen-linear" class="text-base"></iconify-icon>
                                 </a>
-                                <a href="{{ route('admin.products.edit', $product['id']) }}" class="p-2 text-gray-500 hover:text-[#DF5E1D] hover:bg-orange-50 rounded-lg transition-colors" title="Edit">
-                                    <iconify-icon icon="solar:pen-linear" style="stroke-width: 1.5;"></iconify-icon>
-                                </a>
-                                <form action="{{ route('admin.products.destroy', $product['id']) }}" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Hapus barang {{ $product->name }}?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                                        <iconify-icon icon="solar:trash-bin-2-linear" style="stroke-width: 1.5;"></iconify-icon>
+                                    <button type="submit" class="p-2 text-gray-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors" title="Hapus">
+                                        <iconify-icon icon="solar:trash-bin-trash-linear" class="text-base"></iconify-icon>
                                     </button>
                                 </form>
+                                @endcan
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-12 px-6 text-center text-gray-500">
-                            <div class="flex flex-col items-center gap-3">
-                                <iconify-icon icon="solar:laptop-minimalistic-linear" class="text-4xl text-gray-300" style="stroke-width: 1.5;"></iconify-icon>
-                                <p>No products found. Start by adding your first product.</p>
-                            </div>
+                        <td colspan="8" class="py-12 text-center text-gray-400">
+                            <iconify-icon icon="solar:box-linear" class="text-4xl mb-2"></iconify-icon>
+                            <p class="text-sm">Belum ada data barang atau sparepart yang dicatat.</p>
                         </td>
                     </tr>
                     @endforelse
@@ -110,26 +171,12 @@
             </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-            <div class="text-xs text-gray-500">
-                Showing <span class="font-medium">1</span> to <span class="font-medium">{{ count($products) }}</span> of <span class="font-medium">{{ count($products) }}</span> products
-            </div>
-            <div class="flex items-center gap-2">
-                <button class="px-3 py-1.5 text-xs font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Previous
-                </button>
-                <button class="px-3 py-1.5 text-xs font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Next
-                </button>
-            </div>
+        @if($products->hasPages())
+        <div class="p-4 border-t border-gray-100">
+            {{ $products->links() }}
         </div>
+        @endif
     </div>
+
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Add any JavaScript functionality here if needed
-</script>
-@endpush

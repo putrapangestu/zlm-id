@@ -25,6 +25,9 @@ class User extends Authenticatable
         'member_number',
         'member_tier',
         'member_points',
+        'needs_follow_up',
+        'follow_up_notes',
+        'follow_up_date',
         'joined_member_at',
         'email_verified_at',
     ];
@@ -39,6 +42,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'joined_member_at' => 'datetime',
+            'follow_up_date' => 'datetime',
+            'needs_follow_up' => 'boolean',
             'password' => 'hashed',
             'member_points' => 'integer',
         ];

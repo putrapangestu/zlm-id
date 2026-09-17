@@ -64,6 +64,7 @@ class LaptopController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
+            'sku' => 'nullable|string|max:100|unique:laptops,sku',
             'brand' => 'nullable|string|max:255',
             'brand_id' => 'nullable|exists:brands,id',
             'description' => 'required|string',
@@ -166,6 +167,7 @@ class LaptopController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
+            'sku' => 'nullable|string|max:100|unique:laptops,sku,' . $laptop->id,
             'brand' => 'nullable|string|max:255',
             'brand_id' => 'nullable|exists:brands,id',
             'description' => 'required|string',

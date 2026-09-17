@@ -168,11 +168,14 @@ class UserController extends Controller
             'Quality Control (QC)' => [
                 'qc.view' => 'Lihat Daftar Barang Pending QC',
                 'qc.inspect' => 'Lakukan Inspeksi Fisik, Loloskan SKU & Tolak Unit',
+                'qc.print' => 'Cetak Lembar Hasil QC (PDF / Kertas Biasa)',
             ],
-            'Restock Barang' => [
+            'Restock Barang & Supplier' => [
                 'restock.view' => 'Lihat Riwayat & Daftar Restock',
                 'restock.create' => 'Input Pembelian / Batch Restock Baru',
-                'restock.print' => 'Cetak Format Kertas Dot Matrix',
+                'restock.print' => 'Cetak Format Kertas Dot Matrix Restock',
+                'suppliers.view' => 'Lihat Data Master Supplier',
+                'suppliers.manage' => 'Kelola / Tambah / Edit Master Supplier',
             ],
             'Retur Barang' => [
                 'returns.view' => 'Lihat Daftar Pengajuan Retur',
@@ -183,19 +186,26 @@ class UserController extends Controller
                 'laptops.create' => 'Tambah Produk Laptop Baru',
                 'laptops.edit' => 'Edit Spesifikasi, Harga & Diskon Produk',
                 'laptops.delete' => 'Hapus Produk Laptop',
+                'brands.manage' => 'Kelola Master Brand Laptop',
+                'addons.manage' => 'Kelola Paket Add-Ons & Bundle',
+            ],
+            'Master Barang & Sparepart' => [
+                'products.view' => 'Lihat Data Master Barang & Sparepart',
+                'products.manage' => 'Tambah / Edit / Hapus Master Barang',
             ],
             'Kategori & Konten' => [
                 'categories.manage' => 'Kelola Kategori Laptop',
                 'articles.manage' => 'Kelola Artikel & Blog',
                 'sliders.manage' => 'Kelola Slider Banner & Testimoni',
             ],
-            'Penjualan & Transaksi Online' => [
+            'Penjualan & Transaksi Toko' => [
                 'transactions.view' => 'Lihat Semua Riwayat Transaksi Toko',
                 'transactions.confirm' => 'Konfirmasi Pembayaran Manual & Tracking Resi',
+                'transactions.print' => 'Cetak Faktur Penjualan (Dot Matrix)',
             ],
             'Member & Pelanggan' => [
                 'members.view' => 'Lihat Daftar Pelanggan & Member',
-                'members.manage' => 'Kelola Tier Member, Poin & Kartu Digital',
+                'members.manage' => 'Kelola Tier Member, Poin, Tambah & Follow-up',
             ],
             'Laporan Keuangan & Inventori' => [
                 'reports.purchases' => 'Lihat Laporan Pembelian & Restock',

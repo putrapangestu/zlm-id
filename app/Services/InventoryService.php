@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Models\Laptop;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\ProductItem;
 use App\Models\ProductReturn;
+use App\Models\QcItemPart;
 use App\Models\Restock;
 use App\Models\RestockItem;
 use App\Models\StockMovement;
@@ -24,6 +26,7 @@ class InventoryService
     {
         return DB::transaction(function () use ($data, $creator) {
             $restock = Restock::create([
+                'supplier_id' => $data['supplier_id'] ?? null,
                 'supplier_name' => $data['supplier_name'],
                 'supplier_phone' => $data['supplier_phone'] ?? null,
                 'invoice_number' => $data['invoice_number'] ?? null,
@@ -31,6 +34,11 @@ class InventoryService
                 'total_amount' => 0,
                 'notes' => $data['notes'] ?? null,
                 'status' => 'received',
+                'shipping_status' => $data['shipping_status'] ?? 'received',
+                'shipping_courier' => $data['shipping_courier'] ?? null,
+                'tracking_number' => $data['tracking_number'] ?? null,
+                'shipped_at' => ($data['shipping_status'] ?? '') === 'in_transit' ? now() : null,
+                'received_at' => ($data['shipping_status'] ?? 'received') === 'received' ? now() : null,
                 'created_by' => $creator->id,
             ]);
 
@@ -113,6 +121,9 @@ class InventoryService
                         'laptop_id' => $laptop->id,
                         'sku' => null, // SKU terbit HANYA setelah lolos QC
                         'serial_number' => null,
+                        'base_cost' => $price,
+                        'additional_cost' => 0,
+                        'final_cost' => $price,
                         'qc_status' => 'pending',
                         'is_sold' => false,
                         'qc_checklist' => null,
@@ -146,14 +157,71 @@ class InventoryService
         });
     }
 
-    public function passQc(ProductItem $item, string $sku, ?string $serialNumber, array $checklist, ?string $notes, User $inspector): ProductItem
+    public function passQc(ProductItem $item, string $sku, ?string $serialNumber, array $checklist, ?string $notes, User $inspector, array $parts = []): ProductItem
     {
-        return DB::transaction(function () use ($item, $sku, $serialNumber, $checklist, $notes, $inspector) {
+        return DB::transaction(function () use ($item, $sku, $serialNumber, $checklist, $notes, $inspector, $parts) {
             $wasPending = $item->qc_status === 'pending';
+
+            // 1. Proses Part & Biaya Tambahan QC (Gambar 2)
+            $totalAdditionalCost = 0;
+            if (!empty($parts)) {
+                foreach ($parts as $partData) {
+                    $partName = trim($partData['part_name'] ?? '');
+                    $productId = !empty($partData['product_id']) ? $partData['product_id'] : null;
+
+                    if (empty($partName) && empty($productId)) {
+                        continue;
+                    }
+
+                    $qty = max(1, (int) ($partData['quantity'] ?? 1));
+                    $unitCost = (float) ($partData['unit_cost'] ?? 0);
+
+                    if ($productId && empty($partName)) {
+                        $productObj = Product::find($productId);
+                        if ($productObj) {
+                            $partName = $productObj->name;
+                            if ($unitCost == 0) {
+                                $unitCost = (float) $productObj->cost_price;
+                            }
+                        }
+                    }
+
+                    $subtotal = $qty * $unitCost;
+                    $totalAdditionalCost += $subtotal;
+
+                    QcItemPart::create([
+                        'product_item_id' => $item->id,
+                        'product_id' => $productId,
+                        'part_name' => $partName ?: 'Sparepart Tambahan',
+                        'quantity' => $qty,
+                        'unit_cost' => $unitCost,
+                        'total_cost' => $subtotal,
+                        'notes' => $partData['notes'] ?? null,
+                    ]);
+
+                    // Potong stok dari Master Barang jika dipilih
+                    if ($productId) {
+                        $prod = Product::find($productId);
+                        if ($prod && $prod->stock >= $qty) {
+                            $prod->decrement('stock', $qty);
+                        }
+                    }
+                }
+            }
+
+            // Hitung Base Cost dan Final HPP
+            $baseCost = (float) $item->base_cost;
+            if ($baseCost <= 0 && $item->restock_id) {
+                $baseCost = (float) ($item->restock?->items()->where('laptop_id', $item->laptop_id)->value('purchase_price') ?? 0);
+            }
+            $finalCost = $baseCost + $totalAdditionalCost;
 
             $item->update([
                 'sku' => $sku,
                 'serial_number' => $serialNumber,
+                'base_cost' => $baseCost,
+                'additional_cost' => $totalAdditionalCost,
+                'final_cost' => $finalCost,
                 'qc_status' => 'passed',
                 'qc_checklist' => $checklist,
                 'qc_notes' => $notes,

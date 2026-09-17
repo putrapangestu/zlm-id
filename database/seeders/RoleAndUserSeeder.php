@@ -24,11 +24,14 @@ class RoleAndUserSeeder extends Seeder
             // Quality Control (QC)
             'qc.view' => 'Lihat Daftar QC',
             'qc.inspect' => 'Lakukan Inspeksi QC & Loloskan SKU',
+            'qc.print' => 'Cetak Lembar Hasil QC (PDF / A4)',
 
-            // Restock Barang
+            // Restock Barang & Supplier
             'restock.view' => 'Lihat Data Restock',
             'restock.create' => 'Tambah Batch Restock',
             'restock.print' => 'Cetak Dot Matrix Bukti Restock',
+            'suppliers.view' => 'Lihat Data Master Supplier',
+            'suppliers.manage' => 'Kelola Data Master Supplier',
 
             // Retur Barang
             'returns.view' => 'Lihat Pengajuan Retur',
@@ -39,6 +42,12 @@ class RoleAndUserSeeder extends Seeder
             'laptops.create' => 'Tambah Produk Laptop',
             'laptops.edit' => 'Edit Spesifikasi & Diskon Produk',
             'laptops.delete' => 'Hapus Produk',
+            'brands.manage' => 'Kelola Master Brand Laptop',
+            'addons.manage' => 'Kelola Paket Add-Ons & Bundle',
+
+            // Master Barang & Sparepart
+            'products.view' => 'Lihat Data Master Barang & Sparepart',
+            'products.manage' => 'Kelola Data Master Barang & Sparepart',
 
             // Kategori & Konten
             'categories.manage' => 'Kelola Kategori',
@@ -48,10 +57,11 @@ class RoleAndUserSeeder extends Seeder
             // Transaksi & Pesanan
             'transactions.view' => 'Lihat Transaksi Penjualan',
             'transactions.confirm' => 'Konfirmasi Pembayaran Manual',
+            'transactions.print' => 'Cetak Faktur Penjualan (Dot Matrix)',
 
             // Member & Pelanggan
             'members.view' => 'Lihat Data Pelanggan & Member',
-            'members.manage' => 'Kelola Poin & Tier Member',
+            'members.manage' => 'Kelola Poin, Tambah & Follow-up Member',
 
             // Laporan
             'reports.purchases' => 'Lihat Laporan Pembelian',

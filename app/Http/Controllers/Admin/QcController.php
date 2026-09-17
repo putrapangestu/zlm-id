@@ -51,8 +51,9 @@ class QcController extends Controller
 
     public function inspect(ProductItem $item): View
     {
-        $item->load(['laptop', 'restock']);
-        return view('admin.qc.inspect', compact('item'));
+        $item->load(['laptop', 'restock.supplier', 'parts.product']);
+        $masterProducts = \App\Models\Product::active()->orderBy('name')->get();
+        return view('admin.qc.inspect', compact('item', 'masterProducts'));
     }
 
     public function approve(Request $request, ProductItem $item): RedirectResponse
@@ -62,13 +63,26 @@ class QcController extends Controller
             'serial_number' => 'nullable|string|max:100',
             'checklist' => 'required|array',
             'checklist.screen' => 'required|in:ok,minor,defect',
+            'checklist.screen_notes' => 'nullable|string|max:255',
             'checklist.keyboard' => 'required|in:ok,minor,defect',
+            'checklist.keyboard_notes' => 'nullable|string|max:255',
             'checklist.battery' => 'required|in:ok,minor,defect',
+            'checklist.battery_notes' => 'nullable|string|max:255',
             'checklist.body' => 'required|in:ok,minor,defect',
+            'checklist.body_notes' => 'nullable|string|max:255',
             'checklist.ports' => 'required|in:ok,minor,defect',
+            'checklist.ports_notes' => 'nullable|string|max:255',
             'checklist.webcam' => 'required|in:ok,minor,defect',
+            'checklist.webcam_notes' => 'nullable|string|max:255',
             'checklist.specs' => 'required|in:match,mismatch',
+            'checklist.specs_notes' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:1000',
+            'parts' => 'nullable|array',
+            'parts.*.product_id' => 'nullable|exists:products,id',
+            'parts.*.part_name' => 'nullable|string|max:255',
+            'parts.*.quantity' => 'nullable|integer|min:1',
+            'parts.*.unit_cost' => 'nullable|numeric|min:0',
+            'parts.*.notes' => 'nullable|string|max:255',
         ]);
 
         $this->inventoryService->passQc(
@@ -77,11 +91,18 @@ class QcController extends Controller
             $validated['serial_number'] ?? null,
             $validated['checklist'],
             $validated['notes'] ?? null,
-            auth()->user()
+            auth()->user(),
+            $validated['parts'] ?? []
         );
 
         return redirect()->route('admin.qc.index')
             ->with('success', "Unit {$item->laptop->name} berhasil LOLOS QC dan siap dijual dengan SKU: {$validated['sku']}. Stok bertambah!");
+    }
+
+    public function printReport(ProductItem $item): View
+    {
+        $item->load(['laptop', 'inspector', 'parts.product', 'restock.supplier']);
+        return view('admin.qc.print-pdf', compact('item'));
     }
 
     public function reject(Request $request, ProductItem $item): RedirectResponse

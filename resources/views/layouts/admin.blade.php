@@ -61,7 +61,7 @@
     <aside id="admin-sidebar" class="w-64 bg-white border-r border-gray-200/60 flex flex-col flex-shrink-0 z-30 transition-all duration-300">
         <div class="h-16 flex items-center px-6 border-b border-gray-100">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
-                <img src="{{ asset('assets/logo.png') }}" alt="ZLM.ID" class="h-7 w-7 object-contain">
+                <img src="{{ config('settings.store_logo') ? asset('storage/' . config('settings.store_logo')) : asset('assets/logo.png') }}" alt="ZLM.ID" class="h-7 w-7 object-contain">
                 <span class="font-bold text-lg tracking-tight text-[#363230]">ZLM<span class="text-[#DF5E1D]">.ID</span> Admin</span>
             </a>
         </div>
@@ -101,6 +101,13 @@
             </a>
             @endcan
 
+            @can('suppliers.view')
+            <a href="{{ route('admin.suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.suppliers.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
+                <iconify-icon icon="solar:users-group-two-rounded-linear" class="text-lg"></iconify-icon>
+                <span>Master Supplier</span>
+            </a>
+            @endcan
+
             @can('returns.view')
             <a href="{{ route('admin.returns.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.returns.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
                 <iconify-icon icon="solar:refresh-square-linear" class="text-lg"></iconify-icon>
@@ -115,10 +122,19 @@
             </a>
             @endcan
 
+            @can('products.view')
+            <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.products.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
+                <iconify-icon icon="solar:box-bold" class="text-lg"></iconify-icon>
+                <span>Master Barang & Part</span>
+            </a>
+            @endcan
+
+            @can('brands.manage')
             <a href="{{ route('admin.brands.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.brands.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
                 <iconify-icon icon="solar:tag-bold" class="text-lg"></iconify-icon>
                 <span>Master Brand</span>
             </a>
+            @endcan
 
             @can('categories.manage')
             <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.categories.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
@@ -127,10 +143,12 @@
             </a>
             @endcan
 
+            @can('addons.manage')
             <a href="{{ route('admin.addons.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.addons.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
                 <iconify-icon icon="solar:box-minimalistic-linear" class="text-lg"></iconify-icon>
                 <span>Paket Add-Ons & Bundle</span>
             </a>
+            @endcan
 
             {{-- 3. PENJUALAN & PELANGGAN --}}
             <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-3 mb-1.5">Penjualan & Member</div>
@@ -173,10 +191,12 @@
             </a>
             @endcan
 
+            @can('sliders.manage')
             <a href="{{ route('admin.testimonials.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl @if(request()->routeIs('admin.testimonials.*')) bg-orange-50 text-[#DF5E1D] font-bold @else text-gray-600 hover:bg-gray-50 hover:text-[#363230] @endif transition-colors text-xs font-medium">
                 <iconify-icon icon="solar:chat-round-dots-linear" class="text-lg"></iconify-icon>
                 <span>Testimoni</span>
             </a>
+            @endcan
 
             {{-- 5. LAPORAN KEUANGAN & BARANG --}}
             <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-3 mb-1.5">Laporan & Analisis</div>

@@ -54,6 +54,7 @@
                         <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">#</th>
                         <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">No. Restock & Tanggal</th>
                         <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Supplier</th>
+                        <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Pengiriman</th>
                         <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Item & Unit</th>
                         <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Total Biaya (HPP)</th>
                         <th class="py-4 px-6 text-[10px] font-medium text-gray-400 uppercase tracking-widest">Status QC</th>
@@ -75,6 +76,28 @@
                         <td class="py-4 px-6">
                             <span class="font-medium text-[#363230] block">{{ $restock->supplier_name }}</span>
                             <span class="text-xs text-gray-400">Inv: {{ $restock->invoice_number ?? '-' }}</span>
+                        </td>
+
+                        {{-- Pengiriman --}}
+                        <td class="py-4 px-6">
+                            @if($restock->shipping_status === 'received')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Diterima
+                                </span>
+                            @elseif($restock->shipping_status === 'in_transit')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Dikirim
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pending
+                                </span>
+                            @endif
+                            @if($restock->tracking_number)
+                                <span class="block text-[10px] font-mono text-gray-400 mt-0.5 truncate max-w-[120px]" title="{{ $restock->tracking_number }}">
+                                    {{ $restock->shipping_courier ? $restock->shipping_courier . ': ' : '' }}{{ $restock->tracking_number }}
+                                </span>
+                            @endif
                         </td>
 
                         {{-- Items Qty --}}

@@ -2,59 +2,70 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
+    use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'name',
-        'brand',
-        'type',
+        'slug',
+        'category_id',
+        'sku',
         'description',
+        'stock',
         'price',
-        'processor',
-        'ram',
-        'storage',
-        'graphic',
-        'display',
-        'battery',
-        'weight',
-        'minus'
+        'cost_price',
+        'brand',
+        'image_url',
+        'is_active',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'cost_price' => 'decimal:2',
+        'stock' => 'integer',
+        'is_active' => 'boolean',
     ];
 
-    public function images(): MorphMany
+    protected static function booted(): void
     {
-        return $this->morphMany(Image::class, 'model');
+        static::creating(function (Product $product) {
+            if (empty($product->slug) && !empty($product->name)) {
+                $product->slug = Str::slug($product->name) . '-' . Str::random(4);
+            }
+            if (empty($product->sku)) {
+                $product->sku = 'BRG-' . strtoupper(Str::random(6));
+            }
+            if (empty($product->brand)) {
+                $product->brand = 'General';
+            }
+        });
     }
 
-    public function scopeByType($query, $type)
+    public function category(): BelongsTo
     {
-        return $query->where('type', $type);
+        return $this->belongsTo(Category::class);
     }
 
-    public function scopeInPriceRange($query, $min, $max)
+    public function qcItemParts(): HasMany
     {
-        return $query->whereBetween('price', [$min, $max]);
+        return $this->hasMany(QcItemPart::class);
     }
 
-    public function getImageUrlAttribute()
+    public function scopeActive($query)
     {
-        $image = $this->images()->first();
-        return $image ? $image->image : 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=1200';
+        return $query->where('is_active', true);
     }
 
-    public function getCategoryAttribute()
+    public function scopeInStock($query)
     {
-        return strtolower($this->type);
-    }
-
-    public function getStockAttribute()
-    {
-        return 10;
+        return $query->where('stock', '>', 0);
     }
 }

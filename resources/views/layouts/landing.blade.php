@@ -139,7 +139,7 @@
     <div class="preloader-wrapper" id="preloader">
         <div class="preloader-content">
             <div class="preloader-logo">
-                <img src="{{ asset('assets/logo.png') }}" alt="ZLM.ID">
+                <img src="{{ config('settings.store_logo') ? asset('storage/' . config('settings.store_logo')) : asset('assets/logo.png') }}" alt="ZLM.ID">
             </div>
             <div class="preloader-text">ZLM.ID</div>
             <div class="preloader-line"></div>

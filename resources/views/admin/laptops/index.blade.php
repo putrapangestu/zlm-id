@@ -84,9 +84,16 @@
                                         <a href="{{ route('admin.laptops.show', $laptop) }}" class="font-bold text-[#363230] hover:text-[#DF5E1D] transition-colors line-clamp-1 block">
                                             {{ $laptop->name }}
                                         </a>
-                                        <span class="text-[11px] text-gray-400 block mt-0.5">
-                                            {{ $laptop->processor }} &bull; {{ $laptop->ram }}
-                                        </span>
+                                        <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                                            <span class="text-[11px] text-gray-400">
+                                                {{ $laptop->processor }} &bull; {{ $laptop->ram }}
+                                            </span>
+                                            @if($laptop->sku)
+                                                <span class="inline-block px-1.5 py-0.5 bg-gray-100 text-gray-600 font-mono text-[10px] rounded border border-gray-200">
+                                                    {{ $laptop->sku }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>

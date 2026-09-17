@@ -89,41 +89,82 @@ class ReportController extends Controller
         $startDate = $request->filled('start_date') ? $request->start_date : now()->startOfMonth()->format('Y-m-d');
         $endDate = $request->filled('end_date') ? $request->end_date : now()->format('Y-m-d');
 
-        $paidOrders = Order::where('payment_status', 'paid')
+        $paidOrders = Order::with(['items.productItem.parts', 'items.laptop', 'user'])
+            ->where('payment_status', 'paid')
             ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate);
-
-        $totalRevenue = (float) (clone $paidOrders)->sum('total');
-        $revenue = $totalRevenue;
-        $onlineRevenue = (float) (clone $paidOrders)->where('source', 'web')->sum('total');
-        $posRevenue = (float) (clone $paidOrders)->where('source', 'pos')->sum('total');
-
-        $shippingCost = (float) (clone $paidOrders)->sum('shipping_cost');
-        $taxTotal = (float) (clone $paidOrders)->sum('tax');
-        $memberDiscounts = (float) (clone $paidOrders)->sum('member_discount_amount');
-
-        // Total HPP from restocks in this period
-        $itemHpp = (float) RestockItem::whereDate('created_at', '>=', $startDate)
             ->whereDate('created_at', '<=', $endDate)
-            ->sum('subtotal');
+            ->get();
 
-        if ($itemHpp == 0 && $totalRevenue > 0) {
-            // Fallback estimation (65% of revenue if restock data is historical)
-            $itemHpp = $totalRevenue * 0.7;
+        $totalRevenue = (float) $paidOrders->sum('total');
+        $onlineRevenue = (float) $paidOrders->where('source', 'web')->sum('total');
+        $posRevenue = (float) $paidOrders->where('source', 'pos')->sum('total');
+
+        $shippingCost = (float) $paidOrders->sum('shipping_cost');
+        $taxTotal = (float) $paidOrders->sum('tax');
+        $memberDiscounts = (float) $paidOrders->sum('member_discount_amount');
+
+        // Calculate real HPP from sold items (including QC spareparts)
+        $baseCostSold = 0;
+        $qcPartsCostSold = 0;
+        $totalHppSold = 0;
+
+        foreach ($paidOrders as $order) {
+            foreach ($order->items as $item) {
+                $qty = max(1, (int) $item->quantity);
+                if ($item->productItem) {
+                    $itemBase = (float) $item->productItem->base_cost;
+                    $itemParts = (float) $item->productItem->additional_cost;
+                    $itemFinal = (float) $item->productItem->final_cost;
+
+                    if ($itemFinal <= 0) {
+                        $itemFinal = (float) ($item->unit_price ?: ($item->price ?: 0)) * 0.7;
+                        $itemBase = $itemFinal;
+                    }
+                    $baseCostSold += ($itemBase * $qty);
+                    $qcPartsCostSold += ($itemParts * $qty);
+                    $totalHppSold += ($itemFinal * $qty);
+                } else {
+                    // Fallback to cost estimation
+                    $unitP = (float) ($item->unit_price ?: ($item->price ?: 0));
+                    $estHpp = ($unitP > 0 ? $unitP * 0.7 : 0) * $qty;
+                    $baseCostSold += $estHpp;
+                    $totalHppSold += $estHpp;
+                }
+            }
         }
-        $hpp = $itemHpp;
 
-        $grossProfit = $totalRevenue - $itemHpp;
+        // Total supplier restocks in this period
+        $restockPurchasesTotal = (float) Restock::whereBetween('purchase_date', [$startDate, $endDate])->sum('total_amount');
+
+        $grossProfit = $totalRevenue - $totalHppSold;
         $netProfit = $grossProfit - $shippingCost - $memberDiscounts;
-        $ordersCount = (clone $paidOrders)->count();
+        $grossMarginPercent = $totalRevenue > 0 ? round(($grossProfit / $totalRevenue) * 100, 1) : 0;
+        $netMarginPercent = $totalRevenue > 0 ? round(($netProfit / $totalRevenue) * 100, 1) : 0;
+        $ordersCount = $paidOrders->count();
 
-        return view('admin.reports.profit-loss', compact(
-            'period',
-            'revenue', 'totalRevenue', 'onlineRevenue', 'posRevenue',
-            'shippingCost', 'taxTotal', 'memberDiscounts', 'hpp', 'itemHpp',
-            'grossProfit', 'netProfit', 'ordersCount',
-            'startDate', 'endDate'
-        ));
+        return view('admin.reports.profit-loss', [
+            'period' => $period,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'totalRevenue' => $totalRevenue,
+            'revenue' => $totalRevenue,
+            'onlineRevenue' => $onlineRevenue,
+            'posRevenue' => $posRevenue,
+            'shippingCost' => $shippingCost,
+            'taxTotal' => $taxTotal,
+            'memberDiscounts' => $memberDiscounts,
+            'baseCostSold' => $baseCostSold,
+            'qcPartsCostSold' => $qcPartsCostSold,
+            'hpp' => $totalHppSold,
+            'totalHppSold' => $totalHppSold,
+            'restockPurchasesTotal' => $restockPurchasesTotal,
+            'grossProfit' => $grossProfit,
+            'netProfit' => $netProfit,
+            'grossMarginPercent' => $grossMarginPercent,
+            'netMarginPercent' => $netMarginPercent,
+            'ordersCount' => $ordersCount,
+            'recentSoldOrders' => $paidOrders->take(10),
+        ]);
     }
 
     public function productStats(Request $request): View
@@ -158,12 +199,22 @@ class ReportController extends Controller
             ->take(10)
             ->get();
 
-        // Recent Stock Movements
-        $recentMovements = StockMovement::with(['laptop', 'user'])
-            ->latest()
-            ->take(15)
+        // Brand distribution for chart
+        $brandDistribution = Laptop::selectRaw('brand, SUM(stock) as total_stock')
+            ->whereNotNull('brand')
+            ->where('brand', '!=', '')
+            ->groupBy('brand')
+            ->orderByDesc('total_stock')
+            ->take(8)
             ->get();
 
-        return view('admin.reports.product-stats', compact('stockSummary', 'topSelling', 'topRated', 'recentMovements'));
+        // QC Distribution for chart
+        $qcDistribution = [
+            'passed' => ProductItem::where('qc_status', 'passed')->count(),
+            'pending' => ProductItem::where('qc_status', 'pending')->count(),
+            'failed' => ProductItem::where('qc_status', 'failed')->count(),
+        ];
+
+        return view('admin.reports.product-stats', compact('stockSummary', 'topSelling', 'topRated', 'recentMovements', 'brandDistribution', 'qcDistribution'));
     }
 }

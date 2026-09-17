@@ -18,6 +18,7 @@ class Laptop extends Model
     protected $fillable = [
         'name',
         'slug',
+        'sku',
         'brand',
         'brand_id',
         'description',
@@ -95,6 +96,16 @@ class Laptop extends Model
                     $slug = "{$originalSlug}-" . $count++;
                 }
                 $laptop->slug = $slug;
+            }
+
+            if (empty($laptop->sku)) {
+                $brandCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $laptop->brand ?? 'LAP'), 0, 3));
+                $count = static::count() + 1;
+                $candidate = 'LP-' . ($brandCode ?: 'GEN') . '-' . date('ym') . str_pad((string)$count, 4, '0', STR_PAD_LEFT);
+                while (static::where('sku', $candidate)->exists()) {
+                    $candidate = 'LP-' . ($brandCode ?: 'GEN') . '-' . date('ym') . str_pad((string)(++$count), 4, '0', STR_PAD_LEFT);
+                }
+                $laptop->sku = $candidate;
             }
         });
 

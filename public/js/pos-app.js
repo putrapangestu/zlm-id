@@ -15,12 +15,24 @@ const PosApp = {
     discountRate: 0,
     taxRate: 11,
     syncing: false,
+    currentMobileTab: 'catalog',
 
     async init() {
         console.log('[PosApp] Initializing POS...');
         this.setupServiceWorker();
         this.setupNetworkListeners();
         this.setupBarcodeScanner();
+
+        // Mobile / Tablet responsiveness listener
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                document.getElementById('pos-catalog-section')?.classList.remove('hidden');
+                document.getElementById('pos-cart-aside')?.classList.remove('hidden');
+                document.getElementById('pos-cart-aside')?.classList.add('flex');
+            } else {
+                this.switchMobileTab(this.currentMobileTab);
+            }
+        });
 
         // Load cached data from IndexedDB first for instant startup
         await this.loadFromIndexedDB();
@@ -125,18 +137,22 @@ const PosApp = {
     },
 
     setupBarcodeScanner() {
-        const barcodeInput = document.getElementById('barcode-scanner-input');
-        if (!barcodeInput) return;
+        const inputs = [
+            document.getElementById('barcode-scanner-input'),
+            document.getElementById('barcode-scanner-input-mobile')
+        ].filter(Boolean);
 
-        barcodeInput.addEventListener('keydown', async (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const code = barcodeInput.value.trim();
-                if (!code) return;
+        inputs.forEach(input => {
+            input.addEventListener('keydown', async (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const code = input.value.trim();
+                    if (!code) return;
 
-                barcodeInput.value = '';
-                await this.handleBarcodeScanned(code);
-            }
+                    input.value = '';
+                    await this.handleBarcodeScanned(code);
+                }
+            });
         });
     },
 
@@ -326,6 +342,10 @@ const PosApp = {
             });
         }
 
+        if (window.innerWidth < 1024) {
+            this.showToast(`${product.name} masuk keranjang`, 'info');
+        }
+
         this.renderCart();
     },
 
@@ -355,6 +375,53 @@ const PosApp = {
         }
     },
 
+    switchMobileTab(tab) {
+        this.currentMobileTab = tab;
+        const catalogSec = document.getElementById('pos-catalog-section');
+        const cartAside = document.getElementById('pos-cart-aside');
+        const tabBtnCatalog = document.getElementById('tab-btn-catalog');
+        const tabBtnCart = document.getElementById('tab-btn-cart');
+        const mobileCartBar = document.getElementById('pos-mobile-cart-bar');
+
+        if (!catalogSec || !cartAside) return;
+
+        if (tab === 'catalog') {
+            catalogSec.classList.remove('hidden');
+            cartAside.classList.add('hidden');
+            cartAside.classList.remove('flex');
+
+            if (tabBtnCatalog) {
+                tabBtnCatalog.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-[#DF5E1D] text-white shadow-xs';
+            }
+            if (tabBtnCart) {
+                tabBtnCart.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 relative';
+            }
+
+            if (mobileCartBar) {
+                if (this.cart.length > 0) {
+                    mobileCartBar.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+                } else {
+                    mobileCartBar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+                }
+            }
+        } else {
+            catalogSec.classList.add('hidden');
+            cartAside.classList.remove('hidden');
+            cartAside.classList.add('flex');
+
+            if (tabBtnCatalog) {
+                tabBtnCatalog.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200';
+            }
+            if (tabBtnCart) {
+                tabBtnCart.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-[#DF5E1D] text-white shadow-xs relative';
+            }
+
+            if (mobileCartBar) {
+                mobileCartBar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+            }
+        }
+    },
+
     renderCart() {
         const container = document.getElementById('cart-items-container');
         const emptyState = document.getElementById('cart-empty-state');
@@ -366,19 +433,31 @@ const PosApp = {
 
         if (!container) return;
 
+        const mobileBadge = document.getElementById('mobile-cart-badge');
+        const barCount = document.getElementById('bar-cart-count');
+        const barTotal = document.getElementById('bar-cart-total');
+        const mobileCartBar = document.getElementById('pos-mobile-cart-bar');
+
         if (this.cart.length === 0) {
             container.innerHTML = '';
-            emptyState.classList.remove('hidden');
-            subtotalEl.innerText = 'Rp 0';
-            discountEl.innerText = 'Rp 0';
-            taxEl.innerText = 'Rp 0';
-            totalEl.innerText = 'Rp 0';
-            payBtn.disabled = true;
+            emptyState?.classList.remove('hidden');
+            if (subtotalEl) subtotalEl.innerText = 'Rp 0';
+            if (discountEl) discountEl.innerText = 'Rp 0';
+            if (taxEl) taxEl.innerText = 'Rp 0';
+            if (totalEl) totalEl.innerText = 'Rp 0';
+            if (payBtn) payBtn.disabled = true;
+
+            if (mobileBadge) mobileBadge.classList.add('hidden');
+            if (barCount) barCount.innerText = '0';
+            if (barTotal) barTotal.innerText = 'Rp 0';
+            if (mobileCartBar) mobileCartBar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+
+            this.currentTotals = { subtotal: 0, discount: 0, member_discount_amount: 0, tax: 0, total: 0 };
             return;
         }
 
-        emptyState.classList.add('hidden');
-        payBtn.disabled = false;
+        emptyState?.classList.add('hidden');
+        if (payBtn) payBtn.disabled = false;
 
         let subtotal = 0;
         container.innerHTML = this.cart.map(item => {
@@ -416,10 +495,27 @@ const PosApp = {
         const taxAmount = (taxableAmount * this.taxRate) / 100;
         const grandTotal = taxableAmount + taxAmount;
 
-        subtotalEl.innerText = 'Rp ' + subtotal.toLocaleString('id-ID');
-        discountEl.innerText = totalDiscount > 0 ? '-Rp ' + totalDiscount.toLocaleString('id-ID') : 'Rp 0';
-        taxEl.innerText = 'Rp ' + taxAmount.toLocaleString('id-ID');
-        totalEl.innerText = 'Rp ' + grandTotal.toLocaleString('id-ID');
+        if (subtotalEl) subtotalEl.innerText = 'Rp ' + subtotal.toLocaleString('id-ID');
+        if (discountEl) discountEl.innerText = totalDiscount > 0 ? '-Rp ' + totalDiscount.toLocaleString('id-ID') : 'Rp 0';
+        if (taxEl) taxEl.innerText = 'Rp ' + taxAmount.toLocaleString('id-ID');
+        if (totalEl) totalEl.innerText = 'Rp ' + grandTotal.toLocaleString('id-ID');
+
+        // Update Mobile Badges and Floating Bar
+        const totalQty = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+        if (mobileBadge) {
+            mobileBadge.innerText = totalQty;
+            mobileBadge.classList.remove('hidden');
+        }
+        if (barCount) barCount.innerText = totalQty;
+        if (barTotal) barTotal.innerText = 'Rp ' + grandTotal.toLocaleString('id-ID');
+
+        if (mobileCartBar) {
+            if (this.cart.length > 0 && this.currentMobileTab === 'catalog') {
+                mobileCartBar.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            } else {
+                mobileCartBar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+            }
+        }
 
         this.currentTotals = {
             subtotal,

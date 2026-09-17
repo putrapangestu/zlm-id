@@ -37,12 +37,13 @@ class NewModulesTest extends TestCase
 
         // Create permissions
         $permissions = [
-            'pos.access', 'qc.view', 'qc.inspect', 'restock.view', 'restock.create',
+            'pos.access', 'qc.view', 'qc.inspect', 'qc.print', 'restock.view', 'restock.create',
             'restock.print', 'returns.view', 'returns.process', 'laptops.view',
             'members.view', 'members.manage', 'users.manage', 'reports.purchases',
             'reports.profit_loss', 'reports.product_stats', 'settings.manage',
-            'transactions.view', 'transactions.confirm', 'categories.manage',
-            'articles.manage', 'sliders.manage'
+            'transactions.view', 'transactions.confirm', 'transactions.print',
+            'categories.manage', 'articles.manage', 'sliders.manage',
+            'suppliers.view', 'suppliers.manage', 'products.view', 'products.manage'
         ];
 
         foreach ($permissions as $perm) {
@@ -183,6 +184,16 @@ class NewModulesTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_pos_page_renders_with_responsive_cart_and_pay_button(): void
+    {
+        $response = $this->actingAs($this->karyawan)->get('/pos');
+        $response->assertStatus(200);
+        $response->assertSee('tab-btn-catalog');
+        $response->assertSee('tab-btn-cart');
+        $response->assertSee('cart-pay-btn');
+        $response->assertSee('BAYAR SEKARANG');
+    }
+
     public function test_pos_bootstrap_and_offline_sync(): void
     {
         // Set stock > 0 for POS catalog
@@ -272,5 +283,111 @@ class NewModulesTest extends TestCase
         $result = $service->sendMessage('081234567890', 'Test');
         $this->assertFalse($result['success']);
         $this->assertEquals('WhatsApp notification is disabled in settings.', $result['message']);
+    }
+
+    public function test_supplier_crud(): void
+    {
+        $response = $this->actingAs($this->admin)->post('/admin/suppliers', [
+            'name' => 'PT Mitra Komputer Indonesia',
+            'contact_person' => 'Pak Bambang',
+            'phone' => '081122334455',
+            'email' => 'bambang@mitra.co.id',
+            'city' => 'Surabaya',
+        ]);
+
+        $response->assertRedirect('/admin/suppliers');
+        $this->assertDatabaseHas('suppliers', [
+            'name' => 'PT Mitra Komputer Indonesia',
+            'phone' => '081122334455',
+        ]);
+    }
+
+    public function test_general_product_crud(): void
+    {
+        $response = $this->actingAs($this->admin)->post('/admin/products', [
+            'name' => 'SSD NVMe 512GB Kingston NV2',
+            'sku' => 'SSD-NVME-512GB',
+            'stock' => 15,
+            'price' => 650000,
+            'cost_price' => 480000,
+        ]);
+
+        $response->assertRedirect('/admin/products');
+        $this->assertDatabaseHas('products', [
+            'sku' => 'SSD-NVME-512GB',
+            'stock' => 15,
+        ]);
+    }
+
+    public function test_qc_parts_addition_increases_hpp(): void
+    {
+        $inventoryService = app(InventoryService::class);
+
+        $product = \App\Models\Product::create([
+            'name' => 'RAM DDR4 8GB SODIMM',
+            'sku' => 'RAM-DDR4-8GB',
+            'price' => 350000,
+            'cost_price' => 250000,
+            'stock' => 5,
+        ]);
+
+        $item = ProductItem::create([
+            'laptop_id' => $this->laptop->id,
+            'base_cost' => 8000000,
+            'additional_cost' => 0,
+            'final_cost' => 8000000,
+            'qc_status' => 'pending',
+        ]);
+
+        $inventoryService->passQc(
+            $item,
+            'SKU-TEST-PARTS-1',
+            'SN-999',
+            ['screen' => 'ok'],
+            'Upgrade RAM baru',
+            $this->admin,
+            [
+                [
+                    'product_id' => $product->id,
+                    'part_name' => $product->name,
+                    'quantity' => 1,
+                    'unit_cost' => 250000,
+                ]
+            ]
+        );
+
+        $item->refresh();
+        $product->refresh();
+
+        $this->assertEquals(250000, (float)$item->additional_cost);
+        $this->assertEquals(8250000, (float)$item->final_cost);
+        $this->assertEquals(4, $product->stock); // Decremented from 5 to 4
+    }
+
+    public function test_member_creation_and_follow_up_toggle(): void
+    {
+        $createResponse = $this->actingAs($this->admin)->post('/admin/members', [
+            'name' => 'Citra Kirana',
+            'email' => 'citra@example.com',
+            'phone_number' => '081298765432',
+            'member_tier' => 'silver',
+            'member_points' => 50,
+            'needs_follow_up' => 1,
+            'follow_up_notes' => 'Minta info restock Asus Zenbook',
+        ]);
+
+        $createResponse->assertRedirect('/admin/members');
+        $user = User::where('email', 'citra@example.com')->first();
+        $this->assertNotNull($user);
+        $this->assertTrue($user->needs_follow_up);
+
+        // Toggle follow up to 0
+        $toggleResponse = $this->actingAs($this->admin)->patch("/admin/members/{$user->id}/follow-up", [
+            'needs_follow_up' => 0,
+        ]);
+
+        $toggleResponse->assertRedirect();
+        $user->refresh();
+        $this->assertFalse($user->needs_follow_up);
     }
 }
