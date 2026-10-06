@@ -379,10 +379,10 @@
 
             {{-- Actions --}}
             <div class="grid grid-cols-2 gap-3 no-print pt-2">
-                <button onclick="PosApp.printThermalReceipt()" class="py-3 px-4 bg-[#363230] text-white hover:bg-black rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                <a href="{{ route('admin.transactions.print-dotmatrix', ['order' => $order->id]) }}" target="_blank" class="py-3 px-4 bg-[#363230] text-white hover:bg-black rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
                     <iconify-icon icon="solar:printer-linear" class="text-base"></iconify-icon>
                     <span>Cetak Struk</span>
-                </button>
+                </a>
                 <button onclick="document.getElementById('pos-receipt-modal').classList.add('hidden')" class="py-3 px-4 bg-[#DF5E1D] text-white hover:bg-[#c45218] rounded-xl text-xs font-bold transition">
                     Transaksi Baru
                 </button>
