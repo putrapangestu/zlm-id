@@ -329,8 +329,8 @@ body {
         margin: 0;
         padding: 0;
         background: #fdf2f4;
-        font-size: 10.5px;
-        line-height: 1.25;
+        font-size: 13.5px;
+        line-height: 1.35;
     }
 
     .no-print-bar {
@@ -341,7 +341,7 @@ body {
         width: 100%;
         max-width: 100%;
         margin: 0;
-        padding: 14px 20px;
+        padding: 20px 16px 12px 16px;
         box-shadow: none;
         border: none;
         page-break-after: avoid;
@@ -356,37 +356,43 @@ body {
     }
 
     .top-row {
-        margin-bottom: 4px;
-        gap: 12px;
+        margin-bottom: 3px;
+        gap: 10px;
     }
 
     .store-logo-text {
-        font-size: 24px;
-        padding: 2px 4px;
+        font-size: 28px;
+        padding: 3px 5px;
     }
 
     .store-details h2 {
-        font-size: 11px;
+        font-size: 14px;
         margin-bottom: 1px;
+        font-weight: 700;
     }
 
     .store-details p {
-        font-size: 9px;
-        line-height: 1.15;
+        font-size: 12px;
+        line-height: 1.2;
     }
 
     .meta-table {
-        font-size: 9px;
+        font-size: 12px;
+    }
+
+    .meta-table td {
+        padding: 1px 3px;
     }
 
     .items-table {
-        font-size: 9px;
-        margin: 3px 0;
+        font-size: 12px;
+        margin: 2px 0;
     }
 
     .items-table th {
         padding: 2px 4px;
-        font-size: 8px;
+        font-size: 11px;
+        font-weight: 700;
     }
 
     .items-table td {
@@ -394,38 +400,44 @@ body {
     }
 
     .item-spec {
-        font-size: 8px;
+        font-size: 11px;
         padding-left: 14px;
+        line-height: 1.2;
     }
 
     .item-sn {
-        font-size: 8px;
+        font-size: 11px;
         padding-left: 14px;
+        font-weight: 700;
     }
 
     .bottom-section {
-        gap: 16px;
-        margin-top: 4px;
-        font-size: 9px;
+        gap: 12px;
+        margin-top: 3px;
+        font-size: 12px;
     }
 
     .sig-space {
-        height: 30px;
+        height: 28px;
     }
 
     .totals-table {
-        font-size: 9px;
+        font-size: 12px;
     }
 
     .totals-table td {
-        padding: 0.5px 3px;
+        padding: 1px 3px;
     }
 
     .terms {
-        margin-top: 5px;
+        margin-top: 4px;
         padding-top: 3px;
-        font-size: 8px;
-        line-height: 1.25;
+        font-size: 10.5px;
+        line-height: 1.3;
+    }
+
+    .terms li {
+        margin: 1px 0;
     }
 }
     </style>
