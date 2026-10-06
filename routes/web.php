@@ -33,6 +33,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SmartSearchController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\WinpayWebhookController;
 use App\Http\Controllers\XenditWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -79,6 +80,13 @@ Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wi
 // Xendit Webhook (public, no auth, no CSRF)
 Route::post('/webhooks/xendit', [XenditWebhookController::class, 'handle'])
     ->name('webhooks.xendit')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+
+Route::post('/webhooks/winpay/v1.0/qr/qr-mpm-notify', [WinpayWebhookController::class, 'qris'])
+    ->name('webhooks.winpay.qris')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::post('/webhooks/winpay/v1.0/transfer-va/payment', [WinpayWebhookController::class, 'virtualAccount'])
+    ->name('webhooks.winpay.virtual-account')
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
 // Tracking (public)

@@ -4,14 +4,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Laptop;
+use App\Services\WinpayService;
 use App\Services\XenditService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class TransactionController extends Controller {
     public function __construct(
-        protected XenditService $xenditService
+        protected XenditService $xenditService,
+        protected WinpayService $winpayService,
     ) {}
 
     public function index(Request $request): View {
@@ -64,7 +67,8 @@ class TransactionController extends Controller {
             'items' => 'required|array|min:1',
             'items.*.laptop_id' => 'required|exists:laptops,id',
             'items.*.quantity' => 'required|integer|min:1',
-            'payment_method' => 'required|in:xendit,manual_transfer',
+            'payment_method' => 'required|in:xendit,manual_transfer,winpay_qris,winpay_va',
+            'payment_channel' => 'exclude_unless:payment_method,winpay_va|required|in:BRI,BNI,MANDIRI,PERMATA,BSI,MUAMALAT,BCA,CIMB,SINARMAS,BNC',
             'shipping_address' => 'nullable|string|max:500',
             'shipping_cost' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string|max:1000',
@@ -123,8 +127,38 @@ class TransactionController extends Controller {
                     'xendit_expiry' => $invoice['expiry_date'],
                 ]);
             } catch (\Exception $e) {
+                Log::error('Admin Xendit invoice creation failed', [
+                    'order_id' => $order->id,
+                    'error' => $e->getMessage(),
+                ]);
+
                 return redirect()->route('admin.transactions.show', $order)
                     ->with('warning', 'Transaksi dibuat, tetapi gagal membuat invoice Xendit: ' . $e->getMessage());
+            }
+        } elseif (str_starts_with($validated['payment_method'], 'winpay_')) {
+            try {
+                $payment = $validated['payment_method'] === 'winpay_qris'
+                    ? $this->winpayService->createQrisPayment($order)
+                    : $this->winpayService->createVirtualAccount($order, $validated['payment_channel']);
+
+                $order->update([
+                    'winpay_reference' => $payment['reference'],
+                    'winpay_contract_id' => $payment['contract_id'],
+                    'winpay_qr_url' => $payment['qr_url'],
+                    'winpay_qr_content' => $payment['qr_content'],
+                    'winpay_virtual_account_no' => $payment['virtual_account_no'],
+                    'winpay_channel' => $payment['channel'],
+                    'winpay_expiry' => $payment['expiry'],
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Admin Winpay payment creation failed', [
+                    'order_id' => $order->id,
+                    'payment_method' => $validated['payment_method'],
+                    'error' => $e->getMessage(),
+                ]);
+
+                return redirect()->route('admin.transactions.show', $order)
+                    ->with('warning', 'Transaksi dibuat, tetapi gagal membuat pembayaran Winpay. Periksa konfigurasi gateway lalu coba lagi.');
             }
         }
 

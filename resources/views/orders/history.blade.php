@@ -25,6 +25,10 @@ $psColors = ['unpaid' => 'bg-yellow-100 text-yellow-700', 'pending_verification'
                                 </span>
                                 @if($order->payment_method === 'xendit')
                                 <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">Xendit</span>
+                                @elseif($order->payment_method === 'winpay_qris')
+                                <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium">Winpay QRIS</span>
+                                @elseif($order->payment_method === 'winpay_va')
+                                <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium">Winpay {{ $order->winpay_channel }}</span>
                                 @else
                                 <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-medium">Manual Transfer</span>
                                 @endif
@@ -69,6 +73,11 @@ $psColors = ['unpaid' => 'bg-yellow-100 text-yellow-700', 'pending_verification'
                             <a href="{{ $order->xendit_invoice_url }}" target="_blank"
                                class="px-3 py-1.5 bg-[#DF5E1D] text-white rounded-lg text-xs font-medium hover:bg-[#c94f14]">
                                 Pay Now
+                            </a>
+                            @elseif(in_array($order->payment_method, ['winpay_qris', 'winpay_va'], true) && $order->payment_status === 'unpaid')
+                            <a href="{{ route('orders.confirmation', $order) }}"
+                               class="px-3 py-1.5 bg-[#DF5E1D] text-white rounded-lg text-xs font-medium hover:bg-[#c94f14]">
+                                View Payment Instructions
                             </a>
                             @elseif($order->payment_method === 'manual_transfer' && $order->payment_status === 'unpaid')
                             <a href="{{ route('orders.confirmation', $order) }}"

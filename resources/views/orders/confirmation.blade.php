@@ -125,6 +125,41 @@
                     Bayar Sekarang via Xendit →
                 </a>
                 @endif
+            @elseif($order->payment_method === 'winpay_qris')
+                @if($order->payment_status === 'paid')
+                <div class="flex items-center gap-3 text-green-600">
+                    <iconify-icon icon="solar:check-circle-bold" class="text-2xl"></iconify-icon>
+                    <span class="font-medium">Pembayaran QRIS lunas</span>
+                </div>
+                @elseif($order->winpay_qr_url)
+                <p class="text-sm text-gray-600 mb-4">Pindai QRIS berikut untuk membayar. Referensi: {{ $order->winpay_reference }}</p>
+                <img src="{{ $order->winpay_qr_url }}" alt="QRIS pembayaran order {{ $order->order_number }}" class="mx-auto w-64 max-w-full">
+                @if($order->winpay_expiry)
+                <p class="text-xs text-gray-500 mt-3">Berlaku sampai {{ $order->winpay_expiry->format('d M Y H:i') }}</p>
+                @endif
+                @elseif($order->winpay_qr_content)
+                <p class="text-sm text-gray-600 mb-2">Gunakan kode QRIS berikut untuk membayar:</p>
+                <code class="block break-all rounded-lg bg-gray-50 p-3 text-xs">{{ $order->winpay_qr_content }}</code>
+                @else
+                <p class="text-sm text-amber-700">QRIS belum tersedia. Silakan hubungi admin untuk melanjutkan pembayaran.</p>
+                @endif
+            @elseif($order->payment_method === 'winpay_va')
+                @if($order->payment_status === 'paid')
+                <div class="flex items-center gap-3 text-green-600">
+                    <iconify-icon icon="solar:check-circle-bold" class="text-2xl"></iconify-icon>
+                    <span class="font-medium">Pembayaran Virtual Account lunas</span>
+                </div>
+                @elseif($order->winpay_virtual_account_no)
+                <p class="text-sm text-gray-600 mb-2">Transfer ke Virtual Account {{ $order->winpay_channel }} berikut:</p>
+                <p class="text-2xl font-semibold tracking-wide text-[#363230]">{{ $order->winpay_virtual_account_no }}</p>
+                <p class="text-sm text-gray-600 mt-2">Nominal: <strong>Rp {{ number_format($order->total, 0, ',', '.') }}</strong></p>
+                <p class="text-xs text-gray-500 mt-2">Referensi: {{ $order->winpay_reference }}</p>
+                @if($order->winpay_expiry)
+                <p class="text-xs text-gray-500 mt-1">Berlaku sampai {{ $order->winpay_expiry->format('d M Y H:i') }}</p>
+                @endif
+                @else
+                <p class="text-sm text-amber-700">Virtual Account belum tersedia. Silakan hubungi admin untuk melanjutkan pembayaran.</p>
+                @endif
             @elseif($order->payment_method === 'manual_transfer')
                 @if($order->payment_status === 'paid')
                 <div class="flex items-center gap-3 text-green-600">

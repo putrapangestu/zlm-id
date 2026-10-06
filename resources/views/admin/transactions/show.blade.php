@@ -33,8 +33,8 @@
     {{-- Status Badges --}}
     <div class="flex gap-3">
         @php
-            $pmLabels = ['xendit' => 'Xendit', 'manual_transfer' => 'Manual Transfer'];
-            $pmColors = ['xendit' => 'bg-blue-100 text-blue-700', 'manual_transfer' => 'bg-purple-100 text-purple-700'];
+            $pmLabels = ['xendit' => 'Xendit', 'winpay_qris' => 'Winpay QRIS', 'winpay_va' => 'Winpay Virtual Account', 'manual_transfer' => 'Manual Transfer'];
+            $pmColors = ['xendit' => 'bg-blue-100 text-blue-700', 'winpay_qris' => 'bg-emerald-100 text-emerald-700', 'winpay_va' => 'bg-emerald-100 text-emerald-700', 'manual_transfer' => 'bg-purple-100 text-purple-700'];
             $psLabels = ['unpaid' => 'Unpaid', 'pending_verification' => 'Pending Verification', 'paid' => 'Paid', 'failed' => 'Failed'];
             $psColors = ['unpaid' => 'bg-yellow-100 text-yellow-700', 'pending_verification' => 'bg-orange-100 text-orange-700', 'paid' => 'bg-green-100 text-green-700', 'failed' => 'bg-red-100 text-red-700'];
             $osLabels = ['pending' => 'Pending', 'processing' => 'Processing', 'completed' => 'Completed', 'cancelled' => 'Cancelled'];
@@ -71,6 +71,20 @@
                 <p><span class="text-gray-500">Status:</span> <span class="font-medium">{{ $psLabels[$order->payment_status] ?? $order->payment_status }}</span></p>
                 @if($order->xendit_invoice_url)
                 <p><a href="{{ $order->xendit_invoice_url }}" target="_blank" class="text-[#DF5E1D] hover:underline">View Xendit Invoice →</a></p>
+                @endif
+                @if($order->payment_method === 'winpay_qris')
+                    @if($order->winpay_qr_url)
+                    <a href="{{ $order->winpay_qr_url }}" target="_blank" class="text-[#DF5E1D] hover:underline">Open Winpay QRIS →</a>
+                    <img src="{{ $order->winpay_qr_url }}" alt="Winpay QRIS {{ $order->order_number }}" class="mt-2 w-40">
+                    @elseif($order->winpay_qr_content)
+                    <p class="font-mono break-all">{{ $order->winpay_qr_content }}</p>
+                    @endif
+                @elseif($order->payment_method === 'winpay_va' && $order->winpay_virtual_account_no)
+                <p><span class="text-gray-500">Bank:</span> <span class="font-medium">{{ $order->winpay_channel }}</span></p>
+                <p><span class="text-gray-500">Virtual Account:</span> <span class="font-medium">{{ $order->winpay_virtual_account_no }}</span></p>
+                @endif
+                @if($order->winpay_expiry)
+                <p><span class="text-gray-500">Winpay expires:</span> <span class="font-medium">{{ $order->winpay_expiry->format('d M Y H:i') }}</span></p>
                 @endif
                 @if($order->proof_of_transfer)
                 <p><a href="{{ Storage::url($order->proof_of_transfer) }}" target="_blank" class="text-[#DF5E1D] hover:underline">View Proof of Transfer →</a></p>

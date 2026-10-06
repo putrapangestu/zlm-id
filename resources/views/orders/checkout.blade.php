@@ -160,10 +160,40 @@
                         </div>
                     </div>
 
+                    <div class="mt-5">
+                        <p class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-2">Payment Method</p>
+                        @if ($paymentGateway === 'xendit')
+                            <div class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm font-medium text-[#363230]">
+                                Xendit
+                            </div>
+                        @else
+                            <select id="payment_method" name="payment_method" x-model="paymentMethod"
+                                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D]">
+                                <option value="winpay_qris">Winpay — QRIS</option>
+                                <option value="winpay_va">Winpay — Virtual Account</option>
+                            </select>
+                        @endif
+                    </div>
+
+                    @if ($paymentGateway === 'winpay')
+                    <div x-show="paymentMethod === 'winpay_va'" x-cloak class="mt-3">
+                        <label for="payment_channel" class="block text-xs font-semibold text-[#363230] uppercase tracking-wide mb-2">Bank</label>
+                        <select id="payment_channel" name="payment_channel" :required="paymentMethod === 'winpay_va'"
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D]">
+                            <option value="">Pilih bank</option>
+                            @foreach (['BRI', 'BNI', 'MANDIRI', 'PERMATA', 'BSI', 'MUAMALAT', 'BCA', 'CIMB', 'SINARMAS', 'BNC'] as $bank)
+                                <option value="{{ $bank }}" @selected(old('payment_channel') === $bank)>{{ $bank }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+
                     <div class="mt-4 p-3 bg-blue-50 rounded-xl">
                         <div class="flex items-center gap-2">
                             <iconify-icon icon="solar:card-bold" class="text-blue-500"></iconify-icon>
-                            <span class="text-xs font-medium text-blue-700">Pembayaran akan diproses melalui Xendit</span>
+                            <span class="text-xs font-medium text-blue-700">
+                                Pembayaran diproses melalui {{ $paymentGateway === 'xendit' ? 'Xendit' : 'Winpay' }}
+                            </span>
                         </div>
                     </div>
 
@@ -173,7 +203,7 @@
 
                     <button type="submit" class="w-full bg-[#DF5E1D] text-white py-3 rounded-xl text-sm font-medium hover:bg-[#c45218] transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
                             :disabled="!shippingSelected">
-                        Pay via Xendit
+                        Continue to payment
                     </button>
                 </div>
             </div>
@@ -277,6 +307,7 @@ function orderSummary() {
     return {
         shippingCost: 0,
         shippingSelected: false,
+        paymentMethod: @js(old('payment_method', 'winpay_qris')),
 
         init() {
             window.addEventListener('shipping-selected', (e) => {

@@ -21,6 +21,8 @@ class OrderTest extends TestCase
     {
         parent::setUp();
 
+        config(['payment.gateway' => 'xendit']);
+
         Role::create(['name' => 'buyer']);
 
         $this->user = User::factory()->create();

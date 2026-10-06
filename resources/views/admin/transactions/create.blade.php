@@ -53,20 +53,26 @@
         <div class="bg-white p-6 rounded-xl border border-gray-200">
             <h3 class="text-lg font-semibold text-[#363230] mb-4">Payment Method</h3>
             <div class="space-y-3">
-                <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
-                    <input type="radio" name="payment_method" value="xendit" checked>
-                    <div>
-                        <p class="font-medium text-sm text-[#363230]">Xendit (Online)</p>
-                        <p class="text-xs text-gray-500">Customer akan dibayarkan melalui Xendit invoice</p>
-                    </div>
-                </label>
-                <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
-                    <input type="radio" name="payment_method" value="manual_transfer">
-                    <div>
-                        <p class="font-medium text-sm text-[#363230]">Manual Transfer</p>
-                        <p class="text-xs text-gray-500">Customer upload bukti transfer nanti</p>
-                    </div>
-                </label>
+                <select id="payment_method" name="payment_method" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                    <option value="xendit" @selected(old('payment_method', 'xendit') === 'xendit')>Xendit (Online)</option>
+                    <option value="winpay_qris" @selected(old('payment_method') === 'winpay_qris')>Winpay — QRIS</option>
+                    <option value="winpay_va" @selected(old('payment_method') === 'winpay_va')>Winpay — Virtual Account</option>
+                    <option value="manual_transfer" @selected(old('payment_method') === 'manual_transfer')>Manual Transfer</option>
+                </select>
+                <p class="text-xs text-gray-500">Pilih metode online atau manual untuk customer.</p>
+
+                <div id="payment-channel-block" hidden>
+                    <label for="payment_channel" class="block text-sm font-medium text-[#363230] mb-1">Bank Virtual Account</label>
+                    <select id="payment_channel" name="payment_channel"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="">-- Pilih Bank --</option>
+                        @foreach (['BRI', 'BNI', 'MANDIRI', 'PERMATA', 'BSI', 'MUAMALAT', 'BCA', 'CIMB', 'SINARMAS', 'BNC'] as $bank)
+                            <option value="{{ $bank }}" @selected(old('payment_channel') === $bank)>{{ $bank }}</option>
+                        @endforeach
+                    </select>
+                    @error('payment_channel')<p class="text-sm text-red-500 mt-1">{{ $message }}</p>@enderror
+                </div>
             </div>
             @error('payment_method')<p class="text-sm text-red-500 mt-1">{{ $message }}</p>@enderror
         </div>
@@ -107,6 +113,20 @@
 @push('scripts')
 <script>
 let itemIndex = 1;
+const paymentMethod = document.getElementById('payment_method');
+const paymentChannelBlock = document.getElementById('payment-channel-block');
+const paymentChannel = document.getElementById('payment_channel');
+
+function updatePaymentChannelVisibility() {
+    const needsChannel = paymentMethod.value === 'winpay_va';
+    paymentChannelBlock.hidden = !needsChannel;
+    paymentChannel.required = needsChannel;
+    if (!needsChannel) paymentChannel.value = '';
+}
+
+paymentMethod.addEventListener('change', updatePaymentChannelVisibility);
+updatePaymentChannelVisibility();
+
 function addItem() {
     const container = document.getElementById('items-container');
     const div = document.createElement('div');

@@ -40,6 +40,8 @@
             <select name="payment_method" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
                 <option value="">All Methods</option>
                 <option value="xendit" {{ request('payment_method') == 'xendit' ? 'selected' : '' }}>Xendit</option>
+                <option value="winpay_qris" {{ request('payment_method') == 'winpay_qris' ? 'selected' : '' }}>Winpay QRIS</option>
+                <option value="winpay_va" {{ request('payment_method') == 'winpay_va' ? 'selected' : '' }}>Winpay Virtual Account</option>
                 <option value="manual_transfer" {{ request('payment_method') == 'manual_transfer' ? 'selected' : '' }}>Manual Transfer</option>
             </select>
             <select name="payment_status" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
@@ -79,6 +81,8 @@
                     <td class="px-4 py-3 text-sm">
                         @if($order->payment_method === 'xendit')
                             <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">Xendit</span>
+                        @elseif(in_array($order->payment_method, ['winpay_qris', 'winpay_va'], true))
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium">Winpay {{ $order->winpay_channel }}</span>
                         @else
                             <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-medium">Manual</span>
                         @endif

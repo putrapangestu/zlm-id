@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             '/webhooks/xendit',
+            '/webhooks/winpay/v1.0/qr/qr-mpm-notify',
+            '/webhooks/winpay/v1.0/transfer-va/payment',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -6,15 +6,18 @@ use App\Mail\OrderConfirmationMail;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Services\InventoryService;
+use App\Services\WinpayService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use LogicException;
 
 class OrderController extends Controller
 {
     public function __construct(
-        protected InventoryService $inventoryService
+        protected InventoryService $inventoryService,
+        protected WinpayService $winpayService,
     ) {}
 
     public function checkout()
@@ -28,8 +31,13 @@ class OrderController extends Controller
         }
 
         $totalWeight = $cart->items->sum(fn ($item) => ($item->laptop->weight ?: 1.4) * $item->quantity);
+        $paymentGateway = config('payment.gateway');
 
-        return view('orders.checkout', compact('cart', 'totalWeight'));
+        if (! in_array($paymentGateway, ['winpay', 'xendit'], true)) {
+            throw new LogicException('PAYMENT_GATEWAY must be either "winpay" or "xendit".');
+        }
+
+        return view('orders.checkout', compact('cart', 'totalWeight', 'paymentGateway'));
     }
 
     public function placeOrder(Request $request)
@@ -50,6 +58,11 @@ class OrderController extends Controller
             }
         }
 
+        $paymentGateway = config('payment.gateway');
+        if (! in_array($paymentGateway, ['winpay', 'xendit'], true)) {
+            throw new LogicException('PAYMENT_GATEWAY must be either "winpay" or "xendit".');
+        }
+
         $validated = $request->validate([
             'shipping_address' => 'required|string|max:255',
             'shipping_city' => 'required|string|max:255',
@@ -64,6 +77,10 @@ class OrderController extends Controller
             'shipping_city_id' => 'required|string|max:20',
             'shipping_city_name' => 'required|string|max:255',
             'shipping_province_name' => 'required|string|max:255',
+            'payment_method' => $paymentGateway === 'winpay'
+                ? 'nullable|in:winpay_qris,winpay_va'
+                : 'prohibited',
+            'payment_channel' => 'exclude_unless:payment_method,winpay_va|required|in:BRI,BNI,MANDIRI,PERMATA,BSI,MUAMALAT,BCA,CIMB,SINARMAS,BNC',
         ]);
 
         $subtotal = $cart->total;
@@ -79,7 +96,9 @@ class OrderController extends Controller
             'shipping_cost' => $shippingCost,
             'total' => $total,
             'status' => 'pending',
-            'payment_method' => 'xendit',
+            'payment_method' => $paymentGateway === 'xendit'
+                ? 'xendit'
+                : ($validated['payment_method'] ?? 'winpay_qris'),
             'payment_status' => 'unpaid',
             'notes' => $validated['notes'] ?? null,
             'shipping_address' => $validated['shipping_address'],
@@ -122,24 +141,55 @@ class OrderController extends Controller
             Log::warning('Failed sending order email: ' . $e->getMessage());
         }
 
-        // Buat Xendit Invoice
-        try {
-            $xenditService = app(\App\Services\XenditService::class);
-            $invoice = $xenditService->createInvoice($order);
-            $order->update([
-                'xendit_invoice_id' => $invoice['id'],
-                'xendit_invoice_url' => $invoice['invoice_url'],
-                'xendit_expiry' => $invoice['expiry_date'],
-            ]);
-            return redirect()->away($invoice['invoice_url']);
-        } catch (\Exception $e) {
-            Log::error('Xendit invoice creation failed', [
-                'order_id' => $order->id,
-                'error' => $e->getMessage(),
-            ]);
-            return redirect()->route('orders.confirmation', $order)
-                ->with('warning', 'Order berhasil dibuat, tetapi gagal menghubungi gateway pembayaran. Silakan hubungi admin.');
+        if ($order->payment_method === 'xendit') {
+            try {
+                $invoice = app(\App\Services\XenditService::class)->createInvoice($order);
+                $order->update([
+                    'xendit_invoice_id' => $invoice['id'],
+                    'xendit_invoice_url' => $invoice['invoice_url'],
+                    'xendit_expiry' => $invoice['expiry_date'],
+                ]);
+
+                return redirect()->away($invoice['invoice_url']);
+            } catch (\Exception $e) {
+                Log::error('Xendit invoice creation failed', [
+                    'order_id' => $order->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        } else {
+            try {
+                $payment = $order->payment_method === 'winpay_qris'
+                    ? $this->winpayService->createQrisPayment($order)
+                    : $this->winpayService->createVirtualAccount($order, $validated['payment_channel']);
+
+                $order->update([
+                    'winpay_reference' => $payment['reference'],
+                    'winpay_contract_id' => $payment['contract_id'],
+                    'winpay_qr_url' => $payment['qr_url'],
+                    'winpay_qr_content' => $payment['qr_content'],
+                    'winpay_virtual_account_no' => $payment['virtual_account_no'],
+                    'winpay_channel' => $payment['channel'],
+                    'winpay_expiry' => $payment['expiry'],
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Winpay payment creation failed', [
+                    'order_id' => $order->id,
+                    'payment_method' => $order->payment_method,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
+
+        if (
+            ($order->payment_method === 'xendit' && ! $order->xendit_invoice_url)
+            || (str_starts_with($order->payment_method, 'winpay_') && ! $order->winpay_reference)
+        ) {
+            return redirect()->route('orders.confirmation', $order)
+                ->with('warning', 'Order berhasil dibuat, tetapi gagal menghubungi gateway pembayaran. Silakan coba lagi atau hubungi admin.');
+        }
+
+        return redirect()->route('orders.confirmation', $order);
     }
 
     public function xenditCallback(Request $request, Order $order): RedirectResponse
