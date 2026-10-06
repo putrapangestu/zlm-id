@@ -329,7 +329,7 @@ body {
         margin: 0;
         padding: 0;
         background: #fdf2f4;
-        font-size: 18px;
+        font-size: 16.5px;
         line-height: 1.4;
     }
 
@@ -361,23 +361,23 @@ body {
     }
 
     .store-logo-text {
-        font-size: 40px;
+        font-size: 37px;
         padding: 4px 6px;
     }
 
     .store-details h2 {
-        font-size: 19px;
+        font-size: 18px;
         margin-bottom: 1px;
         font-weight: 700;
     }
 
     .store-details p {
-        font-size: 16px;
+        font-size: 15px;
         line-height: 1.25;
     }
 
     .meta-table {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .meta-table td {
@@ -385,13 +385,13 @@ body {
     }
 
     .items-table {
-        font-size: 16px;
+        font-size: 15px;
         margin: 2px 0;
     }
 
     .items-table th {
         padding: 2px 4px;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 700;
     }
 
@@ -400,13 +400,13 @@ body {
     }
 
     .item-spec {
-        font-size: 15px;
+        font-size: 14px;
         padding-left: 14px;
         line-height: 1.22;
     }
 
     .item-sn {
-        font-size: 15px;
+        font-size: 14px;
         padding-left: 14px;
         font-weight: 700;
     }
@@ -414,7 +414,7 @@ body {
     .bottom-section {
         gap: 6px;
         margin-top: 2px;
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .sig-space {
@@ -422,7 +422,7 @@ body {
     }
 
     .totals-table {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .totals-table td {
@@ -432,7 +432,7 @@ body {
     .terms {
         margin-top: 4px;
         padding-top: 3px;
-        font-size: 14px;
+        font-size: 13px;
         line-height: 1.32;
     }
 
