@@ -244,11 +244,25 @@
                 width: 100%;
                 margin: 0;
                 padding: 0;
+                background: #fdf2f4;
             }
 
-            .print-container {
-                width: 100%;
+            .no-print-bar {
+                display: none !important;
+            }
+
+            .paper-container {
                 max-width: none;
+                margin: 0;
+                padding: 24px 32px;
+                box-shadow: none;
+                border: none;
+                page-break-after: avoid;
+            }
+
+            .paper-container::before,
+            .paper-container::after {
+                display: none;
             }
         }
     </style>
