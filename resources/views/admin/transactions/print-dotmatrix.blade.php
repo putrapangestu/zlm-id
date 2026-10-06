@@ -26,8 +26,8 @@ body {
     font-family: 'Courier Prime', 'Courier New', Courier, monospace;
     color: #1e293b;
     padding: 20px 10px;
-    font-size: 11px;
-    line-height: 1.3;
+    font-size: 12.5px;
+    line-height: 1.35;
 }
 
 .no-print-bar {
@@ -127,14 +127,14 @@ body {
 }
 
 .store-logo-text {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 900;
     color: #2563eb;
     line-height: 1;
     letter-spacing: -1px;
     font-family: sans-serif;
     border: 2px solid #2563eb;
-    padding: 3px 5px;
+    padding: 4px 6px;
     border-radius: 6px;
     flex-shrink: 0;
 }
@@ -144,15 +144,15 @@ body {
 }
 
 .store-details h2 {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.5px;
     margin-bottom: 1px;
 }
 
 .store-details p {
-    font-size: 10px;
-    line-height: 1.2;
+    font-size: 11.5px;
+    line-height: 1.25;
     color: #18181b;
     margin: 0;
 }
@@ -163,18 +163,18 @@ body {
 
 .meta-table {
     border-collapse: collapse;
-    font-size: 10px;
-    line-height: 1.25;
+    font-size: 11px;
+    line-height: 1.3;
 }
 
 .meta-table td {
     vertical-align: top;
-    padding: 1px 4px;
+    padding: 2px 5px;
     white-space: nowrap;
 }
 
 .meta-table td:nth-child(2) {
-    padding: 1px 2px;
+    padding: 2px 3px;
 }
 
 .divider {
@@ -191,34 +191,34 @@ body {
 .items-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .items-table th {
     text-align: left;
-    padding: 3px 5px;
+    padding: 4px 6px;
     border-top: 1px solid #18181b;
     border-bottom: 1px solid #18181b;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 9px;
+    font-size: 10px;
 }
 
 .items-table td {
-    padding: 2px 5px;
+    padding: 2px 6px;
     vertical-align: top;
 }
 
 .item-spec {
-    font-size: 9px;
+    font-size: 10px;
     color: #27272a;
-    padding-left: 16px;
+    padding-left: 18px;
 }
 
 .item-sn {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
-    padding-left: 16px;
+    padding-left: 18px;
 }
 
 /* Bottom Section - Structured Layout */
@@ -226,7 +226,7 @@ body {
     display: flex;
     gap: 20px;
     margin-top: 6px;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .signatures-col {
@@ -263,11 +263,11 @@ body {
 .totals-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .totals-table td {
-    padding: 1px 4px;
+    padding: 2px 5px;
     vertical-align: top;
 }
 
@@ -292,8 +292,8 @@ body {
     margin-top: 6px;
     padding-top: 4px;
     border-top: 1px dashed #52525b;
-    font-size: 9px;
-    line-height: 1.3;
+    font-size: 10px;
+    line-height: 1.35;
 }
 
 .terms ul {
@@ -329,8 +329,8 @@ body {
         margin: 0;
         padding: 0;
         background: #fdf2f4;
-        font-size: 13.5px;
-        line-height: 1.35;
+        font-size: 18px;
+        line-height: 1.4;
     }
 
     .no-print-bar {
@@ -361,23 +361,23 @@ body {
     }
 
     .store-logo-text {
-        font-size: 28px;
-        padding: 3px 5px;
+        font-size: 40px;
+        padding: 4px 6px;
     }
 
     .store-details h2 {
-        font-size: 14px;
+        font-size: 19px;
         margin-bottom: 1px;
         font-weight: 700;
     }
 
     .store-details p {
-        font-size: 12px;
-        line-height: 1.2;
+        font-size: 16px;
+        line-height: 1.25;
     }
 
     .meta-table {
-        font-size: 12px;
+        font-size: 16px;
     }
 
     .meta-table td {
@@ -385,13 +385,13 @@ body {
     }
 
     .items-table {
-        font-size: 12px;
+        font-size: 16px;
         margin: 2px 0;
     }
 
     .items-table th {
         padding: 2px 4px;
-        font-size: 11px;
+        font-size: 15px;
         font-weight: 700;
     }
 
@@ -400,29 +400,29 @@ body {
     }
 
     .item-spec {
-        font-size: 11px;
+        font-size: 15px;
         padding-left: 14px;
-        line-height: 1.2;
+        line-height: 1.22;
     }
 
     .item-sn {
-        font-size: 11px;
+        font-size: 15px;
         padding-left: 14px;
         font-weight: 700;
     }
 
     .bottom-section {
-        gap: 12px;
-        margin-top: 3px;
-        font-size: 12px;
+        gap: 6px;
+        margin-top: 2px;
+        font-size: 16px;
     }
 
     .sig-space {
-        height: 28px;
+        height: 22px;
     }
 
     .totals-table {
-        font-size: 12px;
+        font-size: 16px;
     }
 
     .totals-table td {
@@ -432,8 +432,8 @@ body {
     .terms {
         margin-top: 4px;
         padding-top: 3px;
-        font-size: 10.5px;
-        line-height: 1.3;
+        font-size: 14px;
+        line-height: 1.32;
     }
 
     .terms li {
