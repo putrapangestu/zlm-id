@@ -123,6 +123,85 @@ class NewModulesTest extends TestCase
         $this->assertEquals(3, ProductItem::where('restock_id', $restock->id)->count());
     }
 
+    public function test_restock_can_create_multiple_new_laptop_models(): void
+    {
+        $response = $this->actingAs($this->admin)->post(route('admin.restocks.store'), [
+            'supplier_name' => 'Distributor Jakarta',
+            'purchase_date' => now()->format('Y-m-d'),
+            'entry_mode' => 'new_product',
+            'new_laptops' => [
+                [
+                    'name' => 'Model Baru Lenovo',
+                    'brand' => 'Lenovo',
+                    'processor' => 'Intel Core i5',
+                    'ram' => '16GB',
+                    'storage' => '512GB',
+                    'quantity' => 2,
+                    'purchase_price' => 8000000,
+                ],
+                [
+                    'name' => 'Model Baru Dell',
+                    'brand' => 'Dell',
+                    'processor' => 'Intel Core i7',
+                    'ram' => '32GB',
+                    'storage' => '1TB',
+                    'quantity' => 1,
+                    'purchase_price' => 12000000,
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect();
+        $restock = Restock::latest()->firstOrFail();
+        $this->assertSame(2, $restock->items()->count());
+        $this->assertSame(3, ProductItem::where('restock_id', $restock->id)->count());
+        $this->assertDatabaseHas('laptops', ['name' => 'Model Baru Lenovo']);
+        $this->assertDatabaseHas('laptops', ['name' => 'Model Baru Dell']);
+    }
+
+    public function test_restock_exports_selected_passed_qc_unit_as_pdf(): void
+    {
+        $inventoryService = app(InventoryService::class);
+        $restock = $inventoryService->createRestock([
+            'supplier_name' => 'Distributor Jakarta',
+            'purchase_date' => now()->format('Y-m-d'),
+            'items' => [
+                [
+                    'laptop_id' => $this->laptop->id,
+                    'quantity' => 2,
+                    'purchase_price' => 8000000,
+                ],
+            ],
+        ], $this->admin);
+        $item = ProductItem::where('restock_id', $restock->id)->firstOrFail();
+
+        $inventoryService->passQc(
+            $item,
+            'SKU-REPORT-001',
+            'SERIAL-REPORT-001',
+            [
+                'screen' => 'ok',
+                'keyboard' => 'ok',
+                'battery' => 'ok',
+                'body' => 'ok',
+                'ports' => 'ok',
+                'webcam' => 'ok',
+                'specs' => 'match',
+            ],
+            'Unit normal',
+            $this->admin
+        );
+
+        $response = $this->actingAs($this->admin)->post(
+            route('admin.restocks.qc-report-pdf', $restock),
+            ['product_item_ids' => [$item->id]]
+        );
+
+        $response->assertOk();
+        $response->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
+    }
+
     public function test_qc_approval_assigns_sku_and_increments_sellable_stock(): void
     {
         $inventoryService = app(InventoryService::class);
@@ -243,6 +322,11 @@ class NewModulesTest extends TestCase
             'status' => 'synced',
             'client_order_uuid' => $clientUuid,
         ]);
+
+        $order = Order::where('client_order_uuid', $clientUuid)->firstOrFail();
+        $this->assertSame('11.00', $order->tax_rate);
+        $this->assertSame('1188000.00', $order->tax);
+        $this->assertSame('11988000.00', $order->total);
 
         $this->laptop->refresh();
         $this->assertEquals(4, $this->laptop->stock); // Decremented from 5 to 4

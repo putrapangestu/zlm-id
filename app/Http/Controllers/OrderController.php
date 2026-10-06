@@ -86,7 +86,8 @@ class OrderController extends Controller
         ]);
 
         $subtotal = $cart->total;
-        $tax = round($subtotal * (float) config('settings.tax_rate', 11) / 100, 2);
+        $taxRate = (float) config('settings.tax_rate', 11);
+        $tax = round($subtotal * $taxRate / 100, 2);
         $shippingCost = (float) $validated['shipping_cost'];
         $total = $subtotal + $tax + $shippingCost;
         $shippingCity = City::with('province')->findOrFail($validated['shipping_city_id']);
@@ -95,6 +96,7 @@ class OrderController extends Controller
             'user_id' => auth()->id(),
             'source' => 'online',
             'subtotal' => $subtotal,
+            'tax_rate' => $taxRate,
             'tax' => $tax,
             'shipping_cost' => $shippingCost,
             'total' => $total,

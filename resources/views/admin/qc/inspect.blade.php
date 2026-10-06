@@ -378,17 +378,31 @@
     </div>
 </div>
 
+@php
+    $existingParts = $item->parts->map(function ($p) {
+        return [
+            'product_id' => $p->product_id,
+            'part_name' => $p->part_name,
+            'quantity' => (int) $p->quantity,
+            'unit_cost' => (float) $p->unit_cost,
+            'notes' => $p->notes ?? '',
+        ];
+    })->values()->toArray();
+
+    $masterProductData = $masterProducts->map(function ($p) {
+        return [
+            'id' => $p->id,
+            'name' => $p->name,
+            'cost_price' => (float) $p->cost_price,
+            'stock' => (int) $p->stock,
+            'sku' => $p->sku,
+        ];
+    })->values()->toArray();
+@endphp
+
 @push('scripts')
 <script>
-const masterProducts = @json($masterProducts->map(function($p) {
-    return [
-        'id' => $p->id,
-        'name' => $p->name,
-        'cost_price' => (float)$p->cost_price,
-        'stock' => (int)$p->stock,
-        'sku' => $p->sku
-    ];
-}));
+const masterProducts = @json($masterProductData);
 
 const baseCost = {{ (float)$item->base_cost }};
 let partIndex = 0;
@@ -513,24 +527,18 @@ function generateSku() {
 }
 
 // Auto generate if empty & populate existing parts
+
 document.addEventListener('DOMContentLoaded', function() {
     const skuInput = document.getElementById('sku');
+    const existingParts = @json($existingParts);
+
     if (!skuInput.value) {
         generateSku();
     }
 
-    // Populate existing parts if any
-    @if($item->parts && $item->parts->count() > 0)
-        @foreach($item->parts as $p)
-            addPartRow({
-                product_id: '{{ $p->product_id }}',
-                part_name: '{{ addslashes($p->part_name) }}',
-                quantity: {{ (int)$p->quantity }},
-                unit_cost: {{ (float)$p->unit_cost }},
-                notes: '{{ addslashes($p->notes ?? "") }}'
-            });
-        @endforeach
-    @endif
+    existingParts.forEach(function(part) {
+        addPartRow(part);
+    });
 });
 </script>
 @endpush

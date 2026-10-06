@@ -175,12 +175,14 @@ class PosController extends Controller
             'orders' => 'required|array|min:1',
             'orders.*.client_order_uuid' => 'required|uuid',
             'orders.*.items' => 'required|array|min:1',
-            'orders.*.payment_method' => 'required|string',
-            'orders.*.subtotal' => 'required|numeric',
-            'orders.*.discount' => 'nullable|numeric',
+            'orders.*.payment_method' => 'required|in:cash,qris,transfer',
+            'orders.*.subtotal' => 'required|numeric|min:0',
+            'orders.*.discount' => 'nullable|numeric|min:0',
+            'orders.*.member_discount_amount' => 'nullable|numeric|min:0',
+            'orders.*.tax_rate' => 'nullable|numeric|min:0|max:100',
             'orders.*.tax' => 'nullable|numeric',
-            'orders.*.total' => 'required|numeric',
-            'orders.*.cash_tendered' => 'nullable|numeric',
+            'orders.*.total' => 'required|numeric|min:0',
+            'orders.*.cash_tendered' => 'nullable|numeric|min:0',
             'orders.*.change_due' => 'nullable|numeric',
             'orders.*.member_id' => 'nullable|exists:users,id',
             'orders.*.notes' => 'nullable|string',
@@ -208,7 +210,17 @@ class PosController extends Controller
             DB::beginTransaction();
             try {
                 $member = !empty($orderData['member_id']) ? User::find($orderData['member_id']) : null;
-                $pointsEarned = (int) floor($orderData['total'] / 100000); // 1 point per 100k
+                $subtotal = (float) $orderData['subtotal'];
+                $discountAmount = min($subtotal, (float) ($orderData['discount'] ?? 0));
+                $taxableAmount = max(0, $subtotal - $discountAmount);
+                $taxRate = (float) ($orderData['tax_rate'] ?? Setting::getValue('tax_rate', '11'));
+                $tax = round($taxableAmount * $taxRate / 100, 2);
+                $total = $taxableAmount + $tax;
+                $cashTendered = (float) ($orderData['cash_tendered'] ?? $total);
+                if ($orderData['payment_method'] === 'cash' && $cashTendered < $total) {
+                    throw new \InvalidArgumentException('Nominal uang tunai kurang dari total transaksi.');
+                }
+                $pointsEarned = (int) floor($total / 100000); // 1 point per 100k
 
                 $orderNumber = 'POS-' . date('ymd') . '-' . strtoupper(Str::random(4));
 
@@ -221,14 +233,15 @@ class PosController extends Controller
                     'status' => 'completed',
                     'payment_status' => 'paid',
                     'payment_method' => $orderData['payment_method'],
-                    'subtotal' => $orderData['subtotal'],
-                    'discount_amount' => $orderData['discount'] ?? 0,
-                    'member_discount_amount' => $orderData['member_discount_amount'] ?? 0,
-                    'tax' => $orderData['tax'] ?? 0,
+                    'subtotal' => $subtotal,
+                    'discount_amount' => $discountAmount,
+                    'member_discount_amount' => min($discountAmount, (float) ($orderData['member_discount_amount'] ?? 0)),
+                    'tax_rate' => $taxRate,
+                    'tax' => $tax,
                     'shipping_cost' => 0,
-                    'total' => $orderData['total'],
-                    'cash_tendered' => $orderData['cash_tendered'] ?? $orderData['total'],
-                    'change_due' => $orderData['change_due'] ?? 0,
+                    'total' => $total,
+                    'cash_tendered' => $cashTendered,
+                    'change_due' => max(0, $cashTendered - $total),
                     'points_earned' => $pointsEarned,
                     'notes' => $orderData['notes'] ?? 'Transaksi Kasir POS Offline Sync',
                     'created_at' => $orderData['created_at'] ?? now(),

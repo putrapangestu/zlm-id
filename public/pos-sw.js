@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zlm-pos-cache-v4';
+const CACHE_NAME = 'zlm-pos-cache-v5';
 const ASSETS_TO_CACHE = [
     '/pos',
     '/pos-manifest.json',

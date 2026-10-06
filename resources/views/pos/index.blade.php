@@ -276,7 +276,7 @@
                         <span id="cart-discount" class="font-mono font-bold text-emerald-600">Rp 0</span>
                     </div>
                     <div class="flex justify-between text-gray-500">
-                        <span>PPN (11%)</span>
+                        <span id="cart-tax-label">PPN ({{ config('settings.tax_rate', 11) }}%)</span>
                         <span id="cart-tax" class="font-mono font-bold text-gray-700">Rp 0</span>
                     </div>
                     <div class="flex justify-between text-sm font-extrabold text-[#363230] pt-1.5 sm:pt-2 border-t border-gray-200">
@@ -345,7 +345,7 @@
             </div>
 
             {{-- Cash Inputs --}}
-            <div class="space-y-3">
+            <div id="cash-payment-details" class="space-y-3">
                 <label class="block text-xs font-bold text-[#363230] uppercase">Uang Tunai Diterima (Cash Tendered)</label>
                 <input type="number" id="cash-tendered-input" oninput="PosApp.calculateChange()" step="1000"
                     class="w-full bg-gray-50 border border-gray-200 rounded-2xl p-3 text-xl font-bold font-mono text-[#363230] focus:outline-none focus:border-[#DF5E1D]">
@@ -367,18 +367,40 @@
 
             {{-- Action Buttons --}}
             <div class="grid grid-cols-3 gap-3 pt-2">
-                <button type="button" onclick="PosApp.processTransaction('qris')" class="py-3 px-3 rounded-xl border border-gray-200 hover:border-blue-500 hover:bg-blue-50/50 text-xs font-bold text-gray-700 flex flex-col items-center gap-1 transition">
+                <button type="button" data-payment-method="qris" onclick="PosApp.selectPaymentMethod('qris')" aria-pressed="false" class="py-3 px-3 rounded-xl border border-gray-200 hover:border-blue-500 hover:bg-blue-50/50 text-xs font-bold text-gray-700 flex flex-col items-center gap-1 transition">
                     <iconify-icon icon="solar:qr-code-linear" class="text-xl text-blue-600"></iconify-icon>
                     <span>QRIS Statis/Dinamis</span>
                 </button>
-                <button type="button" onclick="PosApp.processTransaction('transfer')" class="py-3 px-3 rounded-xl border border-gray-200 hover:border-purple-500 hover:bg-purple-50/50 text-xs font-bold text-gray-700 flex flex-col items-center gap-1 transition">
+                <button type="button" data-payment-method="transfer" onclick="PosApp.selectPaymentMethod('transfer')" aria-pressed="false" class="py-3 px-3 rounded-xl border border-gray-200 hover:border-purple-500 hover:bg-purple-50/50 text-xs font-bold text-gray-700 flex flex-col items-center gap-1 transition">
                     <iconify-icon icon="solar:card-transfer-linear" class="text-xl text-purple-600"></iconify-icon>
                     <span>Transfer Bank / EDC</span>
                 </button>
-                <button type="button" id="payment-submit-btn" onclick="PosApp.processTransaction('cash')" class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex flex-col items-center gap-1 transition shadow-md">
+                <button type="button" data-payment-method="cash" onclick="PosApp.selectPaymentMethod('cash')" aria-pressed="true" class="py-3 px-3 rounded-xl border border-gray-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-xs font-bold text-gray-700 flex flex-col items-center gap-1 transition">
                     <iconify-icon icon="solar:wallet-money-bold" class="text-xl"></iconify-icon>
                     <span>Bayar Tunai</span>
                 </button>
+            </div>
+            <button type="button" id="payment-submit-btn" onclick="PosApp.openPaymentConfirmation()" disabled
+                class="w-full py-3 bg-[#DF5E1D] hover:bg-[#c45218] text-white text-sm font-extrabold rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Submit Pembayaran
+            </button>
+        </div>
+    </div>
+
+    {{-- MODAL: Payment Confirmation --}}
+    <div id="pos-payment-confirm-modal" class="fixed inset-0 z-[60] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <div class="text-center space-y-2">
+                <iconify-icon icon="solar:question-circle-bold" class="text-4xl text-[#DF5E1D]"></iconify-icon>
+                <h3 class="text-base font-extrabold text-[#363230]">Konfirmasi Pembayaran</h3>
+                <p class="text-sm text-gray-500">Apakah Anda yakin memproses pembayaran dengan metode <strong id="payment-confirm-method"></strong>?</p>
+                <p id="payment-confirm-total" class="text-lg font-extrabold font-mono text-[#DF5E1D]"></p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" onclick="document.getElementById('pos-payment-confirm-modal').classList.add('hidden')"
+                    class="py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-bold">Batal</button>
+                <button type="button" id="payment-confirm-btn" onclick="PosApp.confirmPayment()"
+                    class="py-2.5 rounded-xl bg-[#DF5E1D] text-white text-sm font-bold">Ya, Proses</button>
             </div>
         </div>
     </div>

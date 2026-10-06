@@ -16,10 +16,13 @@
 
         <div class="flex items-center gap-3">
             @can('restock.print')
-            <a href="{{ route('admin.restocks.print', $restock) }}" target="_blank" class="px-4 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center gap-2">
-                <iconify-icon icon="solar:printer-linear" class="text-base"></iconify-icon>
-                <span>Cetak Dot Matrix Kertas Besar</span>
-            </a>
+            <form id="qc-pdf-export-form" method="POST" action="{{ route('admin.restocks.qc-report-pdf', $restock) }}">
+                @csrf
+            </form>
+            <button type="submit" form="qc-pdf-export-form" class="px-4 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center gap-2">
+                <iconify-icon icon="solar:document-text-linear" class="text-base"></iconify-icon>
+                <span>Export PDF Unit Terpilih</span>
+            </button>
             @endcan
         </div>
     </div>
@@ -187,18 +190,25 @@
             <div>
                 <h3 class="text-sm font-bold text-[#363230] uppercase tracking-wider flex items-center gap-2">
                     <iconify-icon icon="solar:checklist-linear" class="text-[#DF5E1D] text-lg"></iconify-icon>
-                    Daftar Unit Fisik & Status Quality Control
+                    Daftar Unit Fisik & Status Quality Control ({{ $restock->productItems->where('qc_status', 'passed')->count() }} Lolos QC)
                 </h3>
-                <p class="text-xs text-gray-500 mt-1">Setiap unit fisik wajib diinspeksi. Stok jual hanya bertambah jika unit lolos dan diberi SKU.</p>
+                <p class="text-xs text-gray-500 mt-1">Pilih satu atau beberapa unit yang lolos QC untuk dibuatkan laporan PDF.</p>
             </div>
-            <a href="{{ route('admin.qc.index') }}" class="text-xs font-semibold text-[#DF5E1D] hover:underline">
-                Buka Menu QC &rarr;
-            </a>
+            <div class="flex items-center gap-4">
+                <label class="text-xs text-gray-500 flex items-center gap-2">
+                    <input type="checkbox" id="select-all-qc-passed" class="rounded border-gray-300 text-[#DF5E1D]">
+                    Pilih semua lolos
+                </label>
+                <a href="{{ route('admin.qc.index') }}" class="text-xs font-semibold text-[#DF5E1D] hover:underline">
+                    Buka Menu QC &rarr;
+                </a>
+            </div>
         </div>
 
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50/60 border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    <th class="py-3 px-6">PDF</th>
                     <th class="py-3 px-6">#</th>
                     <th class="py-3 px-6">Laptop & Varian</th>
                     <th class="py-3 px-6">SKU Jual (Setelah QC)</th>
@@ -210,6 +220,13 @@
             <tbody class="divide-y divide-gray-100 text-xs">
                 @foreach($restock->productItems as $index => $pItem)
                 <tr class="hover:bg-gray-50/50">
+                    <td class="py-3.5 px-6">
+                        @if($pItem->qc_status === 'passed')
+                            <input type="checkbox" name="product_item_ids[]" value="{{ $pItem->id }}" form="qc-pdf-export-form" class="qc-pdf-item rounded border-gray-300 text-[#DF5E1D]">
+                        @else
+                            <span class="text-gray-300">—</span>
+                        @endif
+                    </td>
                     <td class="py-3.5 px-6 text-gray-400">{{ $index + 1 }}</td>
                     <td class="py-3.5 px-6">
                         <span class="font-medium text-[#363230] block">{{ $pItem->laptop->name }}</span>
@@ -258,6 +275,20 @@
             </tbody>
         </table>
     </div>
+    @push('scripts')
+    <script>
+        document.getElementById('select-all-qc-passed')?.addEventListener('change', function () {
+            document.querySelectorAll('.qc-pdf-item').forEach(input => input.checked = this.checked);
+        });
+
+        document.getElementById('qc-pdf-export-form')?.addEventListener('submit', function (event) {
+            if (!document.querySelector('.qc-pdf-item:checked')) {
+                event.preventDefault();
+                alert('Pilih minimal satu unit yang sudah lolos QC untuk diekspor.');
+            }
+        });
+    </script>
+    @endpush
 
 </div>
 @endsection

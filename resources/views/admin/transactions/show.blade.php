@@ -138,7 +138,7 @@
             <tfoot class="bg-gray-50">
                 <tr><td colspan="3" class="px-6 py-2 text-sm text-right text-gray-500">Subtotal</td>
                     <td class="px-6 py-2 text-sm text-right font-medium">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td></tr>
-                <tr><td colspan="3" class="px-6 py-2 text-sm text-right text-gray-500">Tax ({{ config('settings.tax_rate', 11) }}%)</td>
+                <tr><td colspan="3" class="px-6 py-2 text-sm text-right text-gray-500">Tax ({{ $order->tax_rate ?? config('settings.tax_rate', 11) }}%)</td>
                     <td class="px-6 py-2 text-sm text-right font-medium">Rp {{ number_format($order->tax, 0, ',', '.') }}</td></tr>
                 @if($order->shipping_cost)
                 <tr><td colspan="3" class="px-6 py-2 text-sm text-right text-gray-500">Shipping</td>

@@ -418,7 +418,7 @@
             }
 
             .sig-space {
-                height: 22px;
+                height: 35px;
             }
 
             .totals-table {
@@ -595,7 +595,7 @@
                         <tr>
                             <td>Potongan</td>
                             <td>:</td>
-                            <td>0 % &nbsp;&nbsp;&nbsp;&nbsp; 0</td>
+                            <td>{{ $order->tax_rate ?? config('settings.tax_rate', 11) }} % &nbsp;&nbsp;&nbsp;&nbsp; {{ number_format($order->tax, 0, ',', '.') }}</td>
                         </tr>
                     </table>
                 </div>

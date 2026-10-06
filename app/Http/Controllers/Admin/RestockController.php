@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Laptop;
+use App\Models\ProductItem;
 use App\Models\Restock;
 use App\Models\Supplier;
 use App\Services\InventoryService;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 
 class RestockController extends Controller
 {
@@ -114,6 +118,30 @@ class RestockController extends Controller
             'new_laptop.categories' => 'nullable|array|exists:categories,id',
             'new_quantity' => 'nullable|integer|min:1',
             'new_purchase_price' => 'nullable|numeric|min:0',
+            'new_laptops' => 'nullable|array',
+            'new_laptops.*.name' => 'nullable|string|max:255',
+            'new_laptops.*.brand' => 'nullable|string|max:255',
+            'new_laptops.*.brand_id' => 'nullable|exists:brands,id',
+            'new_laptops.*.price' => 'nullable|numeric|min:0',
+            'new_laptops.*.processor' => 'nullable|string|max:255',
+            'new_laptops.*.ram' => 'nullable|string|max:255',
+            'new_laptops.*.storage' => 'nullable|string|max:255',
+            'new_laptops.*.graphics' => 'nullable|string|max:255',
+            'new_laptops.*.display' => 'nullable|string|max:255',
+            'new_laptops.*.ports' => 'nullable|string',
+            'new_laptops.*.camera' => 'nullable|string|max:255',
+            'new_laptops.*.audio' => 'nullable|string|max:255',
+            'new_laptops.*.connectivity' => 'nullable|string|max:255',
+            'new_laptops.*.color' => 'nullable|string|max:255',
+            'new_laptops.*.warranty' => 'nullable|string|max:255',
+            'new_laptops.*.weight' => 'nullable|numeric|min:0',
+            'new_laptops.*.battery_life' => 'nullable|string|max:255',
+            'new_laptops.*.description' => 'nullable|string',
+            'new_laptops.*.kelebihan' => 'nullable|string',
+            'new_laptops.*.kekurangan' => 'nullable|string',
+            'new_laptops.*.categories' => 'nullable|array|exists:categories,id',
+            'new_laptops.*.quantity' => 'nullable|integer|min:1',
+            'new_laptops.*.purchase_price' => 'nullable|numeric|min:0',
         ]);
 
         $supplierId = $validated['supplier_id'] ?? null;
@@ -146,15 +174,41 @@ class RestockController extends Controller
         ];
 
         if ($validated['entry_mode'] === 'new_product') {
-            if (empty($validated['new_laptop']['name']) || empty($validated['new_laptop']['processor'])) {
-                return back()->withInput()->with('error', 'Nama laptop dan processor wajib diisi untuk produk baru.');
+            $newProducts = [];
+            if (!empty($validated['new_laptop']['name']) || !empty($validated['new_laptop']['processor'])) {
+                $newProducts[] = [
+                    'laptop' => $validated['new_laptop'],
+                    'quantity' => (int) ($validated['new_quantity'] ?? 1),
+                    'purchase_price' => (float) ($validated['new_purchase_price'] ?? 0),
+                ];
             }
-            $restockData['items'][] = [
-                'new_laptop' => $validated['new_laptop'],
-                'quantity' => (int) ($validated['new_quantity'] ?? 1),
-                'purchase_price' => (float) ($validated['new_purchase_price'] ?? 0),
-                'notes' => 'Unit baru dari batch restock ' . $supplierName,
-            ];
+            foreach ($validated['new_laptops'] ?? [] as $newLaptop) {
+                if (empty($newLaptop['name']) && empty($newLaptop['processor'])) {
+                    continue;
+                }
+                $newProducts[] = [
+                    'laptop' => $newLaptop,
+                    'quantity' => (int) ($newLaptop['quantity'] ?? 1),
+                    'purchase_price' => (float) ($newLaptop['purchase_price'] ?? 0),
+                ];
+            }
+
+            if (empty($newProducts)) {
+                return back()->withInput()->with('error', 'Masukkan minimal 1 model laptop baru.');
+            }
+
+            foreach ($newProducts as $newProduct) {
+                if (empty($newProduct['laptop']['name']) || empty($newProduct['laptop']['processor'])) {
+                    return back()->withInput()->with('error', 'Nama laptop dan processor wajib diisi untuk setiap model baru.');
+                }
+
+                $restockData['items'][] = [
+                    'new_laptop' => $newProduct['laptop'],
+                    'quantity' => $newProduct['quantity'],
+                    'purchase_price' => $newProduct['purchase_price'],
+                    'notes' => 'Unit baru dari batch restock ' . $supplierName,
+                ];
+            }
         } else {
             $validItems = [];
             if (!empty($validated['items'])) {
@@ -223,5 +277,53 @@ class RestockController extends Controller
     {
         $restock->load(['creator', 'supplier', 'items.laptop', 'productItems']);
         return view('admin.restocks.print-dotmatrix', compact('restock'));
+    }
+
+    public function exportQcPdf(Request $request, Restock $restock)
+    {
+        $validated = $request->validate([
+            'product_item_ids' => 'required|array|min:1',
+            'product_item_ids.*' => 'required|uuid|distinct|exists:product_items,id',
+        ]);
+
+        $items = ProductItem::with(['laptop', 'variant', 'inspector'])
+            ->where('restock_id', $restock->id)
+            ->where('qc_status', 'passed')
+            ->whereIn('id', $validated['product_item_ids'])
+            ->orderBy('created_at')
+            ->get();
+
+        if ($items->count() !== count($validated['product_item_ids'])) {
+            abort(422, 'Pilih hanya unit yang sudah lolos QC pada batch restock ini.');
+        }
+
+        $items->each(function (ProductItem $item): void {
+            $platformText = strtolower($item->laptop->brand . ' ' . $item->laptop->name);
+            $item->setAttribute('inspection_platform', Str::contains($platformText, ['apple', 'macbook']) ? 'mac' : 'windows');
+
+            $checklist = $item->qc_checklist ?? [];
+            $statuses = collect($checklist)->filter(fn ($value) => in_array($value, ['ok', 'minor', 'defect', 'match', 'mismatch'], true));
+            $item->setAttribute(
+                'inspection_grade',
+                $statuses->contains(fn ($value) => in_array($value, ['defect', 'mismatch'], true))
+                    ? 'C'
+                    : ($statuses->contains('minor') ? 'B' : 'A')
+            );
+        });
+
+        $html = view('admin.restocks.qc-report-pdf', compact('restock', 'items'))->render();
+        $options = new Options();
+        $options->set('defaultFont', 'DejaVu Sans');
+        $options->set('isRemoteEnabled', false);
+
+        $pdf = new Dompdf($options);
+        $pdf->loadHtml($html, 'UTF-8');
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->render();
+
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="inspection-' . Str::slug($restock->restock_number) . '.pdf"',
+        ]);
     }
 }

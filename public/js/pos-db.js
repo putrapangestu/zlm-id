@@ -3,7 +3,7 @@
  */
 const PosDB = (function () {
     const DB_NAME = 'zlm_pos_db';
-    const DB_VERSION = 2;
+    const DB_VERSION = 3;
     let dbInstance = null;
 
     function open() {
@@ -50,6 +50,10 @@ const PosDB = (function () {
                     const memberStore = db.createObjectStore('members', { keyPath: 'id' });
                     memberStore.createIndex('phone', 'phone', { unique: false });
                     memberStore.createIndex('member_number', 'member_number', { unique: false });
+                }
+
+                if (!db.objectStoreNames.contains('settings')) {
+                    db.createObjectStore('settings', { keyPath: 'id' });
                 }
 
                 // Offline Completed Orders

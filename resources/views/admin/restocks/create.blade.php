@@ -202,6 +202,21 @@
                     </button>
                 </div>
 
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-gray-500">Tambahkan satu kartu untuk setiap model baru yang diterima.</p>
+                    <button type="button" onclick="addNewLaptopCard()" class="px-3 py-2 bg-orange-50 text-[#DF5E1D] border border-orange-200 rounded-xl text-xs font-bold hover:bg-orange-100">
+                        + Tambah Model Baru
+                    </button>
+                </div>
+
+                <div id="new-laptop-cards" class="space-y-5">
+                <div class="new-laptop-card space-y-5 p-4 border border-gray-200 rounded-2xl" data-new-laptop-idx="0">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-gray-700 uppercase">Model Baru 1</h4>
+                    <button type="button" onclick="removeNewLaptopCard(this)" class="remove-new-laptop p-2 text-gray-400 hover:text-rose-600 rounded-lg" title="Hapus model ini">
+                        <iconify-icon icon="solar:trash-bin-trash-linear" class="text-lg"></iconify-icon>
+                    </button>
+                </div>
                 {{-- Laptop Identity --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="sm:col-span-2">
@@ -311,19 +326,21 @@
                 <div class="p-4 bg-gray-50 rounded-2xl border border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Jumlah Unit Masuk (Qty) <span class="text-red-500">*</span></label>
-                        <input type="number" name="new_quantity" id="new_quantity" value="{{ old('new_quantity', 1) }}" min="1" oninput="calculateNewTotal()"
+                        <input type="number" name="new_quantity" id="new_quantity" value="{{ old('new_quantity', 1) }}" min="1" oninput="calculateNewTotal(this)"
                             class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1">HPP / Harga Beli per Unit (Rp) <span class="text-red-500">*</span></label>
-                        <input type="number" step="1000" name="new_purchase_price" id="new_purchase_price" value="{{ old('new_purchase_price', 0) }}" oninput="calculateNewTotal()"
+                        <input type="number" step="1000" name="new_purchase_price" id="new_purchase_price" value="{{ old('new_purchase_price', 0) }}" oninput="calculateNewTotal(this)"
                             class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Total Nilai Pembelian</label>
-                        <div class="px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-mono font-extrabold text-[#DF5E1D]" id="new_total_display">
+                        <div class="new-total-display px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-mono font-extrabold text-[#DF5E1D]" id="new_total_display">
                             Rp 0
                         </div>
+                    </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -468,12 +485,58 @@ function recalculateBatchSummary() {
     document.getElementById('grand-total-display').innerText = 'Rp ' + grandTotal.toLocaleString('id-ID');
 }
 
-function calculateNewTotal() {
-    const qty = parseInt(document.getElementById('new_quantity')?.value || 0);
-    const price = parseFloat(document.getElementById('new_purchase_price')?.value || 0);
+function calculateNewTotal(input = null) {
+    const card = input?.closest('.new-laptop-card') || document.querySelector('.new-laptop-card');
+    if (!card) return;
+    const qty = parseInt(card.querySelector('[name$="[quantity]"], #new_quantity')?.value || 0);
+    const price = parseFloat(card.querySelector('[name$="[purchase_price]"], #new_purchase_price')?.value || 0);
     const total = qty * price;
-    const disp = document.getElementById('new_total_display');
+    const disp = card.querySelector('.new-total-display');
     if (disp) disp.innerText = 'Rp ' + total.toLocaleString('id-ID');
+}
+
+let newLaptopCounter = 1;
+
+function addNewLaptopCard() {
+    const container = document.getElementById('new-laptop-cards');
+    const card = container.querySelector('.new-laptop-card').cloneNode(true);
+    const idx = newLaptopCounter++;
+
+    card.dataset.newLaptopIdx = idx;
+    card.querySelector('h4').innerText = `Model Baru ${idx + 1}`;
+    card.querySelectorAll('[name]').forEach(input => {
+        if (input.name.startsWith('new_laptop[')) {
+            input.name = input.name.replace('new_laptop[', `new_laptops[${idx}][`);
+        } else if (input.name === 'new_quantity') {
+            input.name = `new_laptops[${idx}][quantity]`;
+        } else if (input.name === 'new_purchase_price') {
+            input.name = `new_laptops[${idx}][purchase_price]`;
+        }
+        if (input.type === 'hidden') input.value = '';
+        else if (input.tagName === 'SELECT') input.selectedIndex = 0;
+        else if (input.tagName === 'TEXTAREA') input.value = '';
+        else input.value = input.name.endsWith('[quantity]') ? '1' : '';
+    });
+    card.querySelectorAll('[id]').forEach(element => {
+        const oldId = element.id;
+        element.id = `${oldId}_${idx}`;
+        card.querySelectorAll(`label[for="${oldId}"]`).forEach(label => {
+            label.htmlFor = element.id;
+        });
+    });
+    card.querySelectorAll('[oninput]').forEach(input => {
+        if (input.name.endsWith('[quantity]') || input.name.endsWith('[purchase_price]')) {
+            input.setAttribute('oninput', 'calculateNewTotal(this)');
+        }
+    });
+    card.querySelector('.new-total-display').innerText = 'Rp 0';
+    container.appendChild(card);
+}
+
+function removeNewLaptopCard(button) {
+    const cards = document.querySelectorAll('.new-laptop-card');
+    if (cards.length <= 1) return;
+    button.closest('.new-laptop-card').remove();
 }
 
 function onSupplierChange(selectEl) {
@@ -487,16 +550,18 @@ function onSupplierChange(selectEl) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('new_laptop_brand_id')?.addEventListener('change', function() {
-        const sel = this.options[this.selectedIndex];
-        const brandInput = document.getElementById('new_laptop_brand');
+    document.getElementById('new-laptop-cards')?.addEventListener('change', function(event) {
+        if (!event.target.matches('[id^="new_laptop_brand_id"]')) return;
+        const card = event.target.closest('.new-laptop-card');
+        const sel = event.target.options[event.target.selectedIndex];
+        const brandInput = card.querySelector('input[type="hidden"][id^="new_laptop_brand"]');
         if (brandInput) {
             brandInput.value = sel ? sel.getAttribute('data-name') : '';
         }
     });
 
     calculateRowTotal(0);
-    calculateNewTotal();
+    calculateNewTotal(document.getElementById('new_quantity'));
 });
 </script>
 @endpush

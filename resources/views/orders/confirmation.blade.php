@@ -82,7 +82,7 @@
                     <span class="font-medium">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-gray-500">Tax ({{ config('settings.tax_rate', 11) }}%)</span>
+                    <span class="text-gray-500">Tax ({{ $order->tax_rate ?? config('settings.tax_rate', 11) }}%)</span>
                     <span class="font-medium">Rp {{ number_format($order->tax, 0, ',', '.') }}</span>
                 </div>
                 @if($order->shipping_cost)

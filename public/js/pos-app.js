@@ -18,6 +18,7 @@ const PosApp = {
     selectedMember: null,
     discountRate: 0,
     taxRate: 11,
+    selectedPaymentMethod: 'cash',
     syncing: false,
     currentMobileTab: 'catalog',
     showcaseImages: [],
@@ -110,6 +111,9 @@ const PosApp = {
         try {
             this.products = await PosDB.getAll(this.isShowcase ? 'showcase_products' : 'products');
             this.categories = await PosDB.getAll(this.isShowcase ? 'showcase_categories' : 'categories');
+            const cachedSettings = await PosDB.get('settings', 'active');
+            this.settings = cachedSettings?.values ?? {};
+            this.taxRate = Number(this.settings.tax_rate ?? 11);
             if (!this.isShowcase) {
                 this.qcUnits = await PosDB.getAll('qc_units');
                 this.members = await PosDB.getAll('members');
@@ -136,11 +140,12 @@ const PosApp = {
                 this.categories = data.data.categories;
                 this.members = data.data.members;
                 this.settings = data.data.settings;
-                this.taxRate = data.data.settings.tax_rate ?? 11;
+                this.taxRate = Number(data.data.settings.tax_rate ?? 11);
 
                 // Cache in IndexedDB
                 await PosDB.setAll(this.isShowcase ? 'showcase_products' : 'products', this.products);
                 await PosDB.setAll(this.isShowcase ? 'showcase_categories' : 'categories', this.categories);
+                await PosDB.put('settings', { id: 'active', values: this.settings });
                 if (!this.isShowcase) {
                     await PosDB.setAll('qc_units', this.qcUnits);
                     await PosDB.setAll('members', this.members);
@@ -688,6 +693,7 @@ const PosApp = {
         const subtotalEl = document.getElementById('cart-subtotal');
         const discountEl = document.getElementById('cart-discount');
         const taxEl = document.getElementById('cart-tax');
+        const taxLabelEl = document.getElementById('cart-tax-label');
         const totalEl = document.getElementById('cart-total');
         const payBtn = document.getElementById('cart-pay-btn');
 
@@ -718,6 +724,7 @@ const PosApp = {
 
         emptyState?.classList.add('hidden');
         if (payBtn) payBtn.disabled = false;
+        if (taxLabelEl) taxLabelEl.innerText = `PPN (${this.taxRate}%)`;
 
         let subtotal = 0;
         container.innerHTML = this.cart.map(item => {
@@ -752,7 +759,7 @@ const PosApp = {
 
         const totalDiscount = memberDiscountAmount;
         const taxableAmount = Math.max(0, subtotal - totalDiscount);
-        const taxAmount = (taxableAmount * this.taxRate) / 100;
+        const taxAmount = Math.round((taxableAmount * this.taxRate) / 100 * 100) / 100;
         const grandTotal = taxableAmount + taxAmount;
 
         if (subtotalEl) subtotalEl.innerText = 'Rp ' + subtotal.toLocaleString('id-ID');
@@ -845,6 +852,7 @@ const PosApp = {
 
         totalDisplay.innerText = 'Rp ' + this.currentTotals.total.toLocaleString('id-ID');
         document.getElementById('cash-tendered-input').value = this.currentTotals.total;
+        this.selectPaymentMethod('cash');
         this.calculateChange();
 
         modal.classList.remove('hidden');
@@ -856,17 +864,62 @@ const PosApp = {
         const change = cash - total;
 
         const changeEl = document.getElementById('payment-change-display');
-        const submitBtn = document.getElementById('payment-submit-btn');
-
         if (change >= 0) {
             changeEl.innerText = 'Rp ' + change.toLocaleString('id-ID');
             changeEl.className = 'text-xl font-bold font-mono text-emerald-600';
-            submitBtn.disabled = false;
         } else {
             changeEl.innerText = 'Kurang Rp ' + Math.abs(change).toLocaleString('id-ID');
             changeEl.className = 'text-base font-bold font-mono text-rose-600';
-            submitBtn.disabled = true;
         }
+        this.updatePaymentSelection();
+    },
+
+    selectPaymentMethod(method) {
+        this.selectedPaymentMethod = method;
+        this.updatePaymentSelection();
+    },
+
+    updatePaymentSelection() {
+        const cash = parseFloat(document.getElementById('cash-tendered-input')?.value || 0);
+        const cashIsSufficient = cash >= this.currentTotals.total;
+        const submitBtn = document.getElementById('payment-submit-btn');
+
+        document.querySelectorAll('[data-payment-method]').forEach(button => {
+            const selected = button.dataset.paymentMethod === this.selectedPaymentMethod;
+            button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+            button.classList.toggle('ring-2', selected);
+            button.classList.toggle('ring-[#DF5E1D]', selected);
+            button.classList.toggle('border-[#DF5E1D]', selected);
+        });
+
+        const cashDetails = document.getElementById('cash-payment-details');
+        if (cashDetails) {
+            cashDetails.classList.toggle('hidden', this.selectedPaymentMethod !== 'cash');
+        }
+        if (submitBtn) {
+            submitBtn.disabled = this.selectedPaymentMethod === 'cash' && !cashIsSufficient;
+        }
+    },
+
+    openPaymentConfirmation() {
+        if (this.selectedPaymentMethod === 'cash') {
+            const cash = parseFloat(document.getElementById('cash-tendered-input')?.value || 0);
+            if (cash < this.currentTotals.total) return;
+        }
+
+        const modal = document.getElementById('pos-payment-confirm-modal');
+        document.getElementById('payment-confirm-method').innerText = {
+            cash: 'Tunai',
+            qris: 'QRIS',
+            transfer: 'Transfer Bank / EDC',
+        }[this.selectedPaymentMethod];
+        document.getElementById('payment-confirm-total').innerText = 'Rp ' + this.currentTotals.total.toLocaleString('id-ID');
+        modal?.classList.remove('hidden');
+    },
+
+    confirmPayment() {
+        document.getElementById('pos-payment-confirm-modal')?.classList.add('hidden');
+        this.processTransaction(this.selectedPaymentMethod);
     },
 
     setQuickCash(amount) {
@@ -888,6 +941,7 @@ const PosApp = {
             subtotal: this.currentTotals.subtotal,
             discount: this.currentTotals.discount,
             member_discount_amount: this.currentTotals.member_discount_amount,
+            tax_rate: this.taxRate,
             tax: this.currentTotals.tax,
             total: this.currentTotals.total,
             payment_method: paymentMethod,
