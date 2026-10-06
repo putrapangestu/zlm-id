@@ -17,7 +17,6 @@
 
 html, body {
     width: 100%;
-    height: 100%;
     margin: 0;
     padding: 0;
 }
@@ -27,8 +26,8 @@ body {
     font-family: 'Courier Prime', 'Courier New', Courier, monospace;
     color: #1e293b;
     padding: 20px 10px;
-    font-size: 10px;
-    line-height: 1.2;
+    font-size: 11px;
+    line-height: 1.3;
 }
 
 .no-print-bar {
@@ -71,7 +70,7 @@ body {
     color: #475569;
 }
 
-/* Continuous Paper Canvas - Landscape 9.5" x 5.5" */
+/* Continuous Paper Canvas */
 .paper-container {
     max-width: 1000px;
     margin: 0 auto;
@@ -79,21 +78,19 @@ body {
     background: #fdf2f4;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     border: 1px solid #fbcfe8;
-    padding: 12px 16px;
-    width: 100%;
-    height: auto;
+    padding: 16px 24px;
 }
 
-/* Tractor feed perforated edge - BOTTOM (vertical feed) */
+/* Tractor feed perforated edge - BOTTOM */
 .paper-container::before,
 .paper-container::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-    height: 14px;
+    height: 16px;
     background-image: radial-gradient(#cbd5e1 2.5px, transparent 3px);
-    background-size: 14px 14px;
+    background-size: 16px 16px;
     background-repeat: repeat-x;
     opacity: 0.7;
 }
@@ -109,36 +106,36 @@ body {
 }
 
 .invoice-content {
-    margin: 0 8px;
+    margin: 0 12px;
     color: #09090b;
-    font-size: 10px;
 }
 
+/* Header Section */
 .top-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 4px;
-    gap: 12px;
+    margin-bottom: 6px;
+    gap: 16px;
 }
 
 .store-brand {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: flex-start;
-    flex: 0 0 45%;
+    flex: 1;
 }
 
 .store-logo-text {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 900;
     color: #2563eb;
     line-height: 1;
     letter-spacing: -1px;
     font-family: sans-serif;
     border: 2px solid #2563eb;
-    padding: 2px 4px;
-    border-radius: 4px;
+    padding: 3px 5px;
+    border-radius: 6px;
     flex-shrink: 0;
 }
 
@@ -147,132 +144,156 @@ body {
 }
 
 .store-details h2 {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
 .store-details p {
-    font-size: 9px;
-    line-height: 1.15;
+    font-size: 10px;
+    line-height: 1.2;
     color: #18181b;
     margin: 0;
 }
 
 .header-meta {
-    flex: 0 0 50%;
+    flex: 0 0 auto;
 }
 
 .meta-table {
     border-collapse: collapse;
-    font-size: 9px;
-    line-height: 1.2;
-    width: 100%;
+    font-size: 10px;
+    line-height: 1.25;
 }
 
 .meta-table td {
     vertical-align: top;
-    padding: 1px 3px;
+    padding: 1px 4px;
+    white-space: nowrap;
+}
+
+.meta-table td:nth-child(2) {
+    padding: 1px 2px;
 }
 
 .divider {
     border-top: 1px solid #18181b;
-    margin: 3px 0;
+    margin: 5px 0;
 }
 
 .double-divider {
     border-top: 1px dashed #18181b;
-    margin: 3px 0;
+    margin: 5px 0;
 }
 
-/* Items Table - Compact */
+/* Items Table */
 .items-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 9px;
-    margin: 3px 0;
+    font-size: 10px;
 }
 
 .items-table th {
     text-align: left;
-    padding: 2px 3px;
+    padding: 3px 5px;
     border-top: 1px solid #18181b;
     border-bottom: 1px solid #18181b;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 8px;
+    font-size: 9px;
 }
 
 .items-table td {
-    padding: 1px 3px;
+    padding: 2px 5px;
     vertical-align: top;
 }
 
 .item-spec {
-    font-size: 8px;
+    font-size: 9px;
     color: #27272a;
-    padding-left: 12px;
+    padding-left: 16px;
 }
 
 .item-sn {
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
-    padding-left: 12px;
+    padding-left: 16px;
 }
 
-/* Bottom Grid - 2 Column Horizontal Layout */
+/* Bottom Section - Structured Layout */
 .bottom-section {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    gap: 8px;
-    margin-top: 4px;
-    font-size: 9px;
+    display: flex;
+    gap: 20px;
+    margin-top: 6px;
+    font-size: 10px;
 }
 
 .signatures-col {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+}
+
+.sig-label {
+    font-weight: 700;
+    margin-bottom: 2px;
 }
 
 .sig-row {
     display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
+    gap: 40px;
+    margin-top: 8px;
     text-align: center;
-    gap: 8px;
 }
 
-.sig-row > div {
+.sig-item {
     flex: 1;
 }
 
 .sig-space {
-    height: 30px;
+    height: 35px;
+    border-bottom: 1px solid #18181b;
+}
+
+.totals-section {
+    flex: 1;
 }
 
 .totals-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 9px;
+    font-size: 10px;
 }
 
 .totals-table td {
-    padding: 1px 2px;
+    padding: 1px 4px;
     vertical-align: top;
+}
+
+.totals-table td:nth-child(2) {
+    width: 10px;
 }
 
 .totals-table td:last-child {
     text-align: right;
+    padding-right: 0;
+    font-weight: 500;
 }
 
+.totals-table tr.total-row td {
+    font-weight: 700;
+    border-top: 1px solid #18181b;
+    padding-top: 2px;
+}
+
+/* Terms Section */
 .terms {
     margin-top: 6px;
-    padding-top: 3px;
+    padding-top: 4px;
     border-top: 1px dashed #52525b;
-    font-size: 8px;
-    line-height: 1.2;
+    font-size: 9px;
+    line-height: 1.3;
 }
 
 .terms ul {
@@ -292,7 +313,7 @@ body {
 /* Page Settings */
 @page {
     size: 9.5in 5.5in landscape;
-    margin: 3mm 5mm;
+    margin: 3mm;
 }
 
 @media print {
@@ -304,13 +325,12 @@ body {
 
     html,
     body {
-        width: 9.5in;
-        height: 5.5in;
+        width: 100%;
         margin: 0;
         padding: 0;
         background: #fdf2f4;
-        font-size: 10px;
-        line-height: 1.2;
+        font-size: 10.5px;
+        line-height: 1.25;
     }
 
     .no-print-bar {
@@ -319,63 +339,93 @@ body {
 
     .paper-container {
         width: 100%;
-        height: 100%;
-        max-width: none;
+        max-width: 100%;
         margin: 0;
-        padding: 10px 14px;
+        padding: 14px 20px;
         box-shadow: none;
         border: none;
         page-break-after: avoid;
         break-inside: avoid;
         background: #fdf2f4;
-    }
-
-    .paper-container::before,
-    .paper-container::after {
-        display: none;
+        position: relative;
     }
 
     .invoice-content {
         width: 100%;
-        margin: 0;
-        padding: 0;
+        margin: 0 10px;
     }
 
     .top-row {
-        margin-bottom: 2px;
+        margin-bottom: 4px;
+        gap: 12px;
     }
 
     .store-logo-text {
-        font-size: 20px;
-        padding: 1px 3px;
+        font-size: 24px;
+        padding: 2px 4px;
+    }
+
+    .store-details h2 {
+        font-size: 11px;
+        margin-bottom: 1px;
+    }
+
+    .store-details p {
+        font-size: 9px;
+        line-height: 1.15;
+    }
+
+    .meta-table {
+        font-size: 9px;
     }
 
     .items-table {
-        font-size: 8px;
+        font-size: 9px;
+        margin: 3px 0;
     }
 
     .items-table th {
-        font-size: 7px;
-        padding: 1px 2px;
+        padding: 2px 4px;
+        font-size: 8px;
     }
 
     .items-table td {
-        padding: 0.5px 2px;
+        padding: 1px 4px;
+    }
+
+    .item-spec {
+        font-size: 8px;
+        padding-left: 14px;
+    }
+
+    .item-sn {
+        font-size: 8px;
+        padding-left: 14px;
     }
 
     .bottom-section {
-        margin-top: 2px;
-        gap: 6px;
+        gap: 16px;
+        margin-top: 4px;
+        font-size: 9px;
     }
 
     .sig-space {
-        height: 25px;
+        height: 30px;
+    }
+
+    .totals-table {
+        font-size: 9px;
+    }
+
+    .totals-table td {
+        padding: 0.5px 3px;
     }
 
     .terms {
-        margin-top: 4px;
-        padding-top: 2px;
-        font-size: 7px;
+        margin-top: 5px;
+        padding-top: 3px;
+        font-size: 8px;
+        line-height: 1.25;
     }
 }
     </style>
