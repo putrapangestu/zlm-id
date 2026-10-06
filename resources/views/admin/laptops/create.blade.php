@@ -53,14 +53,14 @@
                 {{-- Name, Brand & SKU --}}
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Model Laptop <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" required placeholder="Contoh: ThinkPad T14s Gen 3 AMD"
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Model Laptop</label>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" placeholder="Contoh: ThinkPad T14s Gen 3 AMD"
                             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                         @error('name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Brand / Merek <span class="text-red-500">*</span></label>
-                        <select name="brand_id" id="brand_id" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Brand / Merek</label>
+                        <select name="brand_id" id="brand_id" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                             <option value="">-- Pilih Brand Laptop --</option>
                             @foreach ($brands as $b)
                                 <option value="{{ $b->id }}" data-name="{{ $b->name }}" @selected(old('brand_id') === $b->id || old('brand') === $b->name)>{{ $b->name }}</option>
@@ -84,14 +84,14 @@
                 {{-- Price & Initial Stock --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Harga Jual Normal (Rp) <span class="text-red-500">*</span></label>
-                        <input type="number" step="1000" name="price" value="{{ old('price') }}" required placeholder="12500000"
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Harga Jual Normal (Rp)</label>
+                        <input type="number" step="0.01" name="price" value="{{ old('price') }}" placeholder="12500000"
                             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                         @error('price') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Stok Jual Siap Pakai (Unit) <span class="text-red-500">*</span></label>
-                        <input type="number" name="stock" value="{{ old('stock', 0) }}" min="0" required
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Stok Jual Siap Pakai (Unit)</label>
+                        <input type="number" name="stock" value="{{ old('stock', 0) }}" min="0"
                             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                         @error('stock') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
@@ -134,14 +134,14 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Processor <span class="text-red-500">*</span></label>
-                            <input type="text" name="processor" value="{{ old('processor') }}" required placeholder="Contoh: AMD Ryzen 7 PRO 6850U"
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Processor</label>
+                            <input type="text" name="processor" value="{{ old('processor') }}" placeholder="Contoh: AMD Ryzen 7 PRO 6850U"
                                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                             @error('processor') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">RAM / Memori <span class="text-red-500">*</span></label>
-                            <input type="text" name="ram" value="{{ old('ram') }}" required placeholder="Contoh: 16GB LPDDR5 6400MHz"
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">RAM / Memori</label>
+                            <input type="text" name="ram" value="{{ old('ram') }}" placeholder="Contoh: 16GB LPDDR5 6400MHz"
                                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                             @error('ram') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -149,8 +149,8 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Storage / SSD <span class="text-red-500">*</span></label>
-                            <input type="text" name="storage" value="{{ old('storage') }}" required placeholder="Contoh: 512GB NVMe PCIe Gen4"
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Storage / SSD</label>
+                            <input type="text" name="storage" value="{{ old('storage') }}" placeholder="Contoh: 512GB NVMe PCIe Gen4"
                                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                             @error('storage') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>

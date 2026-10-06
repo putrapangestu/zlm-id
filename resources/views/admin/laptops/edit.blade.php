@@ -37,13 +37,13 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Model Laptop <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" value="{{ old('name', $laptop->name) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Model Laptop</label>
+                    <input type="text" name="name" value="{{ old('name', $laptop->name) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Brand / Merek <span class="text-red-500">*</span></label>
-                    <select name="brand_id" id="brand_id" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Brand / Merek</label>
+                    <select name="brand_id" id="brand_id" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                         <option value="">-- Pilih Brand Laptop --</option>
                         @foreach ($brands as $b)
                             <option value="{{ $b->id }}" data-name="{{ $b->name }}" @selected(old('brand_id', $laptop->brand_id) === $b->id || old('brand', $laptop->brand) === $b->name)>{{ $b->name }}</option>
@@ -73,12 +73,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Harga Normal (Rp)</label>
-                    <input type="number" step="0.01" name="price" value="{{ old('price', $laptop->price) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <input type="number" step="0.01" name="price" value="{{ old('price', $laptop->price) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('price') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Stok Jual Lolos QC (Unit)</label>
-                    <input type="number" name="stock" value="{{ old('stock', $laptop->stock) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <input type="number" name="stock" value="{{ old('stock', $laptop->stock) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('stock') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -120,12 +120,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Processor</label>
-                    <input type="text" name="processor" value="{{ old('processor', $laptop->processor) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <input type="text" name="processor" value="{{ old('processor', $laptop->processor) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('processor') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">RAM</label>
-                    <input type="text" name="ram" value="{{ old('ram', $laptop->ram) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <input type="text" name="ram" value="{{ old('ram', $laptop->ram) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('ram') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -133,12 +133,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Storage</label>
-                    <input type="text" name="storage" value="{{ old('storage', $laptop->storage) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <input type="text" name="storage" value="{{ old('storage', $laptop->storage) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('storage') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Graphics</label>
-                    <input type="text" name="graphics" value="{{ old('graphics', $laptop->graphics) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <input type="text" name="graphics" value="{{ old('graphics', $laptop->graphics) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('graphics') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -146,7 +146,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Display</label>
-                    <input type="text" name="display" value="{{ old('display', $laptop->display) }}" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
+                    <input type="text" name="display" value="{{ old('display', $laptop->display) }}" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all">
                     @error('display') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>

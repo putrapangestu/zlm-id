@@ -55,7 +55,7 @@ class Laptop extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'price' => 'float',
         'discount_value' => 'decimal:2',
         'discount_start_at' => 'datetime',
         'discount_end_at' => 'datetime',
@@ -89,7 +89,9 @@ class Laptop extends Model
     {
         static::creating(function (Laptop $laptop) {
             if (empty($laptop->slug)) {
-                $slug = Str::slug($laptop->name);
+                $slug = filled($laptop->name)
+                    ? Str::slug($laptop->name)
+                    : 'laptop-' . $laptop->id;
                 $originalSlug = $slug;
                 $count = 1;
                 while (static::where('slug', $slug)->exists()) {
@@ -110,7 +112,13 @@ class Laptop extends Model
         });
 
         static::updating(function (Laptop $laptop) {
-            if ($laptop->isDirty('name') && !$laptop->isDirty('slug')) {
+            if ($laptop->isDirty('name') && ! $laptop->isDirty('slug')) {
+                if (blank($laptop->name)) {
+                    $laptop->slug = 'laptop-' . $laptop->id;
+
+                    return;
+                }
+
                 $slug = Str::slug($laptop->name);
                 $originalSlug = $slug;
                 $count = 1;
@@ -198,6 +206,10 @@ class Laptop extends Model
 
     public function getHasDiscountAttribute(): bool
     {
+        if ($this->price === null) {
+            return false;
+        }
+
         $isActive = $this->is_discount_active ?? true;
         if (!$isActive || empty($this->discount_type) || $this->discount_type === 'none' || (float)$this->discount_value <= 0) {
             return false;
@@ -229,12 +241,16 @@ class Laptop extends Model
 
     public function getFinalPriceAttribute(): float
     {
+        if ($this->price === null) {
+            return 0.0;
+        }
+
         return max(0, (float) $this->price - $this->discount_amount);
     }
 
     public function getAvailableStockAttribute(): int
     {
-        return $this->qc_passed_stock > 0 ? $this->qc_passed_stock : $this->stock;
+        return (int) ($this->qc_passed_stock > 0 ? $this->qc_passed_stock : $this->stock);
     }
 
     public function getIsSoldAttribute(): bool

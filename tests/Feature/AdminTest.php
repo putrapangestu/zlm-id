@@ -8,6 +8,7 @@ use App\Models\LaptopVariant;
 use App\Models\Category;
 use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class AdminTest extends TestCase
@@ -73,11 +74,61 @@ class AdminTest extends TestCase
         $this->assertDatabaseHas('laptops', ['name' => 'Test Laptop']);
     }
 
+    public function test_admin_can_create_laptop_with_nullable_attributes(): void
+    {
+        $this->assertContains(Schema::getColumnType('laptops', 'price'), ['double', 'float']);
+
+        $response = $this->actingAs($this->admin)->post('/admin/laptops', [
+            'name' => null,
+            'brand' => null,
+            'description' => null,
+            'price' => null,
+            'processor' => null,
+            'ram' => null,
+            'storage' => null,
+            'stock' => null,
+        ]);
+
+        $response->assertRedirect('/admin/laptops');
+        $this->assertDatabaseHas('laptops', [
+            'name' => null,
+            'brand' => null,
+            'description' => null,
+            'price' => null,
+            'processor' => null,
+            'ram' => null,
+            'storage' => null,
+            'stock' => null,
+        ]);
+    }
+
+    public function test_admin_can_clear_nullable_laptop_attributes(): void
+    {
+        $laptop = Laptop::factory()->create();
+
+        $response = $this->actingAs($this->admin)->patch("/admin/laptops/{$laptop->slug}", [
+            'name' => null,
+            'brand' => null,
+            'description' => null,
+            'price' => null,
+            'processor' => null,
+            'ram' => null,
+            'storage' => null,
+            'stock' => null,
+        ]);
+
+        $response->assertRedirect('/admin/laptops');
+        $laptop->refresh();
+        $this->assertNull($laptop->name);
+        $this->assertSame('laptop-' . $laptop->id, $laptop->slug);
+        $this->assertNull($laptop->price);
+    }
+
     public function test_admin_can_toggle_laptop_status(): void
     {
         $laptop = Laptop::factory()->create(['is_active' => true]);
 
-        $response = $this->actingAs($this->admin)->patch("/admin/laptops/{$laptop->id}/toggle-status");
+        $response = $this->actingAs($this->admin)->patch("/admin/laptops/{$laptop->slug}/toggle-status");
 
         $response->assertRedirect();
         $this->assertDatabaseHas('laptops', [
