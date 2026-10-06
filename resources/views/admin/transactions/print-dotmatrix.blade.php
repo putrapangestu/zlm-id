@@ -229,48 +229,26 @@
             content: "- ";
         }
 
+        @page {
+            size: A4 landscape;
+            margin: 5mm;
+        }
+
         @media print {
-            @page {
-                size: 11in 9.5in;
-                margin: 0;
+            * {
+                box-sizing: border-box;
             }
 
             html,
             body {
-                width: 11in;
-                height: 9.5in;
-                margin: 0;
-                padding: 0;
-            }
-
-            body {
-                background: transparent;
-            }
-
-            .no-print-bar {
-                display: none !important;
-            }
-
-            .paper-container {
-                width: 11in;
-                height: 9.5in;
-                max-width: none;
-                margin: 0;
-                padding: 0;
-                background: transparent;
-                border: none;
-                box-shadow: none;
-            }
-
-            .paper-container::before,
-            .paper-container::after {
-                display: none;
-            }
-
-            .invoice-content {
                 width: 100%;
                 margin: 0;
-                padding: 0.2in 0.35in;
+                padding: 0;
+            }
+
+            .print-container {
+                width: 100%;
+                max-width: none;
             }
         }
     </style>
