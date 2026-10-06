@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class MarketingRoleSeeder extends Seeder
+class GrantShowcaseAccessToAdminsSeeder extends Seeder
 {
     public function run(): void
     {
@@ -15,11 +15,12 @@ class MarketingRoleSeeder extends Seeder
             'guard_name' => 'web',
         ]);
 
-        $role = Role::firstOrCreate([
-            'name' => 'marketing',
-            'guard_name' => 'web',
-        ]);
+        $adminRole = Role::where('name', 'admin')
+            ->where('guard_name', 'web')
+            ->first();
 
-        $role->syncPermissions([$permission]);
+        if ($adminRole) {
+            $adminRole->givePermissionTo($permission);
+        }
     }
 }

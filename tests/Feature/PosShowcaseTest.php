@@ -4,7 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Laptop;
 use App\Models\User;
-use Database\Seeders\MarketingRoleSeeder;
+use Database\Seeders\GrantShowcaseAccessToAdminsSeeder;
+use Database\Seeders\RoleAndUserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -14,23 +15,23 @@ class PosShowcaseTest extends TestCase
 {
     use RefreshDatabase;
 
-    private User $marketer;
+    private User $showcaseUser;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         Permission::create(['name' => 'pos.showcase', 'guard_name' => 'web']);
-        $marketingRole = Role::create(['name' => 'marketing', 'guard_name' => 'web']);
-        $marketingRole->givePermissionTo('pos.showcase');
+        $employeeRole = Role::create(['name' => 'karyawan', 'guard_name' => 'web']);
 
-        $this->marketer = User::factory()->create();
-        $this->marketer->assignRole($marketingRole);
+        $this->showcaseUser = User::factory()->create();
+        $this->showcaseUser->assignRole($employeeRole);
+        $this->showcaseUser->givePermissionTo('pos.showcase');
     }
 
-    public function test_marketing_can_open_the_product_showroom_without_register_controls(): void
+    public function test_employee_with_showcase_permission_can_open_the_read_only_catalog(): void
     {
-        $response = $this->actingAs($this->marketer)->get(route('pos.showcase'));
+        $response = $this->actingAs($this->showcaseUser)->get(route('pos.showcase'));
 
         $response->assertOk()
             ->assertSee('Mode Showroom Offline.')
@@ -49,7 +50,7 @@ class PosShowcaseTest extends TestCase
             'graphics' => 'Integrated graphics',
         ]);
 
-        $response = $this->actingAs($this->marketer)->get(route('pos.showcase.bootstrap'));
+        $response = $this->actingAs($this->showcaseUser)->get(route('pos.showcase.bootstrap'));
 
         $response->assertOk()
             ->assertJsonPath('data.products.0.name', 'Showroom Laptop')
@@ -59,7 +60,7 @@ class PosShowcaseTest extends TestCase
             ->assertJsonPath('data.members', []);
     }
 
-    public function test_users_without_showcase_permission_cannot_open_the_marketing_catalog(): void
+    public function test_users_without_showcase_permission_cannot_open_the_catalog(): void
     {
         $user = User::factory()->create();
 
@@ -68,23 +69,45 @@ class PosShowcaseTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_marketing_users_cannot_use_cashier_bootstrap_or_order_sync_endpoints(): void
+    public function test_showcase_only_users_cannot_use_cashier_bootstrap_or_order_sync_endpoints(): void
     {
-        $this->actingAs($this->marketer)
+        $this->actingAs($this->showcaseUser)
             ->get(route('pos.bootstrap'))
             ->assertForbidden();
 
-        $this->actingAs($this->marketer)
+        $this->actingAs($this->showcaseUser)
             ->post(route('pos.sync'), [])
             ->assertForbidden();
     }
 
-    public function test_marketing_role_seeder_is_idempotent_and_grants_only_the_showcase_permission(): void
+    public function test_admin_role_receives_showcase_permission_from_the_standard_seeder(): void
     {
-        $this->seed(MarketingRoleSeeder::class);
+        $this->seed(RoleAndUserSeeder::class);
 
-        $role = Role::findByName('marketing');
+        $admin = User::role('admin')->firstOrFail();
 
-        $this->assertSame(['pos.showcase'], $role->permissions->pluck('name')->all());
+        $this->assertTrue($admin->can('pos.showcase'));
+
+        $this->actingAs($admin)
+            ->get(route('pos.showcase'))
+            ->assertOk()
+            ->assertSee('Mode Showroom');
+    }
+
+    public function test_showcase_access_can_be_granted_to_existing_admins_without_reseeding_employee_permissions(): void
+    {
+        $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'web']);
+        $admin = User::factory()->create();
+        $admin->assignRole($adminRole);
+
+        Permission::create(['name' => 'pos.access', 'guard_name' => 'web']);
+        $employeeRole = Role::findByName('karyawan');
+        $employeeRole->givePermissionTo('pos.access');
+
+        $this->seed(GrantShowcaseAccessToAdminsSeeder::class);
+
+        $this->assertTrue($admin->fresh()->can('pos.showcase'));
+        $this->assertTrue($employeeRole->fresh()->hasPermissionTo('pos.access'));
+        $this->assertFalse($employeeRole->fresh()->hasPermissionTo('pos.showcase'));
     }
 }

@@ -98,9 +98,6 @@ class RoleAndUserSeeder extends Seeder
         ];
         $karyawanRole->syncPermissions($defaultKaryawanPermissions);
 
-        $marketingRole = Role::firstOrCreate(['name' => 'marketing', 'guard_name' => 'web']);
-        $marketingRole->syncPermissions(['pos.showcase']);
-
         Role::firstOrCreate(['name' => 'customer', 'guard_name' => 'web']);
 
         // 3. Create Default Users

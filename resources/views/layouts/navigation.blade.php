@@ -16,6 +16,11 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @can('pos.showcase')
+                        <x-nav-link :href="route('pos.showcase')" :active="request()->routeIs('pos.showcase*')">
+                            {{ __('Mode Showroom') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
                 @endauth
             </div>
@@ -81,6 +86,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @can('pos.showcase')
+                <x-responsive-nav-link :href="route('pos.showcase')" :active="request()->routeIs('pos.showcase*')">
+                    {{ __('Mode Showroom') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->
