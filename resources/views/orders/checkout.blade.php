@@ -64,8 +64,8 @@
                             <select x-model="provinceId" @change="loadCities()" required
                                     class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all bg-gray-50 focus:bg-white appearance-none cursor-pointer">
                                 <option value="">-- Select Province --</option>
-                                <template x-for="province in provinces" :key="province.province_id">
-                                    <option :value="province.province_id" x-text="province.province"></option>
+                                <template x-for="province in provinces" :key="province.id">
+                                    <option :value="province.id" x-text="province.name"></option>
                                 </template>
                             </select>
                         </div>
@@ -76,8 +76,8 @@
                             <select x-model="cityId" @change="loadShippingCost()" required
                                     class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DF5E1D]/20 focus:border-[#DF5E1D] transition-all bg-gray-50 focus:bg-white appearance-none cursor-pointer">
                                 <option value="">-- Select City --</option>
-                                <template x-for="city in cities" :key="city.city_id">
-                                    <option :value="city.city_id" x-text="city.city_name + ' (' + city.type + ')'"></option>
+                                <template x-for="city in cities" :key="city.id">
+                                    <option :value="city.id" x-text="city.name"></option>
                                 </template>
                             </select>
                             <input type="hidden" name="shipping_city_id" x-model="cityId">
@@ -243,8 +243,8 @@ function shippingCalculator() {
             this.cityId = '';
             this.shippingOptions = [];
             this.shippingSelected = false;
-            const province = this.provinces.find(p => p.province_id == this.provinceId);
-            this.provinceName = province ? province.province : '';
+            const province = this.provinces.find(p => p.id == this.provinceId);
+            this.provinceName = province ? province.name : '';
 
             if (!this.provinceId) return;
 
@@ -259,8 +259,8 @@ function shippingCalculator() {
             this.shippingSelected = false;
             if (!this.cityId) return;
 
-            const city = this.cities.find(c => c.city_id == this.cityId);
-            this.cityName = city ? city.city_name : '';
+            const city = this.cities.find(c => c.id == this.cityId);
+            this.cityName = city ? city.name : '';
 
             this.loadingShipping = true;
             const weight = {{ $totalWeight ?? 1000 }};

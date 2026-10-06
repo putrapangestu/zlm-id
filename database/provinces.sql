@@ -1,0 +1,103 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.3
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Generation Time: Oct 06, 2026 at 12:14 PM
+-- Server version: 10.11.10-MariaDB-log
+-- PHP Version: 8.3.27
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `getpress`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `provinces`
+--
+
+CREATE TABLE `provinces` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `id_rajaongkir` bigint(20) UNSIGNED DEFAULT NULL,
+  `province_id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `provinces`
+--
+
+INSERT INTO `provinces` (`id`, `id_rajaongkir`, `province_id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'NUSA TENGGARA BARAT (NTB)', '2022-06-08 01:56:07', '2026-08-12 21:45:20'),
+(2, 2, 2, 'MALUKU', '2022-06-08 01:56:08', '2026-08-12 21:45:20'),
+(3, 3, 3, 'KALIMANTAN SELATAN', '2022-06-08 01:56:10', '2026-08-12 21:45:21'),
+(4, 4, 4, 'KALIMANTAN TENGAH', '2022-06-08 01:56:11', '2026-08-12 21:45:21'),
+(5, 5, 5, 'JAWA BARAT', '2022-06-08 01:56:12', '2026-08-12 21:45:21'),
+(6, 6, 6, 'BENGKULU', '2022-06-08 01:56:14', '2026-08-12 21:45:23'),
+(7, 7, 7, 'KALIMANTAN TIMUR', '2022-06-08 01:56:15', '2026-08-12 21:45:24'),
+(8, 8, 8, 'KEPULAUAN RIAU', '2022-06-08 01:56:16', '2026-08-12 21:45:24'),
+(9, 9, 9, 'NANGGROE ACEH DARUSSALAM (NAD)', '2022-06-08 01:56:17', '2026-08-12 21:45:24'),
+(10, 10, 10, 'DKI JAKARTA', '2022-06-08 01:56:19', '2026-08-12 21:45:25'),
+(11, 11, 11, 'BANTEN', '2022-06-08 01:56:20', '2026-08-12 21:45:25'),
+(12, 12, 12, 'JAWA TENGAH', '2022-06-08 01:56:22', '2026-08-12 21:45:25'),
+(13, 13, 13, 'JAMBI', '2022-06-08 01:56:23', '2026-08-12 21:45:28'),
+(14, 14, 14, 'PAPUA', '2022-06-08 01:56:25', '2026-08-12 21:45:28'),
+(15, 15, 15, 'BALI', '2022-06-08 01:56:26', '2026-08-12 21:45:30'),
+(16, 16, 16, 'SUMATERA UTARA', '2022-06-08 01:56:27', '2026-08-12 21:45:30'),
+(17, 17, 17, 'GORONTALO', '2022-06-08 01:56:28', '2026-08-12 21:45:32'),
+(18, 18, 18, 'JAWA TIMUR', '2022-06-08 01:56:30', '2026-08-12 21:45:32'),
+(19, 19, 19, 'DI YOGYAKARTA', '2022-06-08 01:56:31', '2026-08-12 21:45:35'),
+(20, 20, 20, 'SULAWESI TENGGARA', '2022-06-08 01:56:33', '2026-08-12 21:45:35'),
+(21, 21, 21, 'NUSA TENGGARA TIMUR (NTT)', '2022-06-08 01:56:34', '2026-08-12 21:45:36'),
+(22, 22, 22, 'SULAWESI UTARA', '2022-06-08 01:56:36', '2026-08-12 21:45:37'),
+(23, 23, 23, 'SUMATERA BARAT', '2022-06-08 01:56:37', '2026-08-12 21:45:39'),
+(24, 24, 24, 'BANGKA BELITUNG', '2022-06-08 01:56:38', '2026-08-12 21:45:39'),
+(25, 25, 25, 'RIAU', '2022-06-08 01:56:40', '2026-08-12 21:45:40'),
+(26, 26, 26, 'SUMATERA SELATAN', '2022-06-08 01:56:41', '2026-08-12 21:45:40'),
+(27, 27, 27, 'SULAWESI TENGAH', '2022-06-08 01:56:42', '2026-08-12 21:45:41'),
+(28, 28, 28, 'KALIMANTAN BARAT', '2022-06-08 01:56:43', '2026-08-12 21:45:42'),
+(29, 29, 29, 'PAPUA BARAT', '2022-06-08 01:56:45', '2026-08-12 21:45:43'),
+(30, 30, 30, 'LAMPUNG', '2022-06-08 01:56:46', '2026-08-12 21:45:44'),
+(31, 31, 31, 'KALIMANTAN UTARA', '2022-06-08 01:56:47', '2026-08-12 21:45:45'),
+(32, 32, 32, 'MALUKU UTARA', '2022-06-08 01:56:49', '2026-08-12 21:45:45'),
+(33, 33, 33, 'SULAWESI SELATAN', '2022-06-08 01:56:50', '2026-08-12 21:45:46'),
+(34, 34, 34, 'SULAWESI BARAT', '2022-06-08 01:56:51', '2026-08-12 21:45:48');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `provinces`
+--
+ALTER TABLE `provinces`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `provinces_id_rajaongkir_index` (`id_rajaongkir`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `provinces`
+--
+ALTER TABLE `provinces`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

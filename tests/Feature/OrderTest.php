@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Laptop;
+use App\Models\City;
+use App\Models\Province;
 use App\Models\Cart;
 use App\Services\XenditService;
 use Spatie\Permission\Models\Role;
@@ -16,6 +18,7 @@ class OrderTest extends TestCase
 
     private User $user;
     private Laptop $laptop;
+    private City $shippingCity;
 
     protected function setUp(): void
     {
@@ -29,6 +32,12 @@ class OrderTest extends TestCase
         $this->user->assignRole('buyer');
 
         $this->laptop = Laptop::factory()->create(['price' => 1600.00, 'stock' => 10]);
+        $province = Province::create(['id_rajaongkir' => 9, 'name' => 'DKI Jakarta']);
+        $this->shippingCity = City::create([
+            'province_id' => $province->id,
+            'id_rajaongkir' => 152,
+            'name' => 'Jakarta Selatan',
+        ]);
 
         // Mock XenditService to avoid external API calls
         $this->mock(XenditService::class, function ($mock) {
@@ -68,17 +77,17 @@ class OrderTest extends TestCase
         $response = $this->actingAs($this->user)->post('/orders', [
             'notes' => 'Leave at door',
             'shipping_address' => 'Jl. Merdeka No. 123',
-            'shipping_city' => 'Jakarta',
-            'shipping_province' => 'DKI Jakarta',
+            'shipping_city' => 'Untrusted city name',
+            'shipping_province' => 'Untrusted province name',
             'shipping_postal_code' => '12345',
             'shipping_phone' => '081234567890',
             'shipping_cost' => 50000,
             'shipping_courier' => 'jne',
             'shipping_service' => 'REG',
             'shipping_etd' => '2-3 hari',
-            'shipping_city_id' => '152',
-            'shipping_city_name' => 'Jakarta Selatan',
-            'shipping_province_name' => 'DKI Jakarta',
+            'shipping_city_id' => (string) $this->shippingCity->id,
+            'shipping_city_name' => 'Untrusted city name',
+            'shipping_province_name' => 'Untrusted province name',
         ]);
 
         $this->assertDatabaseHas('orders', [
@@ -87,6 +96,9 @@ class OrderTest extends TestCase
             'tax' => 352.00,
             'total' => 53552.00, // subtotal(3200) + tax(352) + shipping_cost(50000)
             'shipping_cost' => 50000.00,
+            'shipping_city_id' => (string) $this->shippingCity->id,
+            'shipping_city_name' => 'Jakarta Selatan',
+            'shipping_province_name' => 'DKI Jakarta',
         ]);
 
         $this->assertDatabaseHas('order_items', [
@@ -118,7 +130,7 @@ class OrderTest extends TestCase
             'shipping_courier' => 'jne',
             'shipping_service' => 'REG',
             'shipping_etd' => '2-3 hari',
-            'shipping_city_id' => '152',
+            'shipping_city_id' => (string) $this->shippingCity->id,
             'shipping_city_name' => 'Jakarta Selatan',
             'shipping_province_name' => 'DKI Jakarta',
         ]);
@@ -152,7 +164,7 @@ class OrderTest extends TestCase
             'shipping_courier' => 'jne',
             'shipping_service' => 'REG',
             'shipping_etd' => '2-3 hari',
-            'shipping_city_id' => '152',
+            'shipping_city_id' => (string) $this->shippingCity->id,
             'shipping_city_name' => 'Jakarta Selatan',
             'shipping_province_name' => 'DKI Jakarta',
         ]);

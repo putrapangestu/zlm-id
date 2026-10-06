@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Cart;
+use App\Models\City;
 use App\Models\Laptop;
 use App\Models\Order;
+use App\Models\Province;
 use App\Models\User;
 use App\Services\WinpayService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,6 +23,8 @@ class WinpayPaymentTest extends TestCase
 
     private User $user;
 
+    private City $shippingCity;
+
     private string $publicKeyPath;
 
     private string $privateKeyPath;
@@ -36,6 +40,12 @@ class WinpayPaymentTest extends TestCase
         Role::create(['name' => 'buyer']);
         $this->user = User::factory()->create();
         $this->user->assignRole('buyer');
+        $province = Province::create(['id_rajaongkir' => 9, 'name' => 'DKI Jakarta']);
+        $this->shippingCity = City::create([
+            'province_id' => $province->id,
+            'id_rajaongkir' => 152,
+            'name' => 'Jakarta Selatan',
+        ]);
 
         $this->opensslConfigPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.'winpay-openssl-'.Str::uuid().'.cnf';
         file_put_contents($this->opensslConfigPath, "[req]\ndistinguished_name = req_distinguished_name\n[req_distinguished_name]\n");
@@ -364,7 +374,7 @@ class WinpayPaymentTest extends TestCase
             'shipping_courier' => 'jne',
             'shipping_service' => 'REG',
             'shipping_etd' => '2-3 hari',
-            'shipping_city_id' => '152',
+            'shipping_city_id' => (string) $this->shippingCity->id,
             'shipping_city_name' => 'Jakarta Selatan',
             'shipping_province_name' => 'DKI Jakarta',
         ], $extra);

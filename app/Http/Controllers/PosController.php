@@ -47,7 +47,7 @@ class PosController extends Controller
 
     private function bootstrapResponse(bool $showcase): JsonResponse
     {
-        $productQuery = Laptop::with(['categories', 'variants'])
+        $productQuery = Laptop::with(['categories', 'images', 'variants.laptop'])
             ->where('is_active', true);
 
         if (! $showcase) {
@@ -59,6 +59,7 @@ class PosController extends Controller
                 return [
                     'id' => $laptop->id,
                     'name' => $laptop->name,
+                    'sku' => $laptop->sku,
                     'brand' => $laptop->brand,
                     'price' => $laptop->price,
                     'final_price' => $laptop->final_price,
@@ -78,21 +79,39 @@ class PosController extends Controller
                     'color' => $laptop->color,
                     'warranty' => $laptop->warranty,
                     'battery_life' => $laptop->battery_life,
+                    'weight' => $laptop->weight,
                     'description' => $laptop->description,
                     'kelebihan' => $laptop->kelebihan,
                     'kekurangan' => $laptop->kekurangan,
                     'image' => $laptop->image_url_full,
+                    'images' => $laptop->images
+                        ->map(fn ($image) => [
+                            'url' => $image->image_url_full,
+                            'caption' => $image->caption,
+                        ])
+                        ->prepend(['url' => $laptop->image_url_full, 'caption' => null])
+                        ->filter(fn ($image) => filled($image['url']))
+                        ->unique('url')
+                        ->values(),
+                    'category_names' => $laptop->categories->pluck('name')->values(),
                     'category_ids' => $laptop->categories->pluck('id')->toArray(),
-                    'variants' => $laptop->variants->map(function ($v) use ($laptop) {
+                    'variants' => $laptop->variants->where('is_active', true)->map(function ($v) use ($laptop) {
                         return [
                             'id' => $v->id,
                             'name' => $v->name,
                             'ram' => $v->ram ?? $laptop->ram,
                             'storage' => $v->storage ?? $laptop->storage,
+                            'graphics' => $v->graphics ?? $laptop->graphics,
+                            'display' => $v->display ?? $laptop->display,
+                            'weight' => $v->weight ?? $laptop->weight,
+                            'battery_life' => $v->battery_life ?? $laptop->battery_life,
+                            'image' => $v->image_url_full,
+                            'original_price' => $v->total_price,
                             'price' => $v->final_price,
-                            'stock' => $v->stock,
+                            'has_discount' => $v->has_discount,
+                            'stock' => $v->available_stock,
                         ];
-                    }),
+                    })->values(),
                 ];
             });
 

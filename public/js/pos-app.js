@@ -17,6 +17,7 @@ const PosApp = {
     taxRate: 11,
     syncing: false,
     currentMobileTab: 'catalog',
+    showcaseImages: [],
 
     async init() {
         console.log('[PosApp] Initializing POS...');
@@ -263,7 +264,7 @@ const PosApp = {
     renderProductCard(p) {
         const name = this.escapeHtml(p.name);
         const brand = this.escapeHtml(p.brand);
-        const image = this.escapeHtml(p.image ?? '');
+        const image = this.escapeHtml(p.image || p.images?.[0]?.url || '');
         const processor = this.escapeHtml(p.processor ?? '');
         const ram = this.escapeHtml(p.ram ?? '');
         const price = Number(p.final_price || 0).toLocaleString('id-ID');
@@ -274,7 +275,7 @@ const PosApp = {
                     onclick="PosApp.showShowcaseDetails('${p.id}')">
                 <div class="w-full">
                     <div class="aspect-[4/3] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden mb-3 flex items-center justify-center p-2 relative">
-                        ${image ? `<img src="${image}" alt="${name}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition">` : `<iconify-icon icon="solar:laptop-minimalistic-linear" class="text-gray-300 text-3xl"></iconify-icon>`}
+                        ${image ? `<img src="${image}" alt="${name}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition" onerror="this.replaceWith(Object.assign(document.createElement('span'), {className:'text-[10px] text-gray-400', textContent:'Foto belum tersedia'}))">` : `<span class="text-[10px] text-gray-400">Foto belum tersedia</span>`}
                         ${p.has_discount ? `<span class="absolute top-2 left-2 px-2 py-0.5 bg-rose-500 text-white rounded-md text-[10px] font-bold">PROMO</span>` : ''}
                     </div>
                     <span class="text-[10px] font-bold text-gray-400 uppercase">${brand}</span>
@@ -325,10 +326,16 @@ const PosApp = {
         if (!product || !modal || !content) return;
 
         const escape = value => this.escapeHtml(value ?? '');
-        const image = product.image
-            ? `<img src="${escape(product.image)}" alt="${escape(product.name)}" class="w-full h-full object-contain">`
-            : `<iconify-icon icon="solar:laptop-minimalistic-linear" class="text-gray-300 text-6xl"></iconify-icon>`;
+        this.showcaseImages = Array.isArray(product.images) ? product.images : [];
+        if (!this.showcaseImages.length && product.image) {
+            this.showcaseImages = [{ url: product.image, caption: null }];
+        }
+        const initialImage = this.showcaseImages[0];
+        const image = initialImage
+            ? `<img id="pos-showcase-main-image" src="${escape(initialImage.url)}" alt="${escape(product.name)}" class="w-full h-full object-contain" onerror="PosApp.handleShowcaseImageError(this)">`
+            : this.showcaseImageFallback();
         const specs = [
+            ['SKU', product.sku],
             ['Prosesor', product.processor],
             ['Memori', product.ram],
             ['Penyimpanan', product.storage],
@@ -341,7 +348,10 @@ const PosApp = {
             ['Audio', product.audio],
             ['Warna', product.color],
             ['Garansi', product.warranty],
-        ].filter(([, value]) => value);
+            ['Berat', product.weight ? `${product.weight} kg` : null],
+        ];
+        const originalPrice = Number(product.price || 0);
+        const finalPrice = Number(product.final_price || 0);
 
         content.innerHTML = `
             <div class="p-5 sm:p-7">
@@ -351,17 +361,32 @@ const PosApp = {
                     </button>
                 </div>
                 <div class="grid gap-6 md:grid-cols-2">
-                    <div class="aspect-square rounded-2xl bg-gray-50 border border-gray-100 p-5 flex items-center justify-center">${image}</div>
+                    <div>
+                        <div id="pos-showcase-image-stage" class="aspect-square rounded-2xl bg-gray-50 border border-gray-100 p-5 flex items-center justify-center">${image}</div>
+                        ${this.showcaseImages.length > 1 ? `
+                            <div class="mt-3 flex gap-2 overflow-x-auto">
+                                ${this.showcaseImages.map((photo, index) => `
+                                    <button type="button" onclick="PosApp.selectShowcaseImage(${index})" class="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 p-1 hover:border-[#DF5E1D]" aria-label="Lihat foto ${index + 1}">
+                                        <img src="${escape(photo.url)}" alt="${escape(photo.caption || product.name)}" class="h-full w-full object-contain" loading="lazy" onerror="this.parentElement.classList.add('hidden')">
+                                    </button>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        ${initialImage?.caption ? `<p id="pos-showcase-image-caption" class="mt-2 text-center text-xs text-gray-500">${escape(initialImage.caption)}</p>` : '<p id="pos-showcase-image-caption" class="mt-2 text-center text-xs text-gray-500"></p>'}
+                    </div>
                     <div>
                         <p class="text-xs font-bold uppercase tracking-wider text-[#DF5E1D]">${escape(product.brand)}</p>
                         <h2 class="mt-1 text-2xl font-extrabold text-[#363230]">${escape(product.name)}</h2>
-                        <p class="mt-3 text-xl font-extrabold text-[#DF5E1D] font-mono">Rp ${Number(product.final_price || 0).toLocaleString('id-ID')}</p>
-                        ${product.description ? `<p class="mt-4 text-sm leading-relaxed text-gray-600">${escape(product.description)}</p>` : ''}
+                        ${product.category_names?.length ? `<div class="mt-2 flex flex-wrap gap-1.5">${product.category_names.map(category => `<span class="rounded-full bg-gray-100 px-2.5 py-1 text-[10px] font-semibold text-gray-600">${escape(category)}</span>`).join('')}</div>` : ''}
+                        <p class="mt-3 text-xl font-extrabold text-[#DF5E1D] font-mono">Rp ${finalPrice.toLocaleString('id-ID')}</p>
+                        ${product.has_discount ? `<p class="text-xs text-gray-400 line-through">Harga normal Rp ${originalPrice.toLocaleString('id-ID')}</p>` : ''}
+                        <p class="mt-1 text-xs font-semibold ${Number(product.stock || 0) > 0 ? 'text-emerald-700' : 'text-amber-700'}">${Number(product.stock || 0) > 0 ? 'Stok tercatat tersedia' : 'Stok tidak tersedia / perlu konfirmasi'} — konfirmasi kembali sebelum transaksi.</p>
+                        ${product.description ? `<p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-gray-600">${escape(product.description)}</p>` : '<p class="mt-4 text-xs italic text-gray-400">Deskripsi produk belum diisi.</p>'}
                         <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             ${specs.map(([label, value]) => `
                                 <div class="rounded-xl bg-gray-50 px-3 py-2">
                                     <p class="text-[10px] font-semibold uppercase text-gray-400">${label}</p>
-                                    <p class="mt-0.5 text-xs font-semibold text-gray-700">${escape(value)}</p>
+                                        <p class="mt-0.5 text-xs font-semibold ${value ? 'text-gray-700' : 'text-gray-400 italic'}">${value ? escape(value) : 'Belum diisi'}</p>
                                 </div>
                             `).join('')}
                         </div>
@@ -370,9 +395,19 @@ const PosApp = {
                                 <h3 class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">Varian</h3>
                                 <div class="space-y-2">
                                     ${product.variants.map(variant => `
-                                        <div class="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2 text-xs">
-                                            <span class="font-semibold text-gray-700">${escape(variant.name)} — ${escape(variant.ram)} / ${escape(variant.storage)}</span>
-                                            <span class="font-bold text-[#DF5E1D] whitespace-nowrap">Rp ${Number(variant.price || 0).toLocaleString('id-ID')}</span>
+                                        <div class="rounded-xl border border-gray-100 px-3 py-3 text-xs">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <span class="font-bold text-gray-800">${escape(variant.name)}</span>
+                                                <div class="text-right">
+                                                    <span class="block font-bold text-[#DF5E1D] whitespace-nowrap">Rp ${Number(variant.price || 0).toLocaleString('id-ID')}</span>
+                                                    ${variant.has_discount ? `<span class="text-[10px] text-gray-400 line-through">Rp ${Number(variant.original_price || 0).toLocaleString('id-ID')}</span>` : ''}
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-gray-600">
+                                                ${[['Memori', variant.ram], ['Penyimpanan', variant.storage], ['Grafis', variant.graphics], ['Layar', variant.display], ['Baterai', variant.battery_life], ['Berat', variant.weight ? `${variant.weight} kg` : null]].filter(([, value]) => value).map(([label, value]) => `<span><strong class="text-gray-400">${label}:</strong> ${escape(value)}</span>`).join('')}
+                                            </div>
+                                            ${variant.image ? `<img src="${escape(variant.image)}" alt="Foto ${escape(variant.name)}" class="mt-2 h-16 w-16 rounded-lg border border-gray-100 object-contain" loading="lazy" onerror="this.classList.add('hidden')">` : ''}
+                                            <p class="mt-2 text-[10px] font-semibold ${Number(variant.stock || 0) > 0 ? 'text-emerald-700' : 'text-amber-700'}">Stok varian: ${Number(variant.stock || 0)} unit</p>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -382,14 +417,46 @@ const PosApp = {
                 </div>
                 ${product.kelebihan || product.kekurangan ? `
                     <div class="mt-6 grid gap-3 sm:grid-cols-2">
-                        ${product.kelebihan ? `<div class="rounded-xl bg-emerald-50 p-4"><h3 class="text-xs font-bold text-emerald-800">Keunggulan</h3><p class="mt-1 text-sm text-emerald-900">${escape(product.kelebihan)}</p></div>` : ''}
-                        ${product.kekurangan ? `<div class="rounded-xl bg-amber-50 p-4"><h3 class="text-xs font-bold text-amber-800">Catatan</h3><p class="mt-1 text-sm text-amber-900">${escape(product.kekurangan)}</p></div>` : ''}
+                        ${product.kelebihan ? `<div class="rounded-xl bg-emerald-50 p-4"><h3 class="text-xs font-bold text-emerald-800">Keunggulan</h3><p class="mt-1 whitespace-pre-line text-sm text-emerald-900">${escape(product.kelebihan)}</p></div>` : ''}
+                        ${product.kekurangan ? `<div class="rounded-xl bg-amber-50 p-4"><h3 class="text-xs font-bold text-amber-800">Catatan</h3><p class="mt-1 whitespace-pre-line text-sm text-amber-900">${escape(product.kekurangan)}</p></div>` : ''}
                     </div>
-                ` : ''}
+                ` : `
+                    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                        <div class="rounded-xl bg-emerald-50 p-4"><h3 class="text-xs font-bold text-emerald-800">Keunggulan</h3><p class="mt-1 text-xs italic text-emerald-700">Belum diisi.</p></div>
+                        <div class="rounded-xl bg-amber-50 p-4"><h3 class="text-xs font-bold text-amber-800">Catatan</h3><p class="mt-1 text-xs italic text-amber-700">Belum diisi.</p></div>
+                    </div>
+                `}
             </div>
         `;
 
         modal.classList.remove('hidden');
+    },
+
+    showcaseImageFallback(message = 'Foto produk belum tersedia') {
+        return `<div class="showcase-image-fallback flex flex-col items-center gap-3 text-center text-gray-400"><iconify-icon icon="solar:laptop-minimalistic-linear" class="text-6xl"></iconify-icon><span class="text-xs">${message}</span></div>`;
+    },
+
+    handleShowcaseImageError(image) {
+        const stage = image.parentElement;
+        if (!stage) return;
+
+        image.classList.add('hidden');
+        if (!stage.querySelector('.showcase-image-fallback')) {
+            stage.insertAdjacentHTML('beforeend', this.showcaseImageFallback('Foto tidak dapat dimuat. Periksa kembali gambar produk.'));
+        }
+    },
+
+    selectShowcaseImage(index) {
+        const photo = this.showcaseImages[index];
+        const image = document.getElementById('pos-showcase-main-image');
+        const caption = document.getElementById('pos-showcase-image-caption');
+        if (!photo || !image) return;
+
+        image.src = photo.url;
+        image.alt = photo.caption || image.alt;
+        image.classList.remove('hidden');
+        image.parentElement?.querySelector('.showcase-image-fallback')?.remove();
+        if (caption) caption.textContent = photo.caption || '';
     },
 
     handleProductClick(productId) {

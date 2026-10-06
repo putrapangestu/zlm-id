@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Laptop;
+use App\Models\LaptopImage;
+use App\Models\LaptopVariant;
 use App\Models\User;
 use Database\Seeders\GrantShowcaseAccessToAdminsSeeder;
 use Database\Seeders\RoleAndUserSeeder;
@@ -42,20 +45,60 @@ class PosShowcaseTest extends TestCase
 
     public function test_showroom_bootstrap_includes_active_out_of_stock_products_but_no_customer_or_qc_data(): void
     {
-        Laptop::factory()->create([
+        $laptop = Laptop::factory()->create([
             'name' => 'Showroom Laptop',
+            'sku' => 'SHOWROOM-001',
             'stock' => 0,
             'is_active' => true,
             'description' => 'Produk untuk katalog marketing.',
             'graphics' => 'Integrated graphics',
+            'weight' => 1.25,
+            'image_url' => 'laptops/main.jpg',
         ]);
+        $laptop->images()->create([
+            'image_url' => 'laptops/side.jpg',
+            'caption' => 'Tampak samping',
+            'sort_order' => 1,
+        ]);
+        $laptop->variants()->create([
+            'name' => 'RAM 32 GB',
+            'sku' => 'SHOWROOM-001-32',
+            'price_modifier' => 1000000,
+            'ram' => '32 GB',
+            'graphics' => 'RTX 4060',
+            'display' => '15.6 inch FHD',
+            'weight' => 1.4,
+            'battery_life' => '8 jam',
+            'stock' => 3,
+            'is_active' => true,
+        ]);
+        $laptop->variants()->create([
+            'name' => 'Nonaktif',
+            'sku' => 'SHOWROOM-001-OFF',
+            'is_active' => false,
+        ]);
+        $category = Category::create([
+            'name' => 'Gaming',
+            'slug' => 'gaming',
+            'is_active' => true,
+        ]);
+        $laptop->categories()->attach($category);
 
         $response = $this->actingAs($this->showcaseUser)->get(route('pos.showcase.bootstrap'));
 
         $response->assertOk()
             ->assertJsonPath('data.products.0.name', 'Showroom Laptop')
+            ->assertJsonPath('data.products.0.sku', 'SHOWROOM-001')
             ->assertJsonPath('data.products.0.description', 'Produk untuk katalog marketing.')
             ->assertJsonPath('data.products.0.graphics', 'Integrated graphics')
+            ->assertJsonPath('data.products.0.weight', '1.25')
+            ->assertJsonPath('data.products.0.images.1.caption', 'Tampak samping')
+            ->assertJsonPath('data.products.0.category_names.0', 'Gaming')
+            ->assertJsonPath('data.products.0.variants.0.graphics', 'RTX 4060')
+            ->assertJsonPath('data.products.0.variants.0.display', '15.6 inch FHD')
+            ->assertJsonPath('data.products.0.variants.0.battery_life', '8 jam')
+            ->assertJsonPath('data.products.0.variants.0.stock', 3)
+            ->assertJsonCount(1, 'data.products.0.variants')
             ->assertJsonPath('data.qc_units', [])
             ->assertJsonPath('data.members', []);
     }

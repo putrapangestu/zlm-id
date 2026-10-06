@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\OrderConfirmationMail;
 use App\Models\Cart;
+use App\Models\City;
 use App\Models\Order;
 use App\Services\InventoryService;
 use App\Services\WinpayService;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 use LogicException;
 
 class OrderController extends Controller
@@ -65,8 +67,6 @@ class OrderController extends Controller
 
         $validated = $request->validate([
             'shipping_address' => 'required|string|max:255',
-            'shipping_city' => 'required|string|max:255',
-            'shipping_province' => 'required|string|max:255',
             'shipping_postal_code' => 'required|string|max:20',
             'shipping_phone' => 'required|string|max:20',
             'notes' => 'nullable|string|max:500',
@@ -74,9 +74,11 @@ class OrderController extends Controller
             'shipping_courier' => 'required|string|max:50',
             'shipping_service' => 'required|string|max:100',
             'shipping_etd' => 'nullable|string|max:50',
-            'shipping_city_id' => 'required|string|max:20',
-            'shipping_city_name' => 'required|string|max:255',
-            'shipping_province_name' => 'required|string|max:255',
+            'shipping_city_id' => [
+                'required',
+                'integer',
+                Rule::exists('cities', 'id')->whereNotNull('id_rajaongkir'),
+            ],
             'payment_method' => $paymentGateway === 'winpay'
                 ? 'nullable|in:winpay_qris,winpay_va'
                 : 'prohibited',
@@ -87,6 +89,7 @@ class OrderController extends Controller
         $tax = round($subtotal * (float) config('settings.tax_rate', 11) / 100, 2);
         $shippingCost = (float) $validated['shipping_cost'];
         $total = $subtotal + $tax + $shippingCost;
+        $shippingCity = City::with('province')->findOrFail($validated['shipping_city_id']);
 
         $order = Order::create([
             'user_id' => auth()->id(),
@@ -102,16 +105,16 @@ class OrderController extends Controller
             'payment_status' => 'unpaid',
             'notes' => $validated['notes'] ?? null,
             'shipping_address' => $validated['shipping_address'],
-            'shipping_city' => $validated['shipping_city'],
-            'shipping_province' => $validated['shipping_province'],
+            'shipping_city' => $shippingCity->name,
+            'shipping_province' => $shippingCity->province->name,
             'shipping_postal_code' => $validated['shipping_postal_code'],
             'shipping_phone' => $validated['shipping_phone'],
             'shipping_courier' => $validated['shipping_courier'],
             'shipping_service' => $validated['shipping_service'],
             'shipping_etd' => $validated['shipping_etd'] ?? null,
-            'shipping_city_id' => $validated['shipping_city_id'],
-            'shipping_city_name' => $validated['shipping_city_name'],
-            'shipping_province_name' => $validated['shipping_province_name'],
+            'shipping_city_id' => (string) $shippingCity->id,
+            'shipping_city_name' => $shippingCity->name,
+            'shipping_province_name' => $shippingCity->province->name,
         ]);
 
         foreach ($cart->items as $item) {

@@ -71,3 +71,16 @@ struktur database
 - model_type
 - image
 
+RajaOngkir shipping locations
+------------------------------
+Create the local province, city, and subdistrict tables, then import the supplied
+location dumps with:
+
+    php artisan migrate
+    php artisan db:seed --class=RajaOngkirLocationSeeder
+
+Keep `database/provinces.sql`, `database/cities.sql`, and
+`database/subdistricts.sql` available when running the seeder. The imported
+`id` is the local primary key and `id_rajaongkir` is the external API ID.
+Checkout submits and stores the local city ID; shipping quotes translate it to
+`id_rajaongkir` before calling RajaOngkir.

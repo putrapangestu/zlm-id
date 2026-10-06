@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Addon;
+use App\Models\City;
 use App\Models\Laptop;
+use App\Models\Province;
 use App\Models\User;
 use App\Models\Cart;
 use App\Services\XenditService;
@@ -19,6 +21,7 @@ class AddonsAndSpecsTest extends TestCase
     private User $buyer;
     private Laptop $laptop;
     private Addon $addon;
+    private City $shippingCity;
 
     protected function setUp(): void
     {
@@ -32,6 +35,12 @@ class AddonsAndSpecsTest extends TestCase
 
         $this->buyer = User::factory()->create();
         $this->buyer->assignRole('buyer');
+        $province = Province::create(['id_rajaongkir' => 18, 'name' => 'Jawa Timur']);
+        $this->shippingCity = City::create([
+            'province_id' => $province->id,
+            'id_rajaongkir' => 256,
+            'name' => 'Malang',
+        ]);
 
         $this->laptop = Laptop::factory()->create([
             'name' => 'ThinkPad X1 Carbon Gen 10',
@@ -160,7 +169,7 @@ class AddonsAndSpecsTest extends TestCase
             'shipping_courier' => 'jne',
             'shipping_service' => 'REG',
             'shipping_etd' => '1-2 hari',
-            'shipping_city_id' => '256',
+            'shipping_city_id' => (string) $this->shippingCity->id,
             'shipping_city_name' => 'Malang',
             'shipping_province_name' => 'Jawa Timur',
         ]);
