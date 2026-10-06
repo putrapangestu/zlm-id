@@ -3,8 +3,8 @@
     <!-- Logo -->
     <div class="h-16 flex items-center px-6 border-b border-gray-100 gap-3">
         <img src="{{ asset('assets/logo.png') }}" alt="ZLM.ID Logo" class="h-8 w-auto">
-        <div class="text-xl font-medium tracking-tighter text-[#363230]">
-            ZLM.<span class="text-[#DF5E1D]">ID</span>
+        <div class="text-xl font-medium tracking-tighter text-[#DF5E1D]">
+            ZLM.<span>ID</span>
         </div>
     </div>
 

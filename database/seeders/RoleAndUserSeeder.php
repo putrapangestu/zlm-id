@@ -19,6 +19,7 @@ class RoleAndUserSeeder extends Seeder
         $permissions = [
             // POS Kasir
             'pos.access' => 'Akses Kasir POS',
+            'pos.showcase' => 'Akses Katalog Showroom POS Offline',
             'pos.discount' => 'Berikan Diskon Kasir',
 
             // Quality Control (QC)
@@ -96,6 +97,9 @@ class RoleAndUserSeeder extends Seeder
             'members.view',
         ];
         $karyawanRole->syncPermissions($defaultKaryawanPermissions);
+
+        $marketingRole = Role::firstOrCreate(['name' => 'marketing', 'guard_name' => 'web']);
+        $marketingRole->syncPermissions(['pos.showcase']);
 
         Role::firstOrCreate(['name' => 'customer', 'guard_name' => 'web']);
 

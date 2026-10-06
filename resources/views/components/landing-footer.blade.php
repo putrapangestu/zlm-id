@@ -9,7 +9,7 @@
                     @if(config('settings.store_logo'))
                         <img src="{{ asset('storage/' . config('settings.store_logo')) }}" alt="{{ config('settings.store_name', 'ZLM.ID') }}" class="h-8">
                     @else
-                        <h4 class="text-white font-bold text-xl tracking-tight">ZLM<span class="text-[#DF5E1D]">.ID</span></h4>
+                        <h4 class="text-[#DF5E1D] font-bold text-xl tracking-tight">ZLM<span>.ID</span></h4>
                     @endif
                 </a>
                 <p class="text-sm text-gray-400 leading-relaxed">{{ config('settings.store_description', 'Premium laptop store — engineered excellence for professionals, creators, and gamers.') }}</p>

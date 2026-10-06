@@ -27,15 +27,34 @@ class PosController extends Controller
 
     public function index(): View
     {
-        return view('pos.index');
+        return view('pos.index', ['showcaseMode' => false]);
+    }
+
+    public function showcase(): View
+    {
+        return view('pos.index', ['showcaseMode' => true]);
     }
 
     public function bootstrap(): JsonResponse
     {
-        // Only products that have passed QC and have sellable stock
-        $products = Laptop::with(['categories', 'variants'])
-            ->where('stock', '>', 0)
-            ->get()
+        return $this->bootstrapResponse(false);
+    }
+
+    public function showcaseBootstrap(): JsonResponse
+    {
+        return $this->bootstrapResponse(true);
+    }
+
+    private function bootstrapResponse(bool $showcase): JsonResponse
+    {
+        $productQuery = Laptop::with(['categories', 'variants'])
+            ->where('is_active', true);
+
+        if (! $showcase) {
+            $productQuery->where('stock', '>', 0);
+        }
+
+        $products = $productQuery->get()
             ->map(function ($laptop) {
                 return [
                     'id' => $laptop->id,
@@ -50,6 +69,18 @@ class PosController extends Controller
                     'processor' => $laptop->processor,
                     'ram' => $laptop->ram,
                     'storage' => $laptop->storage,
+                    'graphics' => $laptop->graphics,
+                    'display' => $laptop->display,
+                    'ports' => $laptop->ports,
+                    'camera' => $laptop->camera,
+                    'audio' => $laptop->audio,
+                    'connectivity' => $laptop->connectivity,
+                    'color' => $laptop->color,
+                    'warranty' => $laptop->warranty,
+                    'battery_life' => $laptop->battery_life,
+                    'description' => $laptop->description,
+                    'kelebihan' => $laptop->kelebihan,
+                    'kekurangan' => $laptop->kekurangan,
                     'image' => $laptop->image_url_full,
                     'category_ids' => $laptop->categories->pluck('id')->toArray(),
                     'variants' => $laptop->variants->map(function ($v) use ($laptop) {
@@ -66,7 +97,7 @@ class PosController extends Controller
             });
 
         // Also fetch QC Passed items with SKUs for instant barcode scanning
-        $qcUnits = ProductItem::with('laptop')
+        $qcUnits = $showcase ? collect() : ProductItem::with('laptop')
             ->where('qc_status', 'passed')
             ->whereNotNull('sku')
             ->get()
@@ -84,7 +115,7 @@ class PosController extends Controller
 
         $categories = Category::where('is_active', true)->get(['id', 'name', 'slug']);
 
-        $members = User::role('customer')
+        $members = $showcase ? collect() : User::role('customer')
             ->get(['id', 'name', 'email', 'phone_number', 'member_number', 'member_tier', 'member_points'])
             ->map(function ($m) {
                 return [

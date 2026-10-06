@@ -19,7 +19,7 @@
                     @if($storeLogo)
                         <img src="{{ $storeLogo }}" alt="{{ config('settings.store_name', 'ZLM.ID') }}" class="h-8 sm:h-9 w-auto object-contain">
                     @endif
-                    <span class="text-xl font-black tracking-tight text-[#363230]">ZLM<span class="text-[#DF5E1D]">.ID</span></span>
+                    <span class="text-xl font-black tracking-tight text-[#DF5E1D]">ZLM<span>.ID</span></span>
                 </a>
             </div>
 
@@ -61,6 +61,9 @@
 
                             @can('pos.access')
                                 <a href="{{ route('pos.index') }}" class="block px-3 py-2 text-xs font-semibold text-emerald-600 hover:bg-emerald-50 rounded-xl transition">Aplikasi Kasir POS</a>
+                            @endcan
+                            @can('pos.showcase')
+                                <a href="{{ route('pos.showcase') }}" class="block px-3 py-2 text-xs font-semibold text-[#DF5E1D] hover:bg-orange-50 rounded-xl transition">Katalog Showroom Offline</a>
                             @endcan
 
                             <div class="border-t border-gray-100 my-1"></div>

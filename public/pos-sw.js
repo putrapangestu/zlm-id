@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zlm-pos-cache-v2';
+const CACHE_NAME = 'zlm-pos-cache-v3';
 const ASSETS_TO_CACHE = [
     '/pos',
     '/pos-manifest.json',
@@ -44,7 +44,7 @@ self.addEventListener('fetch', (event) => {
     }
 
     // Network-first for bootstrap data with cache fallback
-    if (url.pathname.includes('/pos/bootstrap')) {
+    if (url.pathname.includes('/pos/bootstrap') || url.pathname.includes('/pos/showcase/bootstrap')) {
         event.respondWith(
             fetch(event.request)
                 .then((response) => {

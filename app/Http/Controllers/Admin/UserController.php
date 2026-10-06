@@ -67,7 +67,7 @@ class UserController extends Controller
 
         $user->assignRole($validated['role']);
 
-        if ($validated['role'] === 'karyawan' && !empty($validated['permissions'])) {
+        if (in_array($validated['role'], ['karyawan', 'marketing'], true) && !empty($validated['permissions'])) {
             $user->syncPermissions($validated['permissions']);
         } elseif ($validated['role'] === 'admin') {
             $user->syncPermissions(Permission::all());
@@ -133,7 +133,7 @@ class UserController extends Controller
 
         $user->syncRoles([$validated['role']]);
 
-        if ($validated['role'] === 'karyawan') {
+        if (in_array($validated['role'], ['karyawan', 'marketing'], true)) {
             $user->syncPermissions($validated['permissions'] ?? []);
         } elseif ($validated['role'] === 'admin') {
             $user->syncPermissions(Permission::all());
@@ -163,6 +163,7 @@ class UserController extends Controller
         return [
             'Kasir & Transaksi POS' => [
                 'pos.access' => 'Buka Aplikasi Kasir POS & Transaksi',
+                'pos.showcase' => 'Buka Katalog Showroom POS Offline (tanpa transaksi)',
                 'pos.discount' => 'Berikan Diskon Khusus Kasir',
             ],
             'Quality Control (QC)' => [

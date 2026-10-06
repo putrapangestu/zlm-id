@@ -100,8 +100,10 @@ Route::post('/tracking', [TrackingController::class, 'trackByNumber'])->name('tr
 */
 Route::middleware(['auth'])->prefix('pos')->name('pos.')->group(function () {
     Route::get('/', [PosController::class, 'index'])->name('index')->middleware('can:pos.access');
-    Route::get('/bootstrap', [PosController::class, 'bootstrap'])->name('bootstrap');
-    Route::post('/sync', [PosController::class, 'sync'])->name('sync');
+    Route::get('/bootstrap', [PosController::class, 'bootstrap'])->name('bootstrap')->middleware('can:pos.access');
+    Route::get('/showcase', [PosController::class, 'showcase'])->name('showcase')->middleware('can:pos.showcase');
+    Route::get('/showcase/bootstrap', [PosController::class, 'showcaseBootstrap'])->name('showcase.bootstrap')->middleware('can:pos.showcase');
+    Route::post('/sync', [PosController::class, 'sync'])->name('sync')->middleware('can:pos.access');
 });
 
 /*

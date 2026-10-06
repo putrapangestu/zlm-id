@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>ZLM.ID — Aplikasi Kasir POS (Offline-First)</title>
+    <title>{{ $showcaseMode ? 'ZLM.ID — Katalog Showroom Offline' : 'ZLM.ID — Aplikasi Kasir POS (Offline-First)' }}</title>
 
     <link rel="manifest" href="/pos-manifest.json">
     <meta name="theme-color" content="#DF5E1D">
@@ -71,12 +71,13 @@
                 ZLM
             </div>
             <div>
-                <h1 class="text-xs sm:text-sm font-bold text-gray-900 leading-tight">POS KASIR ZLM.ID</h1>
+                <h1 class="text-xs sm:text-sm font-bold text-gray-900 leading-tight">{{ $showcaseMode ? 'KATALOG SHOWROOM ZLM.ID' : 'POS KASIR ZLM.ID' }}</h1>
                 <p class="text-[9px] sm:text-[10px] text-gray-400">Kasir: <strong class="text-gray-700">{{ auth()->user()->name ?? 'Petugas' }}</strong></p>
             </div>
         </div>
 
         {{-- Barcode Quick Scanner Box --}}
+        @unless($showcaseMode)
         <div class="hidden sm:block flex-1 max-w-md mx-2 lg:mx-4">
             <div class="relative">
                 <iconify-icon icon="solar:barcode-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base sm:text-lg"></iconify-icon>
@@ -84,9 +85,21 @@
                     class="w-full bg-gray-50 border border-gray-200 rounded-xl py-1.5 sm:py-2 pl-9 sm:pl-10 pr-3 sm:pr-4 text-xs font-mono font-semibold text-[#363230] focus:outline-none focus:border-[#DF5E1D] focus:ring-2 focus:ring-[#DF5E1D]/10 transition-all">
             </div>
         </div>
+        @endunless
 
         {{-- Right Statuses & Actions --}}
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            @if($showcaseMode && auth()->user()->can('pos.access'))
+                <a href="{{ route('pos.index') }}" class="px-3 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-bold hover:bg-gray-200" title="Kembali ke mode kasir">
+                    Mode Kasir
+                </a>
+            @elseif(!$showcaseMode && auth()->user()->can('pos.showcase'))
+                <a href="{{ route('pos.showcase') }}" class="px-3 py-2 rounded-xl bg-orange-50 text-[#DF5E1D] text-xs font-bold hover:bg-orange-100" title="Tampilkan katalog untuk customer">
+                    <span class="hidden sm:inline">Mode Showroom</span>
+                    <span class="sm:hidden">Showroom</span>
+                </a>
+            @endif
+
             {{-- Network Badge --}}
             <div id="network-status-badge" class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] sm:text-xs font-semibold">
                 <span id="network-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -94,17 +107,20 @@
             </div>
 
             {{-- Pending Sync Badge --}}
+            @unless($showcaseMode)
             <button onclick="PosApp.syncQueue()" id="pos-sync-queue-badge" class="hidden px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-orange-500 text-white text-[10px] sm:text-[11px] font-bold animate-bounce" title="Klik untuk paksa sinkronisasi ke server">
                 0 Sync
             </button>
+            @endunless
 
-            <a href="{{ route('admin.dashboard') }}" class="p-1.5 sm:p-2 text-gray-400 hover:text-[#363230] hover:bg-gray-100 rounded-xl transition-colors" title="Kembali ke Panel Admin">
+            <a href="{{ $showcaseMode ? route('landing.home') : route('admin.dashboard') }}" class="p-1.5 sm:p-2 text-gray-400 hover:text-[#363230] hover:bg-gray-100 rounded-xl transition-colors" title="{{ $showcaseMode ? 'Kembali ke toko' : 'Kembali ke Panel Admin' }}">
                 <iconify-icon icon="solar:widget-2-linear" class="text-lg sm:text-xl"></iconify-icon>
             </a>
         </div>
     </header>
 
     {{-- Barcode Scanner on Mobile Screen (<sm) --}}
+    @unless($showcaseMode)
     <div class="sm:hidden bg-white px-3 py-1.5 border-b border-gray-200/70 shrink-0">
         <div class="relative">
             <iconify-icon icon="solar:barcode-linear" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base"></iconify-icon>
@@ -112,8 +128,10 @@
                 class="w-full bg-gray-50 border border-gray-200 rounded-xl py-1.5 pl-9 pr-3 text-xs font-mono font-semibold text-[#363230] focus:outline-none focus:border-[#DF5E1D]">
         </div>
     </div>
+    @endunless
 
     {{-- Mobile Tab Switcher (Visible on < lg) --}}
+    @unless($showcaseMode)
     <div class="flex lg:hidden bg-white border-b border-gray-200 px-3 py-1.5 shrink-0 gap-2 z-20">
         <button type="button" id="tab-btn-catalog" onclick="PosApp.switchMobileTab('catalog')"
             class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-[#DF5E1D] text-white shadow-xs">
@@ -127,12 +145,19 @@
             <span id="mobile-cart-badge" class="px-1.5 py-0.5 bg-[#DF5E1D] text-white rounded-full text-[10px] font-extrabold hidden">0</span>
         </button>
     </div>
+    @endunless
 
     {{-- Main POS Workspace --}}
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 relative">
 
         {{-- Left Area: Product Catalog & Category Tabs --}}
-        <section id="pos-catalog-section" class="flex-1 flex flex-col p-3 sm:p-4 overflow-hidden lg:border-r border-gray-200/80 min-h-0">
+        <section id="pos-catalog-section" class="flex-1 flex flex-col p-3 sm:p-4 overflow-hidden {{ $showcaseMode ? '' : 'lg:border-r border-gray-200/80' }} min-h-0">
+            @if($showcaseMode)
+            <div class="mb-3 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-xs text-orange-900 shrink-0">
+                <strong>Mode Showroom Offline.</strong> Katalog ini menggunakan data sinkronisasi terakhir. Konfirmasikan harga dan ketersediaan stok sebelum menjanjikan kepada customer.
+            </div>
+            @endif
+
             {{-- Category Pills & Search --}}
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 mb-3 shrink-0">
                 <div id="category-pills" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 max-w-full lg:max-w-2xl scrollbar-none">
@@ -152,6 +177,7 @@
             </div>
 
             {{-- Floating Bottom Cart Bar on Mobile when Cart has items --}}
+            @unless($showcaseMode)
             <div id="pos-mobile-cart-bar" class="lg:hidden fixed bottom-3 left-3 right-3 z-30 bg-[#363230] text-white p-3 rounded-2xl shadow-xl flex items-center justify-between gap-3 transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-10 h-10 rounded-xl bg-[#DF5E1D] flex items-center justify-center text-white shrink-0 relative">
@@ -168,9 +194,11 @@
                     <iconify-icon icon="solar:alt-arrow-right-linear" class="text-base"></iconify-icon>
                 </button>
             </div>
+            @endunless
         </section>
 
         {{-- Right Area: Cart & Checkout --}}
+        @unless($showcaseMode)
         <aside id="pos-cart-aside" class="hidden lg:flex w-full lg:w-[380px] xl:w-[420px] bg-white flex-col shrink-0 shadow-lg z-10 min-h-0 h-full">
 
             {{-- Cart Header & Member Selector --}}
@@ -240,12 +268,18 @@
                 </button>
             </div>
         </aside>
+        @endunless
 
     </main>
 
     {{-- MODAL: Variant Selector --}}
     <div id="pos-variant-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
         <div id="pos-variant-modal-content" class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden animate-scale"></div>
+    </div>
+
+    {{-- MODAL: Product Showroom Details --}}
+    <div id="pos-showcase-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 hidden" onclick="if(event.target === this) this.classList.add('hidden')">
+        <div id="pos-showcase-modal-content" class="bg-white rounded-3xl max-w-3xl w-full max-h-[90dvh] overflow-y-auto shadow-2xl"></div>
     </div>
 
     {{-- MODAL: Member Selector --}}
@@ -357,6 +391,7 @@
     </div>
 
     <!-- Scripts -->
+    <script>window.POS_SHOWCASE_MODE = @json($showcaseMode);</script>
     <script src="/js/pos-db.js"></script>
     <script src="/js/pos-app.js"></script>
 </body>

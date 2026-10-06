@@ -3,7 +3,7 @@
  */
 const PosDB = (function () {
     const DB_NAME = 'zlm_pos_db';
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
     let dbInstance = null;
 
     function open() {
@@ -24,6 +24,12 @@ const PosDB = (function () {
                     prodStore.createIndex('brand', 'brand', { unique: false });
                 }
 
+                if (!db.objectStoreNames.contains('showcase_products')) {
+                    const showcaseStore = db.createObjectStore('showcase_products', { keyPath: 'id' });
+                    showcaseStore.createIndex('name', 'name', { unique: false });
+                    showcaseStore.createIndex('brand', 'brand', { unique: false });
+                }
+
                 // QC Units with SKU Store
                 if (!db.objectStoreNames.contains('qc_units')) {
                     const qcStore = db.createObjectStore('qc_units', { keyPath: 'id' });
@@ -33,6 +39,10 @@ const PosDB = (function () {
                 // Categories Store
                 if (!db.objectStoreNames.contains('categories')) {
                     db.createObjectStore('categories', { keyPath: 'id' });
+                }
+
+                if (!db.objectStoreNames.contains('showcase_categories')) {
+                    db.createObjectStore('showcase_categories', { keyPath: 'id' });
                 }
 
                 // Members Store

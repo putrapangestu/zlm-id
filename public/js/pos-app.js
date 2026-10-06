@@ -3,6 +3,7 @@
  */
 const PosApp = {
     isOnline: navigator.onLine,
+    isShowcase: window.POS_SHOWCASE_MODE === true,
     products: [],
     qcUnits: [],
     categories: [],
@@ -21,7 +22,7 @@ const PosApp = {
         console.log('[PosApp] Initializing POS...');
         this.setupServiceWorker();
         this.setupNetworkListeners();
-        this.setupBarcodeScanner();
+        if (!this.isShowcase) this.setupBarcodeScanner();
 
         // Mobile / Tablet responsiveness listener
         window.addEventListener('resize', () => {
@@ -44,7 +45,7 @@ const PosApp = {
         // If online, fetch fresh data from server and sync pending queue
         if (this.isOnline) {
             await this.fetchBootstrap();
-            await this.syncQueue();
+            if (!this.isShowcase) await this.syncQueue();
         }
     },
 
@@ -60,15 +61,23 @@ const PosApp = {
         window.addEventListener('online', async () => {
             this.isOnline = true;
             this.updateConnectivityUI();
-            this.showToast('Koneksi internet terhubung. Menyinkronkan data kasir...', 'info');
+            this.showToast(
+                this.isShowcase ? 'Online kembali. Memperbarui katalog produk...' : 'Koneksi internet terhubung. Menyinkronkan data kasir...',
+                'info'
+            );
             await this.fetchBootstrap();
-            await this.syncQueue();
+            if (!this.isShowcase) await this.syncQueue();
         });
 
         window.addEventListener('offline', () => {
             this.isOnline = false;
             this.updateConnectivityUI();
-            this.showToast('Mode Offline Aktif. Transaksi disimpan di perangkat & disinkronkan otomatis saat online.', 'warning');
+            this.showToast(
+                this.isShowcase
+                    ? 'Mode offline aktif. Menampilkan katalog yang terakhir disinkronkan.'
+                    : 'Mode Offline Aktif. Transaksi disimpan di perangkat & disinkronkan otomatis saat online.',
+                'warning'
+            );
         });
 
         this.updateConnectivityUI();
@@ -83,7 +92,7 @@ const PosApp = {
 
         if (this.isOnline) {
             badge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold';
-            text.innerText = 'Online (Sinkron Aktif)';
+            text.innerText = this.isShowcase ? 'Online (Katalog)' : 'Online (Sinkron Aktif)';
             dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
         } else {
             badge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold';
@@ -94,10 +103,12 @@ const PosApp = {
 
     async loadFromIndexedDB() {
         try {
-            this.products = await PosDB.getAll('products');
-            this.qcUnits = await PosDB.getAll('qc_units');
-            this.categories = await PosDB.getAll('categories');
-            this.members = await PosDB.getAll('members');
+            this.products = await PosDB.getAll(this.isShowcase ? 'showcase_products' : 'products');
+            this.categories = await PosDB.getAll(this.isShowcase ? 'showcase_categories' : 'categories');
+            if (!this.isShowcase) {
+                this.qcUnits = await PosDB.getAll('qc_units');
+                this.members = await PosDB.getAll('members');
+            }
             console.log('[PosApp] Loaded from IndexedDB:', {
                 products: this.products.length,
                 members: this.members.length
@@ -109,7 +120,8 @@ const PosApp = {
 
     async fetchBootstrap() {
         try {
-            const res = await fetch('/pos/bootstrap');
+            const bootstrapUrl = this.isShowcase ? '/pos/showcase/bootstrap' : '/pos/bootstrap';
+            const res = await fetch(bootstrapUrl);
             if (!res.ok) throw new Error('Bootstrap HTTP Error');
             const data = await res.json();
 
@@ -122,10 +134,12 @@ const PosApp = {
                 this.taxRate = data.data.settings.tax_rate ?? 11;
 
                 // Cache in IndexedDB
-                await PosDB.setAll('products', this.products);
-                await PosDB.setAll('qc_units', this.qcUnits);
-                await PosDB.setAll('categories', this.categories);
-                await PosDB.setAll('members', this.members);
+                await PosDB.setAll(this.isShowcase ? 'showcase_products' : 'products', this.products);
+                await PosDB.setAll(this.isShowcase ? 'showcase_categories' : 'categories', this.categories);
+                if (!this.isShowcase) {
+                    await PosDB.setAll('qc_units', this.qcUnits);
+                    await PosDB.setAll('members', this.members);
+                }
 
                 this.renderCategories();
                 this.renderProducts();
@@ -157,6 +171,8 @@ const PosApp = {
     },
 
     async handleBarcodeScanned(code) {
+        if (this.isShowcase) return;
+
         // 1. Check in QC Units by exact SKU or Serial
         const qcUnit = await PosDB.findBySku(code);
         if (qcUnit) {
@@ -194,7 +210,7 @@ const PosApp = {
             const count = this.products.filter(p => p.category_ids && p.category_ids.includes(cat.id)).length;
             html += `
                 <button onclick="PosApp.selectCategory('${cat.id}')" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${this.selectedCategory === cat.id ? 'bg-[#DF5E1D] text-white shadow-sm' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
-                    ${cat.name} (${count})
+                    ${this.escapeHtml(cat.name)} (${count})
                 </button>
             `;
         });
@@ -235,44 +251,167 @@ const PosApp = {
             grid.innerHTML = `
                 <div class="col-span-full py-16 text-center text-gray-400">
                     <iconify-icon icon="solar:box-minimalistic-linear" class="text-4xl"></iconify-icon>
-                    <p class="text-xs mt-2">Tidak ada produk ditemukan dengan kriteria ini.</p>
+                    <p class="text-xs mt-2">${this.isShowcase && !this.isOnline ? 'Katalog belum tersimpan di perangkat ini. Hubungkan internet satu kali untuk mengunduh katalog.' : 'Tidak ada produk ditemukan dengan kriteria ini.'}</p>
                 </div>
             `;
             return;
         }
 
-        grid.innerHTML = filtered.map(p => `
+        grid.innerHTML = filtered.map(p => this.renderProductCard(p)).join('');
+    },
+
+    renderProductCard(p) {
+        const name = this.escapeHtml(p.name);
+        const brand = this.escapeHtml(p.brand);
+        const image = this.escapeHtml(p.image ?? '');
+        const processor = this.escapeHtml(p.processor ?? '');
+        const ram = this.escapeHtml(p.ram ?? '');
+        const price = Number(p.final_price || 0).toLocaleString('id-ID');
+
+        if (this.isShowcase) {
+            return `
+            <button type="button" class="text-left bg-white rounded-2xl border border-gray-200/70 p-3.5 shadow-sm hover:border-[#DF5E1D]/50 hover:shadow-md transition-all flex flex-col justify-between group"
+                    onclick="PosApp.showShowcaseDetails('${p.id}')">
+                <div class="w-full">
+                    <div class="aspect-[4/3] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden mb-3 flex items-center justify-center p-2 relative">
+                        ${image ? `<img src="${image}" alt="${name}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition">` : `<iconify-icon icon="solar:laptop-minimalistic-linear" class="text-gray-300 text-3xl"></iconify-icon>`}
+                        ${p.has_discount ? `<span class="absolute top-2 left-2 px-2 py-0.5 bg-rose-500 text-white rounded-md text-[10px] font-bold">PROMO</span>` : ''}
+                    </div>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">${brand}</span>
+                    <h4 class="text-sm font-bold text-[#363230] line-clamp-2 mt-0.5 leading-snug">${name}</h4>
+                    <p class="text-xs text-gray-500 mt-1">${processor}${processor && ram ? ' &bull; ' : ''}${ram}</p>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-gray-100 w-full flex items-center justify-between gap-2">
+                    <span class="text-base font-extrabold text-[#DF5E1D] font-mono">Rp ${price}</span>
+                    <span class="text-[11px] font-bold text-gray-600">Spesifikasi <iconify-icon icon="solar:arrow-right-linear"></iconify-icon></span>
+                </div>
+            </button>
+            `;
+        }
+
+        return `
             <div class="bg-white rounded-2xl border border-gray-200/70 p-3.5 shadow-sm hover:border-[#DF5E1D]/50 hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer" onclick="PosApp.handleProductClick('${p.id}')">
                 <div>
                     <div class="aspect-[4/3] rounded-xl bg-gray-50 border border-gray-100 overflow-hidden mb-3 flex items-center justify-center p-2 relative">
-                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition">` : `<iconify-icon icon="solar:laptop-minimalistic-linear" class="text-gray-300 text-3xl"></iconify-icon>`}
+                        ${image ? `<img src="${image}" alt="${name}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition">` : `<iconify-icon icon="solar:laptop-minimalistic-linear" class="text-gray-300 text-3xl"></iconify-icon>`}
                         ${p.has_discount ? `<span class="absolute top-2 left-2 px-2 py-0.5 bg-rose-500 text-white rounded-md text-[10px] font-bold">PROMO</span>` : ''}
                         <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-gray-900/80 backdrop-blur-sm text-white rounded-md text-[10px] font-semibold">Stok: ${p.stock}</span>
                     </div>
 
-                    <span class="text-[10px] font-bold text-gray-400 uppercase">${p.brand}</span>
-                    <h4 class="text-xs font-bold text-[#363230] line-clamp-2 mt-0.5 leading-snug">${p.name}</h4>
-                    <p class="text-[11px] text-gray-500 mt-1">${p.processor ?? ''} &bull; ${p.ram ?? ''}</p>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">${brand}</span>
+                    <h4 class="text-xs font-bold text-[#363230] line-clamp-2 mt-0.5 leading-snug">${name}</h4>
+                    <p class="text-[11px] text-gray-500 mt-1">${processor} &bull; ${ram}</p>
                 </div>
 
                 <div class="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between">
                     <div>
-                        ${p.has_discount ? `<span class="text-[10px] text-gray-400 line-through block">Rp ${p.price.toLocaleString('id-ID')}</span>` : ''}
-                        <span class="text-sm font-extrabold text-[#DF5E1D] font-mono">Rp ${p.final_price.toLocaleString('id-ID')}</span>
+                        ${p.has_discount ? `<span class="text-[10px] text-gray-400 line-through block">Rp ${Number(p.price || 0).toLocaleString('id-ID')}</span>` : ''}
+                        <span class="text-sm font-extrabold text-[#DF5E1D] font-mono">Rp ${price}</span>
                     </div>
                     <button class="w-8 h-8 rounded-xl bg-orange-50 text-[#DF5E1D] flex items-center justify-center hover:bg-[#DF5E1D] hover:text-white transition">
                         <iconify-icon icon="solar:plus-linear" class="text-lg"></iconify-icon>
                     </button>
                 </div>
             </div>
-        `).join('');
+        `;
+    },
+
+    showShowcaseDetails(productId) {
+        if (!this.isShowcase) return;
+
+        const product = this.products.find(item => item.id === productId);
+        const modal = document.getElementById('pos-showcase-modal');
+        const content = document.getElementById('pos-showcase-modal-content');
+        if (!product || !modal || !content) return;
+
+        const escape = value => this.escapeHtml(value ?? '');
+        const image = product.image
+            ? `<img src="${escape(product.image)}" alt="${escape(product.name)}" class="w-full h-full object-contain">`
+            : `<iconify-icon icon="solar:laptop-minimalistic-linear" class="text-gray-300 text-6xl"></iconify-icon>`;
+        const specs = [
+            ['Prosesor', product.processor],
+            ['Memori', product.ram],
+            ['Penyimpanan', product.storage],
+            ['Grafis', product.graphics],
+            ['Layar', product.display],
+            ['Baterai', product.battery_life],
+            ['Konektivitas', product.connectivity],
+            ['Port', product.ports],
+            ['Kamera', product.camera],
+            ['Audio', product.audio],
+            ['Warna', product.color],
+            ['Garansi', product.warranty],
+        ].filter(([, value]) => value);
+
+        content.innerHTML = `
+            <div class="p-5 sm:p-7">
+                <div class="flex justify-end">
+                    <button type="button" onclick="document.getElementById('pos-showcase-modal').classList.add('hidden')" class="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700" aria-label="Tutup detail produk">
+                        <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
+                    </button>
+                </div>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div class="aspect-square rounded-2xl bg-gray-50 border border-gray-100 p-5 flex items-center justify-center">${image}</div>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-[#DF5E1D]">${escape(product.brand)}</p>
+                        <h2 class="mt-1 text-2xl font-extrabold text-[#363230]">${escape(product.name)}</h2>
+                        <p class="mt-3 text-xl font-extrabold text-[#DF5E1D] font-mono">Rp ${Number(product.final_price || 0).toLocaleString('id-ID')}</p>
+                        ${product.description ? `<p class="mt-4 text-sm leading-relaxed text-gray-600">${escape(product.description)}</p>` : ''}
+                        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            ${specs.map(([label, value]) => `
+                                <div class="rounded-xl bg-gray-50 px-3 py-2">
+                                    <p class="text-[10px] font-semibold uppercase text-gray-400">${label}</p>
+                                    <p class="mt-0.5 text-xs font-semibold text-gray-700">${escape(value)}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${product.variants?.length ? `
+                            <div class="mt-5">
+                                <h3 class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">Varian</h3>
+                                <div class="space-y-2">
+                                    ${product.variants.map(variant => `
+                                        <div class="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2 text-xs">
+                                            <span class="font-semibold text-gray-700">${escape(variant.name)} — ${escape(variant.ram)} / ${escape(variant.storage)}</span>
+                                            <span class="font-bold text-[#DF5E1D] whitespace-nowrap">Rp ${Number(variant.price || 0).toLocaleString('id-ID')}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                ${product.kelebihan || product.kekurangan ? `
+                    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                        ${product.kelebihan ? `<div class="rounded-xl bg-emerald-50 p-4"><h3 class="text-xs font-bold text-emerald-800">Keunggulan</h3><p class="mt-1 text-sm text-emerald-900">${escape(product.kelebihan)}</p></div>` : ''}
+                        ${product.kekurangan ? `<div class="rounded-xl bg-amber-50 p-4"><h3 class="text-xs font-bold text-amber-800">Catatan</h3><p class="mt-1 text-sm text-amber-900">${escape(product.kekurangan)}</p></div>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
     },
 
     handleProductClick(productId) {
         const product = this.products.find(p => p.id === productId);
         if (!product) return;
 
+        if (this.isShowcase) {
+            this.showShowcaseDetails(productId);
+            return;
+        }
+
         this.addToCart(product, null, null);
+    },
+
+    escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+        })[character]);
     },
 
     showVariantModal(product) {
@@ -322,6 +461,8 @@ const PosApp = {
     },
 
     addToCart(product, variant = null, productItemId = null) {
+        if (this.isShowcase) return;
+
         const cartKey = `${product.id}_${variant ? variant.id : 'std'}`;
         const existing = this.cart.find(c => c.cartKey === cartKey);
 
@@ -577,6 +718,7 @@ const PosApp = {
     },
 
     openPaymentModal() {
+        if (this.isShowcase) return;
         if (this.cart.length === 0) return;
         const modal = document.getElementById('pos-payment-modal');
         const totalDisplay = document.getElementById('payment-modal-total');
@@ -614,6 +756,8 @@ const PosApp = {
     },
 
     async processTransaction(paymentMethod = 'cash') {
+        if (this.isShowcase) return;
+
         const clientUuid = crypto.randomUUID();
         const cashTendered = parseFloat(document.getElementById('cash-tendered-input').value || this.currentTotals.total);
         const changeDue = Math.max(0, cashTendered - this.currentTotals.total);
@@ -719,6 +863,7 @@ const PosApp = {
     },
 
     async syncQueue() {
+        if (this.isShowcase) return;
         if (this.syncing || !this.isOnline) return;
         this.syncing = true;
 
