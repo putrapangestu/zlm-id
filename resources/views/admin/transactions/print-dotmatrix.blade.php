@@ -230,7 +230,7 @@
         }
 
         @page {
-            size: A4 landscape;
+            size: 9.5in 5.5in;
             margin: 5mm;
         }
 
