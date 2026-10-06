@@ -379,7 +379,7 @@
 
             {{-- Actions --}}
             <div class="grid grid-cols-2 gap-3 no-print pt-2">
-                <a href="{{ route('admin.transactions.print-dotmatrix', ['order' => $order->id]) }}" target="_blank" class="py-3 px-4 bg-[#363230] text-white hover:bg-black rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                <a onclick="PosApp.printThermalReceipt()" class="py-3 px-4 bg-[#363230] text-white hover:bg-black rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
                     <iconify-icon icon="solar:printer-linear" class="text-base"></iconify-icon>
                     <span>Cetak Struk</span>
                 </a>

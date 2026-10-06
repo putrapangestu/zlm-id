@@ -926,7 +926,12 @@ const PosApp = {
     },
 
     printThermalReceipt() {
-        window.print();
+         window.open(
+            order.order_number
+                ? `/${order.order_number}/print-dotmatrix`
+                : '#',
+            '_blank'
+        );
     },
 
     async syncQueue() {

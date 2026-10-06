@@ -128,7 +128,7 @@
                 <tr class="border-b border-gray-100">
                     <td class="px-6 py-3 text-sm font-medium text-[#363230]">{{ $item->laptop->name ?? 'Product' }}</td>
                     <td class="px-6 py-3 text-sm text-center">{{ $item->quantity }}</td>
-                    <td class="px-6 py-3 text-sm text-right">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                    <td class="px-6 py-3 text-sm text-right">Rp {{ number_format($item->unit_price, 0, ',', '.') }}</td>
                     <td class="px-6 py-3 text-sm text-right font-medium">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                 </tr>
                 @empty

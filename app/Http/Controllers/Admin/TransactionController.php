@@ -181,7 +181,8 @@ class TransactionController extends Controller {
         return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi.');
     }
 
-    public function printDotMatrix(Order $order): View {
+    public function printDotMatrix($order): View {
+        $order = Order::where('order_number', $order)->orWhere('id', $order)->firstOrFail();
         $order->load(['user', 'items.laptop', 'items.variant', 'items.productItem', 'approvedBy']);
         return view('admin.transactions.print-dotmatrix', compact('order'));
     }

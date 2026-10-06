@@ -230,32 +230,47 @@
         }
 
         @media print {
-            body {
-                background: transparent;
-                padding: 0;
+            @page {
+                size: 11in 9.5in;
                 margin: 0;
             }
+
+            html,
+            body {
+                width: 11in;
+                height: 9.5in;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background: transparent;
+            }
+
             .no-print-bar {
                 display: none !important;
             }
+
             .paper-container {
-                box-shadow: none;
-                border: none;
-                padding: 0;
+                width: 11in;
+                height: 9.5in;
+                max-width: none;
                 margin: 0;
+                padding: 0;
                 background: transparent;
-                width: 100%;
-                max-width: 100%;
+                border: none;
+                box-shadow: none;
             }
-            .paper-container::before, .paper-container::after {
+
+            .paper-container::before,
+            .paper-container::after {
                 display: none;
             }
+
             .invoice-content {
+                width: 100%;
                 margin: 0;
-            }
-            @page {
-                size: 9.5in 5.5in;
-                margin: 0.15in;
+                padding: 0.2in 0.35in;
             }
         }
     </style>
