@@ -11,6 +11,9 @@ const PosApp = {
     settings: {},
     selectedCategory: 'all',
     searchQuery: '',
+    selectedBrand: '',
+    minPrice: '',
+    maxPrice: '',
     cart: [],
     selectedMember: null,
     discountRate: 0,
@@ -38,6 +41,7 @@ const PosApp = {
 
         // Load cached data from IndexedDB first for instant startup
         await this.loadFromIndexedDB();
+        this.renderBrandFilter();
         this.renderCategories();
         this.renderProducts();
         this.renderCart();
@@ -143,6 +147,7 @@ const PosApp = {
                 }
 
                 this.renderCategories();
+                this.renderBrandFilter();
                 this.renderProducts();
                 console.log('[PosApp] Data cache updated from server');
             }
@@ -230,6 +235,39 @@ const PosApp = {
         this.renderProducts();
     },
 
+    renderBrandFilter() {
+        const select = document.getElementById('showcase-brand-filter');
+        if (!select) return;
+
+        const brands = [...new Set(this.products
+            .map(product => String(product.brand ?? '').trim())
+            .filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b));
+        const selectedBrand = brands.find(brand => brand.toLowerCase() === this.selectedBrand.toLowerCase());
+
+        if (this.selectedBrand && !selectedBrand) this.selectedBrand = '';
+
+        select.innerHTML = `
+            <option value="">Semua brand</option>
+            ${brands.map(brand => `<option value="${this.escapeHtml(brand)}">${this.escapeHtml(brand)}</option>`).join('')}
+        `;
+        select.value = selectedBrand ?? '';
+    },
+
+    handleBrandFilter(brand) {
+        this.selectedBrand = brand;
+        this.renderProducts();
+    },
+
+    handlePriceFilter(bound, value) {
+        if (bound === 'min') {
+            this.minPrice = value;
+        } else {
+            this.maxPrice = value;
+        }
+        this.renderProducts();
+    },
+
     renderProducts() {
         const grid = document.getElementById('products-grid');
         if (!grid) return;
@@ -242,10 +280,24 @@ const PosApp = {
 
         if (this.searchQuery) {
             filtered = filtered.filter(p =>
-                p.name.toLowerCase().includes(this.searchQuery) ||
-                p.brand.toLowerCase().includes(this.searchQuery) ||
+                String(p.name ?? '').toLowerCase().includes(this.searchQuery) ||
+                String(p.brand ?? '').toLowerCase().includes(this.searchQuery) ||
                 (p.processor && p.processor.toLowerCase().includes(this.searchQuery))
             );
+        }
+
+        if (this.isShowcase && this.selectedBrand) {
+            filtered = filtered.filter(product =>
+                String(product.brand ?? '').toLowerCase() === this.selectedBrand.toLowerCase()
+            );
+        }
+
+        if (this.isShowcase && this.minPrice !== '' && Number.isFinite(Number(this.minPrice))) {
+            filtered = filtered.filter(product => Number(product.final_price || 0) >= Number(this.minPrice));
+        }
+
+        if (this.isShowcase && this.maxPrice !== '' && Number.isFinite(Number(this.maxPrice))) {
+            filtered = filtered.filter(product => Number(product.final_price || 0) <= Number(this.maxPrice));
         }
 
         if (filtered.length === 0) {

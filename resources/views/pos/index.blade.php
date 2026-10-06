@@ -171,6 +171,30 @@
                 </div>
             </div>
 
+            @if($showcaseMode)
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3 shrink-0">
+                <label class="text-[11px] font-semibold text-gray-600">
+                    Brand
+                    <select id="showcase-brand-filter" aria-label="Filter berdasarkan brand" onchange="PosApp.handleBrandFilter(this.value)"
+                        class="mt-1 w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-normal text-gray-700 focus:outline-none focus:border-[#DF5E1D]">
+                        <option value="">Semua brand</option>
+                    </select>
+                </label>
+                <label class="text-[11px] font-semibold text-gray-600">
+                    Harga minimum (Rp)
+                    <input type="number" min="0" step="any" inputmode="numeric" aria-label="Harga minimum"
+                        oninput="PosApp.handlePriceFilter('min', this.value)" placeholder="Tanpa batas minimum"
+                        class="mt-1 w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-normal text-gray-700 focus:outline-none focus:border-[#DF5E1D]">
+                </label>
+                <label class="text-[11px] font-semibold text-gray-600">
+                    Harga maksimum (Rp)
+                    <input type="number" min="0" step="any" inputmode="numeric" aria-label="Harga maksimum"
+                        oninput="PosApp.handlePriceFilter('max', this.value)" placeholder="Tanpa batas maksimum"
+                        class="mt-1 w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-normal text-gray-700 focus:outline-none focus:border-[#DF5E1D]">
+                </label>
+            </div>
+            @endif
+
             {{-- Products Grid --}}
             <div id="products-grid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3 pr-1 min-h-0 pb-20 lg:pb-0">
                 {{-- Rendered via JS --}}
