@@ -395,7 +395,9 @@ const PosApp = {
             ['SKU', product.sku],
             ['Prosesor', product.processor],
             ['Memori', product.ram],
+            ['Memori 2', product.ram_2],
             ['Penyimpanan', product.storage],
+            ['Penyimpanan 2', product.storage_2],
             ['Grafis', product.graphics],
             ['Layar', product.display],
             ['Baterai', product.battery_life],
@@ -603,6 +605,7 @@ const PosApp = {
                 name: product.name,
                 variant_name: variant ? variant.name : 'Standard',
                 unit_price: unitPrice,
+                expected_unit_price: unitPrice,
                 quantity: 1,
             });
         }
@@ -623,6 +626,19 @@ const PosApp = {
             this.cart = this.cart.filter(c => c.cartKey !== cartKey);
         }
 
+        this.renderCart();
+    },
+
+    updateCartPrice(cartKey, value) {
+        const item = this.cart.find(c => c.cartKey === cartKey);
+        const unitPrice = Number(value);
+        if (!item || !Number.isFinite(unitPrice) || unitPrice < 0) {
+            this.showToast('Harga harus berupa angka nol atau lebih.', 'error');
+            this.renderCart();
+            return;
+        }
+
+        item.unit_price = unitPrice;
         this.renderCart();
     },
 
@@ -735,7 +751,7 @@ const PosApp = {
                 <div class="p-3 bg-gray-50/80 rounded-xl border border-gray-200/60 flex items-center justify-between gap-2">
                     <div class="flex-1 min-w-0">
                         <h5 class="text-xs font-bold text-[#363230] truncate">${item.name}</h5>
-                        <span class="text-[10px] text-gray-400">${item.variant_name} &bull; Rp ${item.unit_price.toLocaleString('id-ID')}</span>
+                        <span class="text-[10px] text-gray-400">${item.variant_name} &bull; Harga sistem Rp ${Number(item.expected_unit_price ?? item.unit_price).toLocaleString('id-ID')}</span>
                     </div>
 
                     <div class="flex items-center gap-1.5 shrink-0">
@@ -745,7 +761,9 @@ const PosApp = {
                     </div>
 
                     <div class="text-right shrink-0 min-w-[70px]">
-                        <span class="font-mono font-bold text-xs text-[#363230]">Rp ${itemTotal.toLocaleString('id-ID')}</span>
+                        <label class="block text-[9px] font-bold uppercase text-gray-500" for="cart-price-${item.cartKey}">Harga/unit</label>
+                        <input id="cart-price-${item.cartKey}" type="number" min="0" step="1000" value="${item.unit_price}" onchange="PosApp.updateCartPrice('${item.cartKey}', this.value)" aria-label="Ubah harga satuan ${item.name}" class="w-28 rounded-lg border border-gray-200 px-2 py-1 text-right font-mono text-xs font-bold text-[#363230]">
+                        <span class="mt-1 block font-mono text-[10px] text-gray-500">Subtotal Rp ${itemTotal.toLocaleString('id-ID')}</span>
                     </div>
                 </div>
             `;
@@ -939,6 +957,7 @@ const PosApp = {
             order_number: 'POS-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
             items: this.cart,
             subtotal: this.currentTotals.subtotal,
+            expected_subtotal: this.cart.reduce((sum, item) => sum + Number(item.expected_unit_price ?? item.unit_price) * item.quantity, 0),
             discount: this.currentTotals.discount,
             member_discount_amount: this.currentTotals.member_discount_amount,
             tax_rate: this.taxRate,

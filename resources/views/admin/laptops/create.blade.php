@@ -145,6 +145,12 @@
                                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                             @error('ram') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">RAM 2 (Opsional)</label>
+                            <input type="text" name="ram_2" value="{{ old('ram_2') }}" placeholder="Contoh: 8GB onboard"
+                                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                            @error('ram_2') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -153,6 +159,12 @@
                             <input type="text" name="storage" value="{{ old('storage') }}" placeholder="Contoh: 512GB NVMe PCIe Gen4"
                                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                             @error('storage') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Storage 2 (Opsional)</label>
+                            <input type="text" name="storage_2" value="{{ old('storage_2') }}" placeholder="Contoh: 1TB SATA"
+                                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                            @error('storage_2') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kartu Grafis (GPU)</label>

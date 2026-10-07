@@ -46,8 +46,8 @@ class InventoryService
 
             foreach ($data['items'] as $itemData) {
                 $qty = (int) $itemData['quantity'];
-                $price = (float) $itemData['purchase_price'];
-                $subtotal = $qty * $price;
+                $price = isset($itemData['purchase_price']) ? (float) $itemData['purchase_price'] : null;
+                $subtotal = $qty * ($price ?? 0);
                 $totalAmount += $subtotal;
 
                 // 1. Dapatkan atau Buat Laptop Baru dari Restock
@@ -74,10 +74,12 @@ class InventoryService
                         'brand' => $brandName,
                         'brand_id' => $brandId,
                         'description' => $newLaptopData['description'] ?? 'Unit restock baru ZLM.ID',
-                        'price' => $newLaptopData['price'] ?? ($price * 1.25), // Default markup 25% jika belum diset
+                        'price' => $newLaptopData['price'] ?? ($price !== null ? $price * 1.25 : null), // Default markup 25% jika HPP tersedia
                         'processor' => $newLaptopData['processor'],
                         'ram' => $newLaptopData['ram'],
+                        'ram_2' => $newLaptopData['ram_2'] ?? null,
                         'storage' => $newLaptopData['storage'],
+                        'storage_2' => $newLaptopData['storage_2'] ?? null,
                         'graphics' => $newLaptopData['graphics'] ?? null,
                         'display' => $newLaptopData['display'] ?? null,
                         'ports' => $newLaptopData['ports'] ?? null,
@@ -121,9 +123,9 @@ class InventoryService
                         'laptop_id' => $laptop->id,
                         'sku' => null, // SKU terbit HANYA setelah lolos QC
                         'serial_number' => null,
-                        'base_cost' => $price,
+                        'base_cost' => $price ?? 0,
                         'additional_cost' => 0,
-                        'final_cost' => $price,
+                        'final_cost' => $price ?? 0,
                         'qc_status' => 'pending',
                         'is_sold' => false,
                         'qc_checklist' => null,

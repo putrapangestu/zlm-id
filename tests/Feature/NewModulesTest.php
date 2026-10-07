@@ -4,9 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Laptop;
 use App\Models\LaptopVariant;
+use App\Models\AuditLog;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\ProductItem;
 use App\Models\Restock;
+use App\Models\RestockItem;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\InventoryService;
@@ -123,6 +126,80 @@ class NewModulesTest extends TestCase
         $this->assertEquals(3, ProductItem::where('restock_id', $restock->id)->count());
     }
 
+    public function test_received_restock_unit_data_can_be_updated_and_audited(): void
+    {
+        $restock = app(InventoryService::class)->createRestock([
+            'supplier_name' => 'Distributor Jakarta',
+            'purchase_date' => now()->format('Y-m-d'),
+            'items' => [
+                ['laptop_id' => $this->laptop->id, 'quantity' => 1, 'purchase_price' => null],
+            ],
+        ], $this->admin);
+        $item = ProductItem::where('restock_id', $restock->id)->firstOrFail();
+
+        $response = $this->actingAs($this->admin)->patch(
+            route('admin.restocks.units.update', [$restock, $item]),
+            [
+                'serial_number' => 'SERIAL-UNIT-01',
+                'processor' => 'Intel Core i7',
+                'ram' => '16GB',
+                'ram_2' => '8GB',
+                'storage' => '512GB NVMe',
+                'storage_2' => '1TB SATA',
+                'graphics' => 'Intel Iris Xe',
+                'display' => '14 inch IPS',
+            ]
+        );
+
+        $response->assertRedirect(route('admin.restocks.show', $restock));
+        $item->refresh();
+        $this->assertSame('SERIAL-UNIT-01', $item->serial_number);
+        $this->assertSame('8GB', $item->received_specs['ram_2']);
+        $this->assertSame('1TB SATA', $item->received_specs['storage_2']);
+
+        $log = AuditLog::where('action', 'restock_unit_updated')
+            ->where('model_id', $item->id)
+            ->firstOrFail();
+        $this->assertSame($this->admin->id, $log->user_id);
+        $this->assertSame('8GB', $log->new_values['ram_2']);
+        $this->assertSame('SERIAL-UNIT-01', $log->new_values['serial_number']);
+        $this->assertNull(RestockItem::where('restock_id', $restock->id)->firstOrFail()->purchase_price);
+    }
+
+    public function test_profit_loss_excludes_tax_from_gross_profit_and_renders_yearly_chart(): void
+    {
+        $order = Order::create([
+            'user_id' => $this->customer->id,
+            'source' => 'pos',
+            'status' => 'completed',
+            'payment_status' => 'paid',
+            'subtotal' => 1000,
+            'expected_subtotal' => 1000,
+            'tax_rate' => 11,
+            'tax' => 110,
+            'total' => 1110,
+            'shipping_cost' => 0,
+        ]);
+        $order->items()->create([
+            'laptop_id' => $this->laptop->id,
+            'product_name' => $this->laptop->name,
+            'quantity' => 1,
+            'unit_price' => 1000,
+            'subtotal' => 1000,
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('admin.reports.profit-loss', [
+            'period' => 'yearly',
+            'start_date' => now()->startOfYear()->format('Y-m-d'),
+            'end_date' => now()->endOfYear()->format('Y-m-d'),
+        ]));
+
+        $response->assertOk()
+            ->assertSee('chartTransactions')
+            ->assertSee('Rp 110')
+            ->assertSee('Rp 300');
+    }
+
     public function test_restock_can_create_multiple_new_laptop_models(): void
     {
         $response = $this->actingAs($this->admin)->post(route('admin.restocks.store'), [
@@ -174,6 +251,15 @@ class NewModulesTest extends TestCase
             ],
         ], $this->admin);
         $item = ProductItem::where('restock_id', $restock->id)->firstOrFail();
+        $replacedPart = Product::create([
+            'name' => 'SSD Pengganti',
+            'brand' => 'General',
+            'sku' => 'SSD-REPLACE-01',
+            'price' => 500000,
+            'cost_price' => 450000,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
 
         $inventoryService->passQc(
             $item,
@@ -189,7 +275,13 @@ class NewModulesTest extends TestCase
                 'specs' => 'match',
             ],
             'Unit normal',
-            $this->admin
+            $this->admin,
+            [[
+                'product_id' => $replacedPart->id,
+                'part_name' => $replacedPart->name,
+                'quantity' => 1,
+                'unit_cost' => 450000,
+            ]]
         );
 
         $response = $this->actingAs($this->admin)->post(
@@ -200,6 +292,23 @@ class NewModulesTest extends TestCase
         $response->assertOk();
         $response->assertHeader('Content-Type', 'application/pdf');
         $this->assertStringStartsWith('%PDF-', $response->getContent());
+
+        $item->refresh()->load(['laptop', 'variant', 'inspector', 'parts.product']);
+        $item->setAttribute('inspection_platform', 'windows');
+        $item->setAttribute('inspection_grade', 'A');
+        $html = view('admin.restocks.qc-report-pdf', [
+            'restock' => $restock,
+            'items' => collect([$item]),
+        ])->render();
+        $this->assertStringContainsString('SSD-REPLACE-01', $html);
+        $this->assertStringContainsString('Rp 450.000', $html);
+        $this->assertStringContainsString('Total Biaya Tambahan', $html);
+
+        $individualReport = view('admin.qc.print-pdf', ['item' => $item])->render();
+        $this->assertStringContainsString('SKU Sparepart', $individualReport);
+        $this->assertStringContainsString('SSD-REPLACE-01', $individualReport);
+        $this->assertStringContainsString('Harga Satuan', $individualReport);
+        $this->assertStringContainsString('Total Harga', $individualReport);
     }
 
     public function test_qc_approval_assigns_sku_and_increments_sellable_stock(): void
@@ -310,6 +419,7 @@ class NewModulesTest extends TestCase
                             'laptop_id' => $this->laptop->id,
                             'quantity' => 1,
                             'unit_price' => 10800000,
+                            'expected_unit_price' => 12000000,
                         ]
                     ]
                 ]
@@ -327,6 +437,7 @@ class NewModulesTest extends TestCase
         $this->assertSame('11.00', $order->tax_rate);
         $this->assertSame('1188000.00', $order->tax);
         $this->assertSame('11988000.00', $order->total);
+        $this->assertSame('12000000.00', $order->expected_subtotal);
 
         $this->laptop->refresh();
         $this->assertEquals(4, $this->laptop->stock); // Decremented from 5 to 4

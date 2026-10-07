@@ -221,8 +221,14 @@
                                         @if($laptop->ram)
                                             <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->ram }}</p>
                                         @endif
+                                        @if($laptop->ram_2)
+                                            <p class="text-[11px] text-gray-600 leading-relaxed">RAM 2: {{ $laptop->ram_2 }}</p>
+                                        @endif
                                         @if($laptop->storage)
                                             <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->storage }}</p>
+                                        @endif
+                                        @if($laptop->storage_2)
+                                            <p class="text-[11px] text-gray-600 leading-relaxed">Storage 2: {{ $laptop->storage_2 }}</p>
                                         @endif
                                         @if($laptop->graphics_card)
                                             <p class="text-[11px] text-gray-600 leading-relaxed">{{ $laptop->graphics_card }}</p>
@@ -413,4 +419,3 @@
     }
 </script>
 @endpush
-

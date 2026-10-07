@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Laptop;
 use App\Models\ProductItem;
@@ -15,6 +16,7 @@ use Dompdf\Options;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RestockController extends Controller
@@ -101,7 +103,9 @@ class RestockController extends Controller
             'new_laptop.price' => 'nullable|numeric|min:0',
             'new_laptop.processor' => 'nullable|string|max:255',
             'new_laptop.ram' => 'nullable|string|max:255',
+            'new_laptop.ram_2' => 'nullable|string|max:255',
             'new_laptop.storage' => 'nullable|string|max:255',
+            'new_laptop.storage_2' => 'nullable|string|max:255',
             'new_laptop.graphics' => 'nullable|string|max:255',
             'new_laptop.display' => 'nullable|string|max:255',
             'new_laptop.ports' => 'nullable|string',
@@ -125,7 +129,9 @@ class RestockController extends Controller
             'new_laptops.*.price' => 'nullable|numeric|min:0',
             'new_laptops.*.processor' => 'nullable|string|max:255',
             'new_laptops.*.ram' => 'nullable|string|max:255',
+            'new_laptops.*.ram_2' => 'nullable|string|max:255',
             'new_laptops.*.storage' => 'nullable|string|max:255',
+            'new_laptops.*.storage_2' => 'nullable|string|max:255',
             'new_laptops.*.graphics' => 'nullable|string|max:255',
             'new_laptops.*.display' => 'nullable|string|max:255',
             'new_laptops.*.ports' => 'nullable|string',
@@ -179,7 +185,7 @@ class RestockController extends Controller
                 $newProducts[] = [
                     'laptop' => $validated['new_laptop'],
                     'quantity' => (int) ($validated['new_quantity'] ?? 1),
-                    'purchase_price' => (float) ($validated['new_purchase_price'] ?? 0),
+                    'purchase_price' => $validated['new_purchase_price'] ?? null,
                 ];
             }
             foreach ($validated['new_laptops'] ?? [] as $newLaptop) {
@@ -189,7 +195,7 @@ class RestockController extends Controller
                 $newProducts[] = [
                     'laptop' => $newLaptop,
                     'quantity' => (int) ($newLaptop['quantity'] ?? 1),
-                    'purchase_price' => (float) ($newLaptop['purchase_price'] ?? 0),
+                    'purchase_price' => $newLaptop['purchase_price'] ?? null,
                 ];
             }
 
@@ -217,7 +223,7 @@ class RestockController extends Controller
                         $validItems[] = [
                             'laptop_id' => $item['laptop_id'],
                             'quantity' => (int) $item['quantity'],
-                            'purchase_price' => (float) ($item['purchase_price'] ?? 0),
+                            'purchase_price' => $item['purchase_price'] ?? null,
                             'notes' => $item['notes'] ?? null,
                         ];
                     }
@@ -240,7 +246,74 @@ class RestockController extends Controller
     public function show(Restock $restock): View
     {
         $restock->load(['creator', 'supplier', 'items.laptop', 'productItems.laptop', 'productItems.inspector']);
-        return view('admin.restocks.show', compact('restock'));
+        $unitEditLogs = AuditLog::with('user')
+            ->where('action', 'restock_unit_updated')
+            ->whereIn('model_id', $restock->productItems->pluck('id'))
+            ->latest()
+            ->get();
+
+        return view('admin.restocks.show', compact('restock', 'unitEditLogs'));
+    }
+
+    public function updateReceivedUnit(Request $request, Restock $restock, ProductItem $item): RedirectResponse
+    {
+        abort_unless($item->restock_id === $restock->id, 404);
+
+        $validated = $request->validate([
+            'serial_number' => 'nullable|string|max:100',
+            'processor' => 'nullable|string|max:255',
+            'ram' => 'nullable|string|max:255',
+            'ram_2' => 'nullable|string|max:255',
+            'storage' => 'nullable|string|max:255',
+            'storage_2' => 'nullable|string|max:255',
+            'graphics' => 'nullable|string|max:255',
+            'display' => 'nullable|string|max:255',
+        ]);
+
+        $oldValues = [];
+        $newValues = [];
+        $oldSpecs = $item->received_specs ?? [];
+        $newSpecs = $oldSpecs;
+        $specFields = ['processor', 'ram', 'ram_2', 'storage', 'storage_2', 'graphics', 'display'];
+
+        foreach ($specFields as $field) {
+            $value = $validated[$field] ?? null;
+            $previousValue = array_key_exists($field, $oldSpecs) ? $oldSpecs[$field] : $item->laptop->{$field};
+            if ($previousValue !== $value) {
+                $oldValues[$field] = $previousValue;
+                $newValues[$field] = $value;
+            }
+            $newSpecs[$field] = $value;
+        }
+
+        $previousSerial = $item->serial_number;
+        if ($previousSerial !== ($validated['serial_number'] ?? null)) {
+            $oldValues['serial_number'] = $previousSerial;
+            $newValues['serial_number'] = $validated['serial_number'] ?? null;
+        }
+
+        if ($oldValues !== []) {
+            DB::transaction(function () use ($item, $validated, $newSpecs, $oldValues, $newValues, $request): void {
+                $item->update([
+                    'serial_number' => $validated['serial_number'] ?? null,
+                    'received_specs' => $newSpecs,
+                ]);
+
+                AuditLog::create([
+                    'user_id' => auth()->id(),
+                    'action' => 'restock_unit_updated',
+                    'model_type' => ProductItem::class,
+                    'model_id' => $item->id,
+                    'old_values' => $oldValues,
+                    'new_values' => $newValues,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]);
+            });
+        }
+
+        return redirect()->route('admin.restocks.show', $restock)
+            ->with('success', $oldValues === [] ? 'Tidak ada perubahan data unit.' : 'Data unit penerimaan berhasil diperbarui dan dicatat di log.');
     }
 
     public function updateShippingStatus(Request $request, Restock $restock): RedirectResponse
@@ -286,7 +359,7 @@ class RestockController extends Controller
             'product_item_ids.*' => 'required|uuid|distinct|exists:product_items,id',
         ]);
 
-        $items = ProductItem::with(['laptop', 'variant', 'inspector'])
+        $items = ProductItem::with(['laptop', 'variant', 'inspector', 'parts.product'])
             ->where('restock_id', $restock->id)
             ->where('qc_status', 'passed')
             ->whereIn('id', $validated['product_item_ids'])

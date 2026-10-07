@@ -69,7 +69,9 @@ class PosController extends Controller
                     'stock' => $laptop->stock,
                     'processor' => $laptop->processor,
                     'ram' => $laptop->ram,
+                    'ram_2' => $laptop->ram_2,
                     'storage' => $laptop->storage,
+                    'storage_2' => $laptop->storage_2,
                     'graphics' => $laptop->graphics,
                     'display' => $laptop->display,
                     'ports' => $laptop->ports,
@@ -175,6 +177,12 @@ class PosController extends Controller
             'orders' => 'required|array|min:1',
             'orders.*.client_order_uuid' => 'required|uuid',
             'orders.*.items' => 'required|array|min:1',
+            'orders.*.items.*.laptop_id' => 'required|exists:laptops,id',
+            'orders.*.items.*.variant_id' => 'nullable|exists:laptop_variants,id',
+            'orders.*.items.*.product_item_id' => 'nullable|exists:product_items,id',
+            'orders.*.items.*.quantity' => 'required|integer|min:1',
+            'orders.*.items.*.unit_price' => 'required|numeric|min:0',
+            'orders.*.items.*.expected_unit_price' => 'nullable|numeric|min:0',
             'orders.*.payment_method' => 'required|in:cash,qris,transfer',
             'orders.*.subtotal' => 'required|numeric|min:0',
             'orders.*.discount' => 'nullable|numeric|min:0',
@@ -211,6 +219,9 @@ class PosController extends Controller
             try {
                 $member = !empty($orderData['member_id']) ? User::find($orderData['member_id']) : null;
                 $subtotal = (float) $orderData['subtotal'];
+                $expectedSubtotal = collect($orderData['items'])->sum(
+                    fn (array $item) => (int) $item['quantity'] * (float) ($item['expected_unit_price'] ?? $item['unit_price'])
+                );
                 $discountAmount = min($subtotal, (float) ($orderData['discount'] ?? 0));
                 $taxableAmount = max(0, $subtotal - $discountAmount);
                 $taxRate = (float) ($orderData['tax_rate'] ?? Setting::getValue('tax_rate', '11'));
@@ -234,6 +245,7 @@ class PosController extends Controller
                     'payment_status' => 'paid',
                     'payment_method' => $orderData['payment_method'],
                     'subtotal' => $subtotal,
+                    'expected_subtotal' => $expectedSubtotal,
                     'discount_amount' => $discountAmount,
                     'member_discount_amount' => min($discountAmount, (float) ($orderData['member_discount_amount'] ?? 0)),
                     'tax_rate' => $taxRate,

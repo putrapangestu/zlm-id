@@ -193,10 +193,22 @@
                             <span class="font-semibold">{{ $laptop->ram }}</span>
                         </div>
                         @endif
+                        @if($laptop->ram_2)
+                        <div class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-gray-200/80 shadow-2xs">
+                            <iconify-icon icon="solar:ram-bold" class="text-[#DF5E1D]"></iconify-icon>
+                            <span class="font-semibold">RAM 2: {{ $laptop->ram_2 }}</span>
+                        </div>
+                        @endif
                         @if($laptop->storage)
                         <div class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-gray-200/80 shadow-2xs">
                             <iconify-icon icon="solar:database-bold" class="text-[#DF5E1D]"></iconify-icon>
                             <span class="font-semibold">{{ $laptop->storage }}</span>
+                        </div>
+                        @endif
+                        @if($laptop->storage_2)
+                        <div class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-gray-200/80 shadow-2xs">
+                            <iconify-icon icon="solar:database-bold" class="text-[#DF5E1D]"></iconify-icon>
+                            <span class="font-semibold">Storage 2: {{ $laptop->storage_2 }}</span>
                         </div>
                         @endif
                     </div>
@@ -412,10 +424,22 @@
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Memori (RAM)</p>
                 <p class="text-xs font-bold text-[#363230]">{{ $laptop->ram }}</p>
             </div>
+            @if($laptop->ram_2)
+            <div class="bg-white p-4 rounded-2xl border border-gray-200/70 shadow-2xs">
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Memori (RAM 2)</p>
+                <p class="text-xs font-bold text-[#363230]">{{ $laptop->ram_2 }}</p>
+            </div>
+            @endif
             <div class="bg-white p-4 rounded-2xl border border-gray-200/70 shadow-2xs">
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Penyimpanan (Storage)</p>
                 <p class="text-xs font-bold text-[#363230]">{{ $laptop->storage }}</p>
             </div>
+            @if($laptop->storage_2)
+            <div class="bg-white p-4 rounded-2xl border border-gray-200/70 shadow-2xs">
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Penyimpanan (Storage 2)</p>
+                <p class="text-xs font-bold text-[#363230]">{{ $laptop->storage_2 }}</p>
+            </div>
+            @endif
             <div class="bg-white p-4 rounded-2xl border border-gray-200/70 shadow-2xs">
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Kartu Grafis (GPU)</p>
                 <p class="text-xs font-bold text-[#363230]">{{ $laptop->graphics ?: 'Integrated Graphics' }}</p>

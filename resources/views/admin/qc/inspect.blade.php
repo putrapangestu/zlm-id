@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
+    @php($unitSpecs = $item->received_specs ?? [])
 
     {{-- Breadcrumb --}}
     <div class="flex items-center gap-2 text-sm text-gray-400">
@@ -39,10 +40,16 @@
             </div>
 
             <div class="flex flex-wrap gap-2 text-xs bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>CPU:</strong> {{ $item->laptop->processor }}</span>
-                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>RAM:</strong> {{ $item->variant?->ram ?? $item->laptop->ram }}</span>
-                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>Storage:</strong> {{ $item->variant?->storage ?? $item->laptop->storage }}</span>
-                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>Display:</strong> {{ $item->laptop->display ?? '14 inch' }}</span>
+                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>CPU:</strong> {{ array_key_exists('processor', $unitSpecs) ? $unitSpecs['processor'] : $item->laptop->processor }}</span>
+                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>RAM:</strong> {{ array_key_exists('ram', $unitSpecs) ? $unitSpecs['ram'] : ($item->variant?->ram ?? $item->laptop->ram) }}</span>
+                @if(array_key_exists('ram_2', $unitSpecs) ? $unitSpecs['ram_2'] : $item->laptop->ram_2)
+                    <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>RAM 2:</strong> {{ array_key_exists('ram_2', $unitSpecs) ? $unitSpecs['ram_2'] : $item->laptop->ram_2 }}</span>
+                @endif
+                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>Storage:</strong> {{ array_key_exists('storage', $unitSpecs) ? $unitSpecs['storage'] : ($item->variant?->storage ?? $item->laptop->storage) }}</span>
+                @if(array_key_exists('storage_2', $unitSpecs) ? $unitSpecs['storage_2'] : $item->laptop->storage_2)
+                    <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>Storage 2:</strong> {{ array_key_exists('storage_2', $unitSpecs) ? $unitSpecs['storage_2'] : $item->laptop->storage_2 }}</span>
+                @endif
+                <span class="px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700"><strong>Display:</strong> {{ array_key_exists('display', $unitSpecs) ? $unitSpecs['display'] : ($item->laptop->display ?? '14 inch') }}</span>
             </div>
         </div>
     </div>
@@ -420,14 +427,21 @@ function addPartRow(data = {}) {
     let productOptions = '<option value="">-- Pilih dari Master Barang (Opsional) --</option>';
     masterProducts.forEach(p => {
         const selected = (data.product_id == p.id) ? 'selected' : '';
-        productOptions += `<option value="${p.id}" data-price="${p.cost_price}" data-name="${p.name}" ${selected}>${p.name} (Stok: ${p.stock} | HPP: Rp ${new Intl.NumberFormat('id-ID').format(p.cost_price)})</option>`;
+        const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[char]);
+        const name = escapeHtml(p.name);
+        const sku = escapeHtml(p.sku);
+        productOptions += `<option value="${p.id}" data-search="${escapeHtml(`${p.name} ${p.sku}`.toLocaleLowerCase('id-ID'))}" data-price="${p.cost_price}" data-name="${name}" ${selected}>${name}${sku ? ` (${sku})` : ''} (Stok: ${p.stock} | HPP: Rp ${new Intl.NumberFormat('id-ID').format(p.cost_price)})</option>`;
     });
 
     row.innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
             <div class="sm:col-span-4">
                 <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Master Barang / Sparepart</label>
-                <select name="parts[${index}][product_id]" onchange="onProductSelect(this, ${index})" class="w-full bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 focus:outline-none focus:border-[#DF5E1D]">
+                <input type="search" oninput="filterPartOptions(this, ${index})" placeholder="Cari nama atau SKU sparepart..." aria-label="Cari master barang"
+                    class="mb-1 w-full bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 focus:outline-none focus:border-[#DF5E1D]">
+                <select id="part-product-${index}" name="parts[${index}][product_id]" onchange="onProductSelect(this, ${index})" class="w-full bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 focus:outline-none focus:border-[#DF5E1D]">
                     ${productOptions}
                 </select>
             </div>
@@ -459,6 +473,16 @@ function addPartRow(data = {}) {
 
     container.appendChild(row);
     calculatePartSubtotal(index);
+}
+
+function filterPartOptions(input, index) {
+    const query = input.value.trim().toLocaleLowerCase('id-ID');
+    const select = document.getElementById(`part-product-${index}`);
+    if (!select) return;
+
+    Array.from(select.options).forEach((option, optionIndex) => {
+        option.hidden = optionIndex > 0 && query !== '' && !option.dataset.search.includes(query);
+    });
 }
 
 function onProductSelect(select, index) {

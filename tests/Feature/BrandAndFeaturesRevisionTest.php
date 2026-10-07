@@ -250,6 +250,12 @@ class BrandAndFeaturesRevisionTest extends TestCase
         // 3. Profit Loss report
         $resProfitLoss = $this->actingAs($this->admin)->get(route('admin.reports.profit-loss'));
         $resProfitLoss->assertStatus(200);
+        $resYearlyProfitLoss = $this->actingAs($this->admin)->get(route('admin.reports.profit-loss', [
+            'period' => 'yearly',
+            'start_date' => now()->startOfYear()->format('Y-m-d'),
+            'end_date' => now()->endOfYear()->format('Y-m-d'),
+        ]));
+        $resYearlyProfitLoss->assertStatus(200);
 
         // 4. Product Stats report
         $resProductStats = $this->actingAs($this->admin)->get(route('admin.reports.product-stats'));

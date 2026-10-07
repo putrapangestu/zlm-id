@@ -163,6 +163,7 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
         Route::get('/create', [RestockController::class, 'create'])->name('create')->middleware('can:restock.create');
         Route::post('/', [RestockController::class, 'store'])->name('store')->middleware('can:restock.create');
         Route::get('/{restock}', [RestockController::class, 'show'])->name('show')->middleware('can:restock.view');
+        Route::patch('/{restock}/units/{item}', [RestockController::class, 'updateReceivedUnit'])->name('units.update')->middleware('can:restock.create');
         Route::patch('/{restock}/shipping-status', [RestockController::class, 'updateShippingStatus'])->name('shipping-status')->middleware('can:restock.create');
         Route::post('/{restock}/qc-report-pdf', [RestockController::class, 'exportQcPdf'])->name('qc-report-pdf')->middleware('can:restock.print');
         Route::get('/{restock}/print-dotmatrix', [RestockController::class, 'printDotMatrix'])->name('print')->middleware('can:restock.print');

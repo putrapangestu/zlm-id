@@ -510,17 +510,23 @@
                     <thead>
                         <tr>
                             <th style="width: 5%;">No</th>
-                            <th style="width: 45%;">Nama Sparepart / Tindakan Servis</th>
-                            <th style="width: 10%; text-align: center;">Qty</th>
-                            <th style="width: 40%;">Catatan</th>
+                            <th style="width: 17%;">SKU Sparepart</th>
+                            <th style="width: 29%;">Nama Sparepart / Tindakan Servis</th>
+                            <th style="width: 7%; text-align: center;">Qty</th>
+                            <th style="width: 15%; text-align: right;">Harga Satuan</th>
+                            <th style="width: 15%; text-align: right;">Total Harga</th>
+                            <th style="width: 12%;">Catatan</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($item->parts as $idx => $part)
                             <tr>
                                 <td style="text-align:center;">{{ $idx + 1 }}</td>
+                                <td class="mono">{{ $part->product?->sku ?: '-' }}</td>
                                 <td><strong>{{ $part->part_name }}</strong></td>
                                 <td style="text-align:center;" class="mono">{{ $part->quantity }}</td>
+                                <td style="text-align:right;" class="mono">Rp {{ number_format((float) $part->unit_cost, 0, ',', '.') }}</td>
+                                <td style="text-align:right;" class="mono">Rp {{ number_format((float) $part->total_cost, 0, ',', '.') }}</td>
                                 <td>{{ $part->notes ?: '-' }}</td>
                             </tr>
                         @endforeach

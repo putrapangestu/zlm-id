@@ -162,8 +162,8 @@
                             <input type="number" name="items[0][quantity]" value="1" min="1" required oninput="calculateRowTotal(0)" class="item-qty w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                         </div>
                         <div class="sm:col-span-3">
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">HPP / Beli Satuan (Rp) <span class="text-red-500">*</span></label>
-                            <input type="number" step="1000" name="items[0][purchase_price]" value="0" min="0" required oninput="calculateRowTotal(0)" class="item-price w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">HPP / Beli Satuan (Rp, opsional)</label>
+                            <input type="number" step="1000" name="items[0][purchase_price]" value="{{ old('items.0.purchase_price') }}" min="0" oninput="calculateRowTotal(0)" class="item-price w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Subtotal</label>
@@ -254,8 +254,18 @@
                             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                     </div>
                     <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">RAM 2 (Opsional)</label>
+                        <input type="text" name="new_laptop[ram_2]" id="new_laptop_ram_2" value="{{ old('new_laptop.ram_2') }}" placeholder="RAM tambahan"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+                    <div>
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Storage / SSD <span class="text-red-500">*</span></label>
                         <input type="text" name="new_laptop[storage]" id="new_laptop_storage" value="{{ old('new_laptop.storage') }}" placeholder="512GB NVMe SSD"
+                            class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Storage 2 (Opsional)</label>
+                        <input type="text" name="new_laptop[storage_2]" id="new_laptop_storage_2" value="{{ old('new_laptop.storage_2') }}" placeholder="Penyimpanan tambahan"
                             class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                     </div>
                 </div>
@@ -330,8 +340,8 @@
                             class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">HPP / Harga Beli per Unit (Rp) <span class="text-red-500">*</span></label>
-                        <input type="number" step="1000" name="new_purchase_price" id="new_purchase_price" value="{{ old('new_purchase_price', 0) }}" oninput="calculateNewTotal(this)"
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">HPP / Harga Beli per Unit (Rp, opsional)</label>
+                        <input type="number" step="1000" name="new_purchase_price" id="new_purchase_price" value="{{ old('new_purchase_price') }}" min="0" oninput="calculateNewTotal(this)"
                             class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
                     </div>
                     <div>
@@ -416,8 +426,8 @@ function addExistingItemRow() {
             <input type="number" name="items[${idx}][quantity]" value="1" min="1" required oninput="calculateRowTotal(${idx})" class="item-qty w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
         </div>
         <div class="sm:col-span-3">
-            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">HPP / Beli Satuan (Rp) <span class="text-red-500">*</span></label>
-            <input type="number" step="1000" name="items[${idx}][purchase_price]" value="0" min="0" required oninput="calculateRowTotal(${idx})" class="item-price w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
+            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">HPP / Beli Satuan (Rp, opsional)</label>
+            <input type="number" step="1000" name="items[${idx}][purchase_price]" value="" min="0" oninput="calculateRowTotal(${idx})" class="item-price w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#DF5E1D]">
         </div>
         <div class="sm:col-span-2">
             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Subtotal</label>

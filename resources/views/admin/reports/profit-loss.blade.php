@@ -14,6 +14,7 @@
                     <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">Periode</label>
                     <select name="period" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#DF5E1D]">
                         <option value="monthly" @selected($period === 'monthly')>Bulan Berjalan</option>
+                        <option value="yearly" @selected($period === 'yearly')>Tahun Berjalan</option>
                         <option value="custom" @selected($period === 'custom')>Rentang Kustom</option>
                     </select>
                 </div>
@@ -40,7 +41,7 @@
     </div>
 
     {{-- Executive Summary KPI Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {{-- Total Revenue --}}
         <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm space-y-2">
             <div class="flex items-center justify-between">
@@ -71,6 +72,18 @@
             </div>
         </div>
 
+        {{-- Pajak Transaksi --}}
+        <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Pajak Transaksi (PPN)</span>
+                <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <iconify-icon icon="solar:bill-list-bold" class="text-lg"></iconify-icon>
+                </div>
+            </div>
+            <p class="text-2xl font-black text-amber-600 font-mono">Rp {{ number_format($taxTotal, 0, ',', '.') }}</p>
+            <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-100">Tidak dihitung sebagai laba kotor</div>
+        </div>
+
         {{-- Laba Kotor --}}
         <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm space-y-2">
             <div class="flex items-center justify-between">
@@ -83,7 +96,7 @@
                 Rp {{ number_format($grossProfit, 0, ',', '.') }}
             </p>
             <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-100">
-                Omset dikurangi HPP unit & sparepart
+                Omset setelah pajak dikurangi HPP unit & sparepart
             </div>
         </div>
 
@@ -147,7 +160,7 @@
                 {{-- 1. PENDAPATAN USAHA --}}
                 <div class="border-b border-gray-200 pb-3">
                     <div class="flex justify-between font-bold text-gray-900 text-sm mb-2">
-                        <span>1. PENDAPATAN USAHA</span>
+                        <span>1. PENDAPATAN USAHA (TERMASUK PPN)</span>
                         <span class="font-mono">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</span>
                     </div>
                     <div class="space-y-1.5 pl-4 text-gray-600">
@@ -164,8 +177,8 @@
                             <span class="font-mono text-gray-800">Rp {{ number_format($shippingCost, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span>Pajak Transaksi (PPN)</span>
-                            <span class="font-mono text-gray-800">Rp {{ number_format($taxTotal, 0, ',', '.') }}</span>
+                            <span>Pajak Transaksi (PPN, dikeluarkan sebelum laba kotor)</span>
+                            <span class="font-mono text-amber-700">(Rp {{ number_format($taxTotal, 0, ',', '.') }})</span>
                         </div>
                     </div>
                 </div>
@@ -231,68 +244,19 @@
         </div>
     </div>
 
-    {{-- Recent Sold Items Breakdown --}}
+    {{-- Transaction Trend --}}
     <div class="bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="text-sm font-bold text-[#363230] uppercase tracking-wider flex items-center gap-2">
-                <iconify-icon icon="solar:bag-check-bold" class="text-[#DF5E1D] text-lg"></iconify-icon>
-                <span>Sampel Transaksi Penjualan & Margin Unit</span>
+                <iconify-icon icon="solar:chart-bold" class="text-[#DF5E1D] text-lg"></iconify-icon>
+                <span>Grafik Transaksi {{ ucfirst($transactionChartUnit) }}</span>
             </h3>
+            <span class="text-xs text-gray-400">{{ $ordersCount }} transaksi dalam periode terpilih</span>
         </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                    <tr class="bg-gray-50/70 border-b border-gray-100">
-                        <th class="py-3 px-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">No. Order</th>
-                        <th class="py-3 px-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pelanggan</th>
-                        <th class="py-3 px-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Produk Terjual</th>
-                        <th class="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Harga Jual</th>
-                        <th class="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">HPP Unit</th>
-                        <th class="py-3 px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Margin Bersih</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($recentSoldOrders as $order)
-                        @foreach($order->items as $item)
-                            @php
-                                $price = (float)($item->unit_price ?: ($item->price ?: 0));
-                                $finalCost = $item->productItem ? (float)$item->productItem->final_cost : ($price * 0.7);
-                                $itemMargin = $price - $finalCost;
-                            @endphp
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="py-3 px-5 font-mono font-bold text-[#363230]">
-                                    <a href="{{ route('admin.transactions.show', $order) }}" class="text-[#DF5E1D] hover:underline">
-                                        #{{ $order->order_number }}
-                                    </a>
-                                </td>
-                                <td class="py-3 px-5 text-gray-700">
-                                    {{ $order->user->name ?? 'Pelanggan Umum' }}
-                                </td>
-                                <td class="py-3 px-5">
-                                    <span class="font-semibold text-gray-800">{{ $item->product_name ?: ($item->laptop->name ?? 'Laptop') }}</span>
-                                    @if($item->productItem?->sku)
-                                        <span class="block text-[10px] text-gray-400 font-mono">SKU: {{ $item->productItem->sku }}</span>
-                                    @endif
-                                </td>
-                                <td class="py-3 px-4 text-right font-mono font-bold text-gray-900">
-                                    Rp {{ number_format($price, 0, ',', '.') }}
-                                </td>
-                                <td class="py-3 px-4 text-right font-mono text-gray-600">
-                                    Rp {{ number_format($finalCost, 0, ',', '.') }}
-                                </td>
-                                <td class="py-3 px-4 text-right font-mono font-bold {{ $itemMargin >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">
-                                    Rp {{ number_format($itemMargin, 0, ',', '.') }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @empty
-                        <tr>
-                            <td colspan="6" class="py-12 text-center text-gray-400">Belum ada transaksi dalam periode ini.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="p-5">
+            <div class="h-72">
+                <canvas id="chartTransactions"></canvas>
+            </div>
         </div>
     </div>
 
@@ -303,21 +267,39 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const periodSelector = document.querySelector('select[name="period"]');
+    periodSelector?.addEventListener('change', function () {
+        const now = new Date();
+        const formatDate = date => [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, '0'),
+            String(date.getDate()).padStart(2, '0')
+        ].join('-');
+        const startInput = document.querySelector('input[name="start_date"]');
+        const endInput = document.querySelector('input[name="end_date"]');
+        if (!startInput || !endInput || this.value === 'custom') return;
+        startInput.value = this.value === 'yearly'
+            ? `${now.getFullYear()}-01-01`
+            : `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+        endInput.value = formatDate(now);
+    });
+
     // 1. Composition Donut Chart
     const compCtx = document.getElementById('chartProfitComposition');
     if (compCtx) {
         new Chart(compCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Modal Unit Terjual', 'Biaya Sparepart QC', 'Laba Bersih', 'Beban Kirim/Diskon'],
+                labels: ['Modal Unit Terjual', 'Biaya Sparepart QC', 'Laba Bersih', 'Beban Kirim/Diskon', 'Pajak Transaksi'],
                 datasets: [{
                     data: [
                         {{ (float)$baseCostSold }},
                         {{ (float)$qcPartsCostSold }},
                         {{ max(0, (float)$netProfit) }},
-                        {{ (float)($shippingCost + $memberDiscounts) }}
+                        {{ (float)($shippingCost + $memberDiscounts) }},
+                        {{ (float)$taxTotal }}
                     ],
-                    backgroundColor: ['#64748b', '#DF5E1D', '#10b981', '#f59e0b'],
+                    backgroundColor: ['#64748b', '#DF5E1D', '#10b981', '#f59e0b', '#fbbf24'],
                     borderWidth: 2,
                     borderColor: '#ffffff',
                 }]
@@ -342,16 +324,17 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(barCtx, {
             type: 'bar',
             data: {
-                labels: ['Total Omset Pendapatan', 'Total Beban HPP', 'Laba Kotor Usaha', 'Laba Bersih Akhir'],
+                labels: ['Total Omset (termasuk PPN)', 'Total Beban HPP', 'Pajak Transaksi', 'Laba Kotor Usaha', 'Laba Bersih Akhir'],
                 datasets: [{
                     label: 'Nominal (Rp)',
                     data: [
                         {{ (float)$totalRevenue }},
                         {{ (float)$totalHppSold }},
+                        {{ (float)$taxTotal }},
                         {{ (float)$grossProfit }},
                         {{ (float)$netProfit }}
                     ],
-                    backgroundColor: ['#3b82f6', '#DF5E1D', '#10b981', '#059669'],
+                    backgroundColor: ['#3b82f6', '#DF5E1D', '#f59e0b', '#10b981', '#059669'],
                     borderRadius: 8,
                     maxBarThickness: 48
                 }]
@@ -378,6 +361,49 @@ document.addEventListener('DOMContentLoaded', function() {
                         ticks: { font: { size: 11, weight: 'bold' } }
                     }
                 }
+            }
+
+            const transactionCtx = document.getElementById('chartTransactions');
+            if (transactionCtx) {
+                new Chart(transactionCtx, {
+                    data: {
+                        labels: @json($transactionChartLabels),
+                        datasets: [
+                            {
+                                type: 'bar',
+                                label: 'Jumlah Transaksi',
+                                data: @json($transactionChartCounts),
+                                backgroundColor: '#DF5E1D',
+                                borderRadius: 6,
+                                yAxisID: 'y',
+                            },
+                            {
+                                type: 'line',
+                                label: 'Omzet (Rp)',
+                                data: @json($transactionChartRevenue),
+                                borderColor: '#2563eb',
+                                backgroundColor: '#2563eb',
+                                tension: 0.25,
+                                yAxisID: 'y1',
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'Transaksi' }, ticks: { precision: 0 } },
+                            y1: {
+                                beginAtZero: true,
+                                position: 'right',
+                                grid: { drawOnChartArea: false },
+                                title: { display: true, text: 'Omzet (Rp)' },
+                                ticks: { callback: value => 'Rp ' + new Intl.NumberFormat('id-ID', { notation: 'compact' }).format(value) }
+                            }
+                        }
+                    }
+                });
             }
         });
     }

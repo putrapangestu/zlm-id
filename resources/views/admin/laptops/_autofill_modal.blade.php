@@ -147,7 +147,7 @@ function applyTemplate(index) {
 
     // 1. Fill Text & Number Inputs across both create laptop and restock create forms
     const fields = [
-        'name', 'brand', 'price', 'processor', 'ram', 'storage',
+        'name', 'brand', 'price', 'processor', 'ram', 'ram_2', 'storage', 'storage_2',
         'graphics', 'display', 'ports', 'camera', 'audio',
         'connectivity', 'color', 'warranty', 'weight', 'battery_life'
     ];

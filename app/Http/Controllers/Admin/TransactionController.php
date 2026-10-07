@@ -96,6 +96,7 @@ class TransactionController extends Controller {
             'user_id' => $validated['user_id'],
             'status' => 'pending',
             'subtotal' => $subtotal,
+            'expected_subtotal' => $subtotal,
             'tax_rate' => $taxRate,
             'tax' => $tax,
             'total' => $total,

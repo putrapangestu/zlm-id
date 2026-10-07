@@ -231,6 +231,27 @@
                     <td class="py-3.5 px-6">
                         <span class="font-medium text-[#363230] block">{{ $pItem->laptop->name }}</span>
                         <span class="text-gray-400 text-[11px]">{{ $pItem->variant?->name ?? 'Standard' }}</span>
+                        @can('restock.create')
+                        @php($receivedSpecs = $pItem->received_specs ?? [])
+                        <details class="mt-2 text-left">
+                            <summary class="cursor-pointer text-[11px] font-semibold text-[#DF5E1D]">Ubah data unit diterima</summary>
+                            <form method="POST" action="{{ route('admin.restocks.units.update', [$restock, $pItem]) }}" class="mt-3 min-w-[360px] space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                @csrf
+                                @method('PATCH')
+                                <label class="block text-[10px] font-bold text-gray-600">Serial number
+                                    <input name="serial_number" value="{{ old('serial_number', $pItem->serial_number) }}" class="mt-1 w-full rounded border-gray-300 px-2 py-1 text-xs">
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    @foreach(['processor' => 'Processor', 'ram' => 'RAM', 'ram_2' => 'RAM 2', 'storage' => 'Storage', 'storage_2' => 'Storage 2', 'graphics' => 'Graphics', 'display' => 'Display'] as $field => $label)
+                                    <label class="block text-[10px] font-bold text-gray-600">{{ $label }}
+                                        <input name="{{ $field }}" value="{{ old($field, array_key_exists($field, $receivedSpecs) ? $receivedSpecs[$field] : $pItem->laptop->{$field}) }}" class="mt-1 w-full rounded border-gray-300 px-2 py-1 text-xs">
+                                    </label>
+                                    @endforeach
+                                </div>
+                                <button type="submit" class="rounded-lg bg-[#DF5E1D] px-3 py-1.5 text-[11px] font-bold text-white">Simpan Perubahan</button>
+                            </form>
+                        </details>
+                        @endcan
                     </td>
                     <td class="py-3.5 px-6">
                         @if($pItem->sku)
@@ -274,6 +295,26 @@
                 @endforeach
             </tbody>
         </table>
+        @if($unitEditLogs->isNotEmpty())
+        <div class="border-t border-gray-100 p-6">
+            <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-gray-600">Log Perubahan Data Unit</h4>
+            <div class="space-y-3">
+                @foreach($unitEditLogs as $log)
+                <div class="rounded-xl border border-gray-200 bg-gray-50 p-3 text-xs">
+                    <p class="font-semibold text-gray-800">{{ $log->user?->name ?? 'Pengguna tidak diketahui' }} <span class="font-normal text-gray-500">· {{ $log->created_at->format('d/m/Y H:i') }} · unit {{ $log->model_id }}</span></p>
+                    <div class="mt-2 grid gap-1 sm:grid-cols-2">
+                        @foreach($log->new_values ?? [] as $field => $value)
+                        <p class="text-gray-600">{{ str_replace('_', ' ', ucfirst($field)) }}:
+                            <span class="text-gray-400">{{ $log->old_values[$field] ?? '—' }}</span>
+                            <span class="font-semibold text-[#DF5E1D]">→ {{ $value ?? '—' }}</span>
+                        </p>
+                        @endforeach
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
     </div>
     @push('scripts')
     <script>

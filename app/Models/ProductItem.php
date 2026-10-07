@@ -18,6 +18,7 @@ class ProductItem extends Model
         'laptop_variant_id',
         'sku',
         'serial_number',
+        'received_specs',
         'base_cost',
         'additional_cost',
         'final_cost',
@@ -35,6 +36,7 @@ class ProductItem extends Model
         'additional_cost' => 'decimal:2',
         'final_cost' => 'decimal:2',
         'qc_checklist' => 'array',
+        'received_specs' => 'array',
         'qc_at' => 'datetime',
     ];
 

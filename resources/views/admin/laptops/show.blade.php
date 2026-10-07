@@ -163,10 +163,22 @@
                     <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Memori (RAM)</span>
                     <p class="text-xs font-bold text-gray-800">{{ $laptop->ram }}</p>
                 </div>
+                @if($laptop->ram_2)
+                <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-100">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Memori (RAM 2)</span>
+                    <p class="text-xs font-bold text-gray-800">{{ $laptop->ram_2 }}</p>
+                </div>
+                @endif
                 <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-100">
                     <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Penyimpanan (Storage)</span>
                     <p class="text-xs font-bold text-gray-800">{{ $laptop->storage }}</p>
                 </div>
+                @if($laptop->storage_2)
+                <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-100">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Penyimpanan (Storage 2)</span>
+                    <p class="text-xs font-bold text-gray-800">{{ $laptop->storage_2 }}</p>
+                </div>
+                @endif
                 <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-100">
                     <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Kartu Grafis (GPU)</span>
                     <p class="text-xs font-bold text-gray-800">{{ $laptop->graphics ?: 'Integrated Graphics' }}</p>

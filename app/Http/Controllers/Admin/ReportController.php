@@ -86,7 +86,8 @@ class ReportController extends Controller
     public function profitLoss(Request $request): View
     {
         $period = $request->get('period', 'monthly');
-        $startDate = $request->filled('start_date') ? $request->start_date : now()->startOfMonth()->format('Y-m-d');
+        $defaultStart = $period === 'yearly' ? now()->startOfYear() : now()->startOfMonth();
+        $startDate = $request->filled('start_date') ? $request->start_date : $defaultStart->format('Y-m-d');
         $endDate = $request->filled('end_date') ? $request->end_date : now()->format('Y-m-d');
 
         $paidOrders = Order::with(['items.productItem.parts', 'items.laptop', 'user'])
@@ -137,10 +138,30 @@ class ReportController extends Controller
         $restockPurchasesTotal = (float) Restock::whereBetween('purchase_date', [$startDate, $endDate])->sum('total_amount');
 
         $grossProfit = $totalRevenue - $totalHppSold;
+        $grossProfit -= $taxTotal;
         $netProfit = $grossProfit - $shippingCost - $memberDiscounts;
-        $grossMarginPercent = $totalRevenue > 0 ? round(($grossProfit / $totalRevenue) * 100, 1) : 0;
-        $netMarginPercent = $totalRevenue > 0 ? round(($netProfit / $totalRevenue) * 100, 1) : 0;
+        $revenueExcludingTax = max(0, $totalRevenue - $taxTotal);
+        $grossMarginPercent = $revenueExcludingTax > 0 ? round(($grossProfit / $revenueExcludingTax) * 100, 1) : 0;
+        $netMarginPercent = $revenueExcludingTax > 0 ? round(($netProfit / $revenueExcludingTax) * 100, 1) : 0;
         $ordersCount = $paidOrders->count();
+
+        $groupByMonth = $period === 'yearly'
+            || ($period === 'custom' && \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($endDate)) > 90);
+        $chartStart = \Carbon\Carbon::parse($startDate);
+        $chartEnd = \Carbon\Carbon::parse($endDate);
+        $bucket = $groupByMonth ? $chartStart->copy()->startOfMonth() : $chartStart->copy()->startOfDay();
+        $transactionChartLabels = [];
+        $transactionChartCounts = [];
+        $transactionChartRevenue = [];
+
+        while ($bucket->lte($chartEnd)) {
+            $key = $bucket->format($groupByMonth ? 'Y-m' : 'Y-m-d');
+            $matchingOrders = $paidOrders->filter(fn (Order $order) => $order->created_at?->format($groupByMonth ? 'Y-m' : 'Y-m-d') === $key);
+            $transactionChartLabels[] = $groupByMonth ? $bucket->translatedFormat('M Y') : $bucket->translatedFormat('d M');
+            $transactionChartCounts[] = $matchingOrders->count();
+            $transactionChartRevenue[] = (float) $matchingOrders->sum('total');
+            $groupByMonth ? $bucket->addMonth() : $bucket->addDay();
+        }
 
         return view('admin.reports.profit-loss', [
             'period' => $period,
@@ -152,6 +173,7 @@ class ReportController extends Controller
             'posRevenue' => $posRevenue,
             'shippingCost' => $shippingCost,
             'taxTotal' => $taxTotal,
+            'revenueExcludingTax' => $revenueExcludingTax,
             'memberDiscounts' => $memberDiscounts,
             'baseCostSold' => $baseCostSold,
             'qcPartsCostSold' => $qcPartsCostSold,
@@ -163,7 +185,10 @@ class ReportController extends Controller
             'grossMarginPercent' => $grossMarginPercent,
             'netMarginPercent' => $netMarginPercent,
             'ordersCount' => $ordersCount,
-            'recentSoldOrders' => $paidOrders->take(10),
+            'transactionChartLabels' => $transactionChartLabels,
+            'transactionChartCounts' => $transactionChartCounts,
+            'transactionChartRevenue' => $transactionChartRevenue,
+            'transactionChartUnit' => $groupByMonth ? 'per bulan' : 'per hari',
         ]);
     }
 
@@ -215,6 +240,6 @@ class ReportController extends Controller
             'failed' => ProductItem::where('qc_status', 'failed')->count(),
         ];
 
-        return view('admin.reports.product-stats', compact('stockSummary', 'topSelling', 'topRated', 'recentMovements', 'brandDistribution', 'qcDistribution'));
+        return view('admin.reports.product-stats', compact('stockSummary', 'topSelling', 'topRated', 'brandDistribution', 'qcDistribution'));
     }
 }

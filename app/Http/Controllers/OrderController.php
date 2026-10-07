@@ -96,6 +96,7 @@ class OrderController extends Controller
             'user_id' => auth()->id(),
             'source' => 'online',
             'subtotal' => $subtotal,
+            'expected_subtotal' => $subtotal,
             'tax_rate' => $taxRate,
             'tax' => $tax,
             'shipping_cost' => $shippingCost,
