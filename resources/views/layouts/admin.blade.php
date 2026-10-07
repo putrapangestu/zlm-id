@@ -62,7 +62,7 @@
         <div class="h-16 flex items-center px-6 border-b border-gray-100">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
                 <img src="{{ config('settings.store_logo') ? asset('storage/' . config('settings.store_logo')) : asset('assets/logo.png') }}" alt="ZLM.ID" class="h-7 w-7 object-contain">
-                <span class="font-bold text-lg tracking-tight text-[#363230]">ZLM<span class="text-[#DF5E1D]">.ID</span> Admin</span>
+                <span class="font-bold text-lg tracking-tight text-[#DF5E1D]">ZLM<span class="text-[#DF5E1D]">.ID</span> Admin</span>
             </a>
         </div>
 
