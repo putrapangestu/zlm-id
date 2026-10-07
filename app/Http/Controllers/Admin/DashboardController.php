@@ -62,7 +62,7 @@ class DashboardController extends Controller
             ->get();
 
         // 5. Top 5 selling laptops this month (cached 10 min to keep DB ultra-fast)
-        $topSelling = Cache::remember('dashboard_top_selling_month', 600, function () use ($monthStart) {
+        $topSelling = Cache::remember('dashboard_top_selling_month_v2', 600, function () use ($monthStart) {
             return OrderItem::where('created_at', '>=', $monthStart)
                 ->selectRaw('laptop_id, SUM(quantity) as total_sold, SUM(subtotal) as total_revenue')
                 ->with(['laptop:id,name,brand,slug,image_url,stock'])
@@ -71,11 +71,11 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get()
                 ->map(function ($item) {
-                    return (object) [
+                    return [
                         'laptop_id' => $item->laptop_id,
                         'total_sold' => (int) $item->total_sold,
                         'total_revenue' => (float) $item->total_revenue,
-                        'laptop' => (object) [
+                        'laptop' => [
                             'name' => $item->laptop?->name ?? 'Laptop #' . $item->laptop_id,
                             'brand' => $item->laptop?->brand ?? '',
                             'slug' => $item->laptop?->slug ?? '',

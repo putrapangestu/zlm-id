@@ -115,7 +115,7 @@
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
         <div class="absolute right-0 top-0 bottom-0 w-72 max-w-[85vw] bg-white shadow-2xl overflow-y-auto">
             <div class="flex items-center justify-between p-4 border-b border-gray-100">
-                <span class="text-xl font-bold tracking-tighter text-black">ZLM<span class="text-[#DF5E1D]">.ID</span></span>
+                <span class="text-xl font-bold tracking-tighter text-[#DF5E1D]">ZLM<span class="text-[#DF5E1D]">.ID</span></span>
                 <button onclick="toggleMobileMenu()" class="p-2 text-gray-500 hover:text-black rounded-lg transition-colors">
                     <iconify-icon icon="solar:close-circle-linear" class="text-2xl"></iconify-icon>
                 </button>

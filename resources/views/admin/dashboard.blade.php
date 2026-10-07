@@ -288,15 +288,15 @@
                                     </span>
                                     <div class="truncate">
                                         <div class="font-bold text-[#363230] truncate group-hover:text-[#DF5E1D] transition-colors">
-                                            {{ $item->laptop?->name ?? 'Laptop #' . $item->laptop_id }}
+                                            {{ $item['laptop']['name'] ?? 'Laptop #' . $item['laptop_id'] }}
                                         </div>
                                         <div class="text-[10px] text-gray-400">
-                                            Sisa stok: {{ $item->laptop?->stock ?? 0 }} unit
+                                            Sisa stok: {{ $item['laptop']['stock'] ?? 0 }} unit
                                         </div>
                                     </div>
                                 </div>
                                 <span class="font-extrabold text-[#DF5E1D] shrink-0 ml-2">
-                                    {{ $item->total_sold }} terjual
+                                    {{ $item['total_sold'] }} terjual
                                 </span>
                             </div>
                         @endforeach
