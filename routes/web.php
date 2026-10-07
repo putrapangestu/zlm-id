@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LaptopCatalogSpreadsheetController;
 use App\Http\Controllers\Admin\LaptopController as AdminLaptopController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\ProductController;
@@ -207,6 +208,9 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
     Route::resource('products', ProductController::class);
 
     // Products / Laptops
+    Route::get('/laptops/template', [LaptopCatalogSpreadsheetController::class, 'template'])->name('laptops.template');
+    Route::get('/laptops/export', [LaptopCatalogSpreadsheetController::class, 'export'])->name('laptops.export');
+    Route::post('/laptops/import', [LaptopCatalogSpreadsheetController::class, 'import'])->name('laptops.import');
     Route::get('/laptops/api/templates', [AdminLaptopController::class, 'apiSearchTemplates'])->name('laptops.api.templates');
     Route::patch('/laptops/{laptop}/toggle-status', [AdminLaptopController::class, 'toggleStatus'])->name('laptops.toggle-status');
     Route::resource('laptops', AdminLaptopController::class)->except(['show']);

@@ -5,6 +5,17 @@
 
 @section('content')
 <div class="space-y-5">
+    @if ($errors->any())
+        <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-700" role="alert">
+            <p class="mb-1 font-bold">Impor katalog belum berhasil:</p>
+            <ul class="list-inside list-disc space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     {{-- Filter & Action Bar --}}
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-gray-200/60 shadow-xs">
         {{-- Search & Filter Form --}}
@@ -39,8 +50,23 @@
             </button>
         </form>
 
-        {{-- Add Buttons --}}
-        <div class="flex items-center gap-2 shrink-0">
+        {{-- Import, export & add actions --}}
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <form method="POST" action="{{ route('admin.laptops.import') }}" enctype="multipart/form-data" class="flex items-center gap-2">
+                @csrf
+                <label class="sr-only" for="laptop-catalog-file">File katalog laptop</label>
+                <input id="laptop-catalog-file" type="file" name="file" accept=".xlsx,.xls" required
+                    class="max-w-48 text-[11px] text-gray-500 file:mr-2 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-2 file:text-[11px] file:font-bold file:text-gray-700">
+                <button type="submit" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition">
+                    Impor Excel
+                </button>
+            </form>
+            <a href="{{ route('admin.laptops.template') }}" class="px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl text-xs font-bold transition">
+                Template
+            </a>
+            <a href="{{ route('admin.laptops.export') }}" class="px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl text-xs font-bold transition">
+                Ekspor Excel
+            </a>
             <a href="{{ route('admin.restocks.create') }}" class="px-4 py-2 bg-orange-50 hover:bg-orange-100 text-[#DF5E1D] border border-orange-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
                 <iconify-icon icon="solar:box-minimalistic-bold" class="text-base"></iconify-icon>
                 <span>Input via Restock</span>
