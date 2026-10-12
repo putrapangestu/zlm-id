@@ -204,6 +204,9 @@ Route::middleware(['auth', 'role:admin|karyawan'])->prefix('admin')->name('admin
     });
 
     // Master Barang & Parts
+    Route::get('/products/template', [ProductController::class, 'template'])->name('products.template');
+    Route::get('/products/export', [ProductController::class, 'export'])->name('products.export');
+    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
     Route::get('/products/api/search', [ProductController::class, 'apiSearch'])->name('products.api.search');
     Route::resource('products', ProductController::class);
 

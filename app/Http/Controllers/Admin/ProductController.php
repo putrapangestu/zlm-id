@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\ProductSpreadsheetService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductController extends Controller
 {
@@ -140,5 +143,76 @@ class ProductController extends Controller
         $items = $query->take(20)->get(['id', 'name', 'sku', 'price', 'cost_price', 'stock']);
 
         return response()->json($items);
+    }
+
+    /**
+     * Download template Excel for Master Barang
+     */
+    public function template(ProductSpreadsheetService $service): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($service): void {
+            (new Xlsx($service->makeSpreadsheet(false)))->save('php://output');
+        }, 'template-master-barang.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    /**
+     * Export master barang based on current filter or all
+     */
+    public function export(Request $request, ProductSpreadsheetService $service): StreamedResponse
+    {
+        $query = Product::with('category');
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%");
+            });
+        }
+
+        if ($categoryId = $request->get('category_id')) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($status = $request->get('status')) {
+            if ($status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($status === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        $products = $query->latest()->get();
+
+        return response()->streamDownload(function () use ($service, $products): void {
+            (new Xlsx($service->makeSpreadsheet(true, $products)))->save('php://output');
+        }, 'master-data-barang-' . now()->format('Ymd-His') . '.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    /**
+     * Import products from Excel
+     */
+    public function import(Request $request, ProductSpreadsheetService $service): RedirectResponse
+    {
+        $validated = $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            $result = $service->import($validated['file']->getRealPath());
+
+            $msg = "Impor selesai: {$result['created']} barang baru ditambahkan, {$result['updated']} barang diperbarui.";
+            if ($result['failed'] > 0) {
+                $msg .= " ({$result['failed']} baris dilewati karena format tidak lengkap).";
+            }
+
+            return redirect()->route('admin.products.index')->with('success', $msg);
+        } catch (\Throwable $e) {
+            return redirect()->route('admin.products.index')->with('error', 'Gagal memproses file: ' . $e->getMessage());
+        }
     }
 }

@@ -78,12 +78,35 @@
                 </button>
             </form>
 
-            @can('products.manage')
-            <a href="{{ route('admin.products.create') }}" class="w-full sm:w-auto px-4 py-2.5 bg-[#DF5E1D] hover:bg-[#c45218] text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5">
-                <iconify-icon icon="solar:add-circle-bold" class="text-base"></iconify-icon>
-                <span>Tambah Barang Baru</span>
-            </a>
-            @endcan
+            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0 justify-end">
+                @can('products.manage')
+                <form method="POST" action="{{ route('admin.products.import') }}" enctype="multipart/form-data" class="flex items-center gap-1.5">
+                    @csrf
+                    <label class="sr-only" for="product-file">File Excel Master Barang</label>
+                    <input id="product-file" type="file" name="file" accept=".xlsx,.xls,.csv" required
+                        class="max-w-44 text-[11px] text-gray-500 file:mr-2 file:rounded-lg file:border-0 file:bg-gray-100 file:px-2.5 file:py-1.5 file:text-[11px] file:font-bold file:text-gray-700 cursor-pointer">
+                    <button type="submit" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs">
+                        <iconify-icon icon="solar:upload-track-2-bold" class="text-sm"></iconify-icon>
+                        <span>Impor</span>
+                    </button>
+                </form>
+
+                <a href="{{ route('admin.products.template') }}" class="px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs" title="Download template Excel">
+                    <iconify-icon icon="solar:document-text-bold" class="text-sm text-gray-500"></iconify-icon>
+                    <span>Template</span>
+                </a>
+
+                <a href="{{ route('admin.products.export', request()->query()) }}" class="px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs" title="Ekspor data saat ini ke Excel">
+                    <iconify-icon icon="solar:download-bold" class="text-sm text-blue-600"></iconify-icon>
+                    <span>Ekspor Excel</span>
+                </a>
+
+                <a href="{{ route('admin.products.create') }}" class="w-full sm:w-auto px-4 py-2 bg-[#DF5E1D] hover:bg-[#c45218] text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5">
+                    <iconify-icon icon="solar:add-circle-bold" class="text-base"></iconify-icon>
+                    <span>Tambah Barang</span>
+                </a>
+                @endcan
+            </div>
         </div>
     </div>
 
