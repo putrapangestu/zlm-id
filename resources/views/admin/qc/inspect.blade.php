@@ -3,6 +3,29 @@
 @section('title', 'Inspeksi QC Unit — ZLM.ID Admin')
 @section('heading', 'Formulir Inspeksi Quality Control')
 
+
+@php
+    $existingParts = $item->parts->map(function ($p) {
+        return [
+            'product_id' => $p->product_id,
+            'part_name' => $p->part_name,
+            'quantity' => (int) $p->quantity,
+            'unit_cost' => (float) $p->unit_cost,
+            'notes' => $p->notes ?? '',
+        ];
+    })->values()->toArray();
+
+    $masterProductData = $masterProducts->map(function ($p) {
+        return [
+            'id' => $p->id,
+            'name' => $p->name,
+            'cost_price' => (float) $p->cost_price,
+            'stock' => (int) $p->stock,
+            'sku' => $p->sku,
+        ];
+    })->values()->toArray();
+@endphp
+
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
     @php($unitSpecs = $item->received_specs ?? [])
@@ -384,28 +407,6 @@
 
     </div>
 </div>
-
-@php
-    $existingParts = $item->parts->map(function ($p) {
-        return [
-            'product_id' => $p->product_id,
-            'part_name' => $p->part_name,
-            'quantity' => (int) $p->quantity,
-            'unit_cost' => (float) $p->unit_cost,
-            'notes' => $p->notes ?? '',
-        ];
-    })->values()->toArray();
-
-    $masterProductData = $masterProducts->map(function ($p) {
-        return [
-            'id' => $p->id,
-            'name' => $p->name,
-            'cost_price' => (float) $p->cost_price,
-            'stock' => (int) $p->stock,
-            'sku' => $p->sku,
-        ];
-    })->values()->toArray();
-@endphp
 
 @push('scripts')
 <script>

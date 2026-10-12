@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zlm-pos-cache-v5';
+const CACHE_NAME = 'zlm-pos-cache-v6';
 const ASSETS_TO_CACHE = [
     '/pos',
     '/pos-manifest.json',
@@ -38,9 +38,16 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Skip caching for POST requests (sync endpoint handled in app)
+    // Skip non-GET requests
     if (event.request.method !== 'GET') {
         return;
+    }
+
+    // NEVER cache HTML navigations / documents outside POS (Admin, Landing Page, Auth, etc.)
+    if (event.request.mode === 'navigate') {
+        if (!url.pathname.startsWith('/pos')) {
+            return; // Let browser fetch directly from server without SW cache
+        }
     }
 
     // Network-first for bootstrap data with cache fallback
@@ -59,7 +66,16 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Cache-first for static assets
+    // Only cache static assets explicitly defined or belonging to /pos
+    const isCacheableStatic = ASSETS_TO_CACHE.includes(url.pathname) || 
+                             url.pathname.startsWith('/pos') ||
+                             url.pathname.startsWith('/js/pos');
+
+    if (!isCacheableStatic) {
+        return; // Pass through to network for all other requests
+    }
+
+    // Cache-first for POS assets
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
